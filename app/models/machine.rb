@@ -2,7 +2,7 @@ include LxcLib
 
 class Machine < ApplicationRecord
   after_commit :create_machine, on: :create
-  after_destroy :destroy_machine
+  before_destroy :destroy_machine
 
   private
   def create_machine

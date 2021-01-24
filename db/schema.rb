@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_23_204445) do
+ActiveRecord::Schema.define(version: 2021_01_24_174240) do
 
   create_table "machines", force: :cascade do |t|
     t.string "hostname"
@@ -19,6 +19,20 @@ ActiveRecord::Schema.define(version: 2021_01_23_204445) do
     t.integer "cpu"
     t.integer "ram"
     t.integer "disk"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "service_id"
+    t.index ["service_id"], name: "index_machines_on_service_id"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.string "name"
+    t.integer "scale"
+    t.integer "cpu"
+    t.integer "ram"
+    t.integer "disk"
+    t.string "hostname"
+    t.string "domain"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

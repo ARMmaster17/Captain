@@ -17,7 +17,45 @@ module LxcLib
     resource = get_resource
     auth_header = authenticate(resource)
 
-    resource['nodes/pxvh1/lxc/' + String(vmid)].delete(auth_header.merge({'force' => '1', 'purge' => '1'}))
+    stop_machine(vmid)
+    sleep(3)
+    begin
+      resource['nodes/pxvh1/lxc/' + String(vmid)].delete(auth_header.merge({'force' => '1', 'purge' => '1'}))
+    rescue
+      Rails.logger.warn "Unable to delete #{vmid}, ignoring..."
+    end
+  end
+
+  def LxcLib.start_machine(vmid)
+    resource = get_resource
+    auth_header = authenticate(resource)
+
+    wait_for_machine_ready(vmid)
+
+    resource["nodes/pxvh1/lxc/#{vmid}/status/start"].post({}, auth_header)
+  end
+
+  def LxcLib.stop_machine(vmid)
+    resource = get_resource
+    auth_header = authenticate(resource)
+
+    resource["nodes/pxvh1/lxc/#{vmid}/status/stop"].post({}, auth_header)
+  end
+
+  def LxcLib.wait_for_machine_ready(vmid)
+    resource = get_resource
+    auth_header = authenticate(resource)
+
+    while(true)
+      sleep(5)
+      data = resource["nodes/pxvh1/lxc/#{vmid}/status/current"].get(auth_header).body
+      locks = JSON.parse(data)['data']['lock']
+      Rails.logger.warn "Value of locks: '#{locks}'"
+      if(locks.eql?(""))
+        sleep(5)
+        return
+      end
+    end
   end
 
   def LxcLib.get_vmid

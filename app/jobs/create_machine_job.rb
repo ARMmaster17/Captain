@@ -20,5 +20,14 @@ class CreateMachineJob < ApplicationJob
 
     vm.vmid = vmid
     vm.save
+    while(true)
+      begin
+        LxcLib.start_machine(vmid)
+        return
+      rescue
+        sleep(5)
+      end
+    end
+
   end
 end

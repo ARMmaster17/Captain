@@ -1,0 +1,52 @@
+<%= form_with(model: service) do |form| %>
+  <% if service.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(service.errors.count, "error") %> prohibited this service from being saved:</h2>
+
+      <ul>
+        <% service.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :scale %>
+    <%= form.number_field :scale %>
+  </div>
+
+  <div class="field">
+    <%= form.label :cpu %>
+    <%= form.number_field :cpu %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ram %>
+    <%= form.number_field :ram %>
+  </div>
+
+  <div class="field">
+    <%= form.label :disk %>
+    <%= form.number_field :disk %>
+  </div>
+
+  <div class="field">
+    <%= form.label :hostname %>
+    <%= form.text_field :hostname %>
+  </div>
+
+  <div class="field">
+    <%= form.label :domain %>
+    <%= form.text_field :domain %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
