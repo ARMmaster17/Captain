@@ -1,0 +1,47 @@
+<%= form_with(model: machine) do |form| %>
+  <% if machine.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(machine.errors.count, "error") %> prohibited this machine from being saved:</h2>
+
+      <ul>
+        <% machine.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :hostname %>
+    <%= form.text_field :hostname %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ip_address %>
+    <%= form.text_field :ip_address %>
+  </div>
+
+  <div class="field">
+    <%= form.label :vmid %>
+    <%= form.text_field :vmid %>
+  </div>
+
+  <div class="field">
+    <%= form.label :cpu %>
+    <%= form.text_field :cpu %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ram %>
+    <%= form.text_field :ram %>
+  </div>
+
+  <div class="field">
+    <%= form.label :disk %>
+    <%= form.text_field :disk %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
