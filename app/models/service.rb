@@ -2,7 +2,7 @@ class Service < ApplicationRecord
   has_many :machines
 
   after_commit :create_machines, on: :create
-  before_destroy :destroy_machines
+  before_commit :destroy_machines, on: :destroy
 end
 
 def create_machines
@@ -16,6 +16,7 @@ def create_machines
       disk: self.disk,
       service_id: self.id
     )
+    sleep(1)
   end
 end
 

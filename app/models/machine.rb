@@ -6,7 +6,7 @@ class Machine < ApplicationRecord
 
   private
   def create_machine
-    CreateMachineJob.perform_now(self)
+    CreateMachineJob.perform_later(self)
   end
 
   def destroy_machine
