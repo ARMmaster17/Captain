@@ -7,6 +7,7 @@ class CreateMachineJob < ApplicationJob
   queue_as :default
 
   def perform(vm)
+    mod_ip_address = vm.ip_address.gsub("/", "%2F")
     vmid = LxcLib.get_vmid
     vm_settings = {}
     vm_settings['vmid'] = vmid
@@ -15,9 +16,10 @@ class CreateMachineJob < ApplicationJob
     vm_settings['memory'] = vm.ram
     vm_settings['swap'] = vm.ram
     #vm_settings['unique'] = '1'
-    vm_settings['net0'] = url_encode("name=eth0,bridge=internal,ip=#{vm.ip_address},gw=10.0.0.1,ip6=manual,firewall=0,mtu=1450")
+    vm_settings['net0'] = "name%3Deth0%2Cbridge%3Dinternal%2Cip%3D#{mod_ip_address}%2Cgw%3D10.0.0.1%2Cfirewall%3D0%2Cmtu%3D1450"
+    vm_settings['nameserver'] = "10.0.0.1"
     vm_settings['storage'] = 'pve-storage'
-    vm_settings['rootfs'] = "0,size=#{vm.disk}"
+    vm_settings['rootfs'] = "pve-storage%3A#{vm.disk}"
     vm_settings['ostemplate'] = 'pve-img:vztmpl/debian-10-standard_10.7-1_amd64.tar.gz'
     vm_settings['onboot'] = '1'
     #vm_settings['ssh-public-keys'] = ''
