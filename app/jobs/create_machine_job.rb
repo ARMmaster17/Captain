@@ -7,6 +7,7 @@ class CreateMachineJob < ApplicationJob
   queue_as :default
 
   def perform(vm)
+    ActionCable.server.broadcast("machine_stream", body: "#{vm.hostname} is being created...")
     mod_ip_address = vm.ip_address.gsub("/", "%2F")
     vmid = LxcLib.get_vmid
     vm_settings = {}
@@ -33,5 +34,7 @@ class CreateMachineJob < ApplicationJob
 
     vm.vmid = vmid
     vm.save
+
+    ActionCable.server.broadcast("machine_stream", body: "#{vm.hostname} is now online.")
   end
 end
