@@ -7,7 +7,8 @@ class CreateMachineJob < ApplicationJob
   queue_as :default
 
   def perform(vm)
-    ActionCable.server.broadcast("machine_stream", body: "#{vm.hostname} is being created...")
+    #MachineChannel.broadcast_to(vm, "#{vm.hostname} is being created...")
+    ActionCable.server.broadcast("machine_channel", body: "#{vm.hostname} is being created...")
     mod_ip_address = vm.ip_address.gsub("/", "%2F")
     vmid = LxcLib.get_vmid
     vm_settings = {}
@@ -28,13 +29,12 @@ class CreateMachineJob < ApplicationJob
     vm_settings['unprivileged'] = '1'
     packed_settings = vm_settings.to_a.map { |v| v.join '=' }.join '&'
 
-    Rails.logger.warn packed_settings.to_s
-
     LxcLib.create_machine(packed_settings)
 
     vm.vmid = vmid
     vm.save
 
-    ActionCable.server.broadcast("machine_stream", body: "#{vm.hostname} is now online.")
+    #MachineChannel.broadcast_to(vm, "#{vm.hostname} is now online.")
+    ActionCable.server.broadcast("machine_channel", body: "#{vm.hostname} is now online.")
   end
 end

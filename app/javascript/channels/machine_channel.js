@@ -1,7 +1,10 @@
 import consumer from "./consumer"
 
-consumer.subscriptions.create({ channel: "MachineChannel", room: "machine_stream"}, {
+consumer.subscriptions.create({ channel: "MachineChannel"}, {
+    connected() {
+        console.log("ActiveCable is working!");
+    },
     received(data) {
-        new Notification(data["title"], body: data["body"])
+        console.log(data["body"]);
     }
 })

@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  root "home#index"
+  get "/manage", to: "home#index"
+
   resources :services do
     resources :machines
   end
