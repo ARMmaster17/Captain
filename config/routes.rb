@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :settings
   root "home#index"
   get "/manage", to: "home#index"
 
