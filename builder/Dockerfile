@@ -1,7 +1,10 @@
 FROM golang:1.16-buster
 
-ADD ./ /app/
-WORKDIR /app/
-RUN go build -o captain-builder
+ADD . /go/src/github.com/ARMmaster17/Captain/
+WORKDIR /go/src/
+#ENV GOPATH=/go/src/
+#ENV GO111MODULE=auto
+WORKDIR /go/src/github.com/ARMmaster17/Captain/builder/
+RUN go build main.go
 
-CMD ["/app/captain-builder"]
+CMD ["/go/src/github.com/ARMmaster17/Captain/builder/main"]

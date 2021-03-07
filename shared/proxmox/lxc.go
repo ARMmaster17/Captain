@@ -1,4 +1,4 @@
-package main
+package proxmox
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func createLxcContainer(config MachineConfig) (string, error) {
+func CreateLxcContainer(config MachineConfig) (string, error) {
 	vmid, err := getNextVmid()
 	if err != nil {
 		log.Println(err)

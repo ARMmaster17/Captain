@@ -1,4 +1,4 @@
-package main
+package ipam
 
 import (
 	"crypto/tls"
@@ -112,7 +112,7 @@ func getFirstFreeIPAddress() (string, error) {
 	return ip, nil
 }
 
-func getIPAddress(hostname string) (string, error) {
+func GetIPAddress(hostname string) (string, error) {
 	ip, err := getFirstFreeIPAddress()
 	if err != nil {
 		log.Println(err)

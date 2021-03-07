@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/ARMmaster17/Captain/shared/ipam"
+	"github.com/ARMmaster17/Captain/shared/proxmox"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -70,22 +72,22 @@ func getAllPlaneConfig() (AllPlaneConfig, error) {
 	return allPlaneConfig, nil
 }
 
-func buildPlaneConfig(tlc Plane) (MachineConfig, error) {
+func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
 	planeConfig, err := planeDefaultOverlapBuild(tlc)
 	if err != nil {
 		log.Println(err)
-		return MachineConfig{}, errors.New("unable to build plane configuration")
+		return proxmox.MachineConfig{}, errors.New("unable to build plane configuration")
 	}
 
 	allPlaneConfig, err := getAllPlaneConfig()
 	if err != nil {
 		log.Println(err)
-		return MachineConfig{}, errors.New("unable to build cluster-wide plane configuration")
+		return proxmox.MachineConfig{}, errors.New("unable to build cluster-wide plane configuration")
 	}
 	hostname := fmt.Sprintf("%s.%s", planeConfig.Name, allPlaneConfig.Domain)
-	ip, err := getIPAddress(hostname)
+	ip, err := ipam.GetIPAddress(hostname)
 	publicKey, err := ioutil.ReadFile("./conf/key.pub")
-	return MachineConfig{
+	return proxmox.MachineConfig{
 		OsTemplate: allPlaneConfig.Template,
 		Net0: fmt.Sprintf("name=eth0,bridge=%s,ip=" + "%s/%d" + ",gw=%s,firewall=0,mtu=%d",
 			allPlaneConfig.Bridge,
@@ -114,7 +116,7 @@ func makePlane(plane Plane) (string, error) {
 		log.Println(err)
 		return "", errors.New("an error occurred while building the plane configuration")
 	}
-	vmid, err := createLxcContainer(machineConfig)
+	vmid, err := proxmox.CreateLxcContainer(machineConfig)
 	if err != nil {
 		log.Println(err)
 		return "", errors.New("an error occurred while building the plane")

@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: ./builder/Dockerfile
+  rabbitmq-docker:
+    image: rabbitmq:3.7.3-management
+    container_name: rabbitmq-docker
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq.conf:ro
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro

@@ -12,4 +12,10 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+builder/conf/*.pub
+builder/conf/*.key
+builder/conf/*.priv
+*.env
+.idea/*

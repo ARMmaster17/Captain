@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"github.com/ARMmaster17/Captain/shared/ampq"
 	"github.com/streadway/amqp"
 	"log"
 	"os"
@@ -10,7 +11,7 @@ import (
 
 func startListening() error {
 	rabbitURI := os.Getenv("RABBITMQ_URI")
-	conn, err := GetQueueConnection(rabbitURI)
+	conn, err := ampq.GetQueueConnection(rabbitURI)
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to connect to RabbitMQ")
