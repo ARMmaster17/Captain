@@ -84,6 +84,7 @@ func buildPlaneConfig(tlc Plane) (MachineConfig, error) {
 	}
 	hostname := fmt.Sprintf("%s.%s", planeConfig.Name, allPlaneConfig.Domain)
 	ip, err := getIPAddress(hostname)
+	publicKey, err := ioutil.ReadFile("./conf/key.pub")
 	return MachineConfig{
 		OsTemplate: allPlaneConfig.Template,
 		Net0: fmt.Sprintf("name=eth0,bridge=%s,ip=" + "%s/%d" + ",gw=%s,firewall=0,mtu=%d",
@@ -103,5 +104,6 @@ func buildPlaneConfig(tlc Plane) (MachineConfig, error) {
 		OnBoot: 1,
 		Unprivileged: 1,
 		Start: 1,
+		SSH: string(publicKey),
 	}, nil
 }

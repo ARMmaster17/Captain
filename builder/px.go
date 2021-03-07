@@ -107,6 +107,7 @@ type MachineConfig struct {
 	OnBoot			int		`schema:"onboot"`
 	Unprivileged	int		`schema:"unprivileged"`
 	Start			int		`schema:"start"`
+	SSH				string	`schema:"ssh-public-keys"`
 }
 
 type NetworkConfig struct {
