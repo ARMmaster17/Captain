@@ -1,35 +1,53 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
+	"github.com/streadway/amqp"
 	"log"
+	"os"
 )
 
-func makePlane(plane Plane) (string, error) {
-	machineConfig, err := buildPlaneConfig(plane)
+func startListening() error {
+	rabbitURI := os.Getenv("RABBITMQ_URI")
+	conn, err := GetQueueConnection(rabbitURI)
 	if err != nil {
 		log.Println(err)
-		return "", errors.New("an error occurred while building the plane configuration")
+		return errors.New("unable to connect to RabbitMQ")
 	}
-	vmid, err := createLxcContainer(machineConfig)
+
+	err = conn.StartConsumer("builder-queue", "builder", handleMessage, 1)
 	if err != nil {
 		log.Println(err)
-		return "", errors.New("an error occurred while building the plane")
+		return errors.New("unable to connect to builder queue")
 	}
-	return vmid, nil
+	return nil
+}
+
+func handleMessage(d amqp.Delivery) bool {
+	if d.Body == nil {
+		log.Println("empty message received")
+		return false
+	}
+	plane := Plane{}
+	err := json.Unmarshal(d.Body, &plane)
+	if err != nil {
+		log.Println("unable to parse message JSON")
+		return false
+	}
+	_, err = makePlane(plane)
+	if err != nil {
+		log.Println("unable to execute plane build request")
+		return false
+	}
+	return true
 }
 
 func main() {
-	plane := Plane{
-		Name:    "test2",
-		CPU:     1,
-		RAM:     256,
-		Storage: 5,
-	}
-	vmid, err := makePlane(plane)
+	err := startListening()
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(vmid)
+	forever := make(chan bool)
+	<-forever
 }
