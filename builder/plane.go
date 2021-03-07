@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
+	"time"
 )
 
 type Plane struct {
@@ -72,6 +73,15 @@ func getAllPlaneConfig() (AllPlaneConfig, error) {
 	return allPlaneConfig, nil
 }
 
+func getFQDNHostname(name string) (string, error) {
+	allPlaneConfig, err := getAllPlaneConfig()
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("unable to build cluster-wide plane configuration")
+	}
+	return fmt.Sprintf("%s.%s", name, allPlaneConfig.Domain), nil
+}
+
 func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
 	planeConfig, err := planeDefaultOverlapBuild(tlc)
 	if err != nil {
@@ -84,9 +94,21 @@ func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to build cluster-wide plane configuration")
 	}
-	hostname := fmt.Sprintf("%s.%s", planeConfig.Name, allPlaneConfig.Domain)
+	hostname, err := getFQDNHostname(tlc.Name)
+	if err != nil {
+		log.Println(err)
+		return proxmox.MachineConfig{}, errors.New("unable to build FQDN")
+	}
 	ip, err := ipam.GetIPAddress(hostname)
+	if err != nil {
+		log.Println(err)
+		return proxmox.MachineConfig{}, errors.New("unable to obtain next available IP address")
+	}
 	publicKey, err := ioutil.ReadFile("./conf/key.pub")
+	if err != nil {
+		log.Println(err)
+		return proxmox.MachineConfig{}, errors.New("unable to read cluster-wide public key")
+	}
 	return proxmox.MachineConfig{
 		OsTemplate: allPlaneConfig.Template,
 		Net0: fmt.Sprintf("name=eth0,bridge=%s,ip=" + "%s/%d" + ",gw=%s,firewall=0,mtu=%d",
@@ -122,4 +144,30 @@ func makePlane(plane Plane) (string, error) {
 		return "", errors.New("an error occurred while building the plane")
 	}
 	return vmid, nil
+}
+
+func destroyPlane(plane Plane) error {
+	hostname, err := getFQDNHostname(plane.Name)
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to build FQDN")
+	}
+	err = ipam.ReleaseIPAddress(hostname)
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to release IP address")
+	}
+	vmid, err := proxmox.GetVmidFromHostname(hostname)
+	err = proxmox.StopLxcContainer(vmid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to stop container")
+	}
+	time.Sleep(30 * time.Second)
+	err = proxmox.DestroyLxcContainer(vmid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to destroy container")
+	}
+	return nil
 }

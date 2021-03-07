@@ -3,6 +3,7 @@ package proxmox
 import (
 	"errors"
 	"github.com/gorilla/schema"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -25,20 +26,24 @@ func CreateLxcContainer(config MachineConfig) (string, error) {
 		return "", errors.New("unable to parse new LXC machine data")
 	}
 	values := form.Encode()
-	url := os.Getenv("PROXMOX_API_URL")
+	pxUrl := os.Getenv("PROXMOX_API_URL")
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	client, request, err := prepareRequest("POST", url + "nodes/" + node + "/lxc", strings.NewReader(values))
+	client, request, err := prepareRequest("POST", pxUrl+ "nodes/" + node + "/lxc", strings.NewReader(values))
 	if err != nil {
 		log.Println(err)
 		return "", errors.New("failed prepare HTTP request for new LXC container")
 	}
 	request.Form = form
 	response, err := client.Do(&request)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("request to create container failed")
+	}
 	defer response.Body.Close()
 	return vmid, nil
 }
 
-func destroyLxcContainer(vmid string) error {
+func DestroyLxcContainer(vmid string) error {
 	url := os.Getenv("PROXMOX_API_URL")
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
 	client, request, err := prepareRequest("DELETE", url + "nodes/" + node + "/lxc/" + vmid, nil)
@@ -54,7 +59,7 @@ func destroyLxcContainer(vmid string) error {
 	return nil
 }
 
-func stopLxcContainer(vmid string) error {
+func StopLxcContainer(vmid string) error {
 	url := os.Getenv("PROXMOX_API_URL")
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
 	client, request, err := prepareRequest("POST", url + "nodes/" + node + "/lxc/" + vmid + "/status/shutdown", nil)
@@ -63,8 +68,16 @@ func stopLxcContainer(vmid string) error {
 		return errors.New("unable to preprare LXC stop request")
 	}
 	response, err := client.Do(&request)
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Println(err)
+		return errors.New("the IPAM API returned invalid data")
+	}
 	if err != nil || response.StatusCode != http.StatusOK {
 		log.Println(err)
+		log.Println(string(body))
+		log.Println(response.Header)
 		return errors.New("request to stop node failed")
 	}
 	return nil

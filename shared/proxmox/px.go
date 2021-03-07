@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/tidwall/gjson"
 	"io"
 	"io/ioutil"
@@ -90,6 +91,30 @@ func getNextVmid() (string, error) {
 	}
 
 	vmid := gjson.Get(string(body), "data").String()
+	return vmid, nil
+}
+
+func GetVmidFromHostname(hostname string) (string, error) {
+	url := fmt.Sprintf("%snodes/%s/lxc", os.Getenv("PROXMOX_API_URL"), os.Getenv("PROXMOX_DEFAULT_NODE"))
+	client, request, err := prepareRequest("GET", url, nil)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("error preparing HTTP request")
+	}
+	response, err := client.Do(&request)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("unable to obtain next available VMID")
+	}
+
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("the Proxmox API returned invalid data")
+	}
+	vmid := gjson.Get(string(body), "data.#(name==\"" + hostname + "\").vmid").String()
+	fmt.Printf("VMID for hostname %s found: %s", hostname, vmid)
 	return vmid, nil
 }
 

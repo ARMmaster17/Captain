@@ -5,6 +5,6 @@ WORKDIR /go/src/
 #ENV GOPATH=/go/src/
 #ENV GO111MODULE=auto
 WORKDIR /go/src/github.com/ARMmaster17/Captain/builder/
-RUN go build main.go
+RUN go build -o captain-builder
 
-CMD ["/go/src/github.com/ARMmaster17/Captain/builder/main"]
+CMD ["/go/src/github.com/ARMmaster17/Captain/builder/captain-builder"]

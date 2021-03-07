@@ -4,9 +4,28 @@ services:
     build:
       context: .
       dockerfile: ./builder/Dockerfile
-  rabbitmq-docker:
+    environment:
+      - PROXMOX_API_URL
+      - PROXMOX_USERNAME
+      - PROXMOX_PASSWORD
+      - PROXMOX_DEFAULT_NODE
+      - IPAM_API_URL
+      - IPAM_APP_NAME
+      - IPAM_USERNAME
+      - IPAM_PASSWORD
+      - RABBITMQ_URI
+      - ETCD_URI
+  etcd:
+    image: bitnami/etcd:3.4.15
+    container_name: etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+    ports:
+      - "2479:2379"
+      - "2480:2380"
+  rabbitmq:
     image: rabbitmq:3.7.3-management
-    container_name: rabbitmq-docker
+    container_name: rabbitmq
     ports:
       - "15672:15672"
       - "5672:5672"

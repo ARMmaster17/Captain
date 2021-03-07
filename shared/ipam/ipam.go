@@ -58,6 +58,10 @@ func authneticateIpam() (*http.Client, string, error) {
 		return nil, "", errors.New("unable to create HTTP client")
 	}
 	token, err := getIpamAuthData(&client)
+	if err != nil {
+		log.Println(err)
+		return nil, "", errors.New("unable to retrieve auth data from IPAM")
+	}
 	return &client, token, nil
 }
 
@@ -125,4 +129,58 @@ func GetIPAddress(hostname string) (string, error) {
 		return "", errors.New("unable to register new IP address")
 	}
 	return ip, nil
+}
+
+func getIPFromHostname(hostname string) (string, error) {
+	url := fmt.Sprintf("api/%s/addresses/search_hostname/%s/", os.Getenv("IPAM_APP_NAME"), hostname)
+	client, request, err := prepareIpamRequest("GET", url, nil)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("unable to prepare HTTP request")
+	}
+
+	response, err := client.Do(&request)
+	defer response.Body.Close()
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("unable to send request to IPAM API")
+	}
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("the IPAM API returned invalid data")
+	}
+	address := gjson.Get(string(body), "data.0.ip").String()
+	return address, nil
+}
+
+func deleteAddress(ip string) error {
+	url := fmt.Sprintf("api/%s/addresses/%s/%d/", os.Getenv("IPAM_APP_NAME"), ip, 12)
+	client, request, err := prepareIpamRequest("DELETE", url, nil)
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to prepare HTTP request")
+	}
+
+	response, err := client.Do(&request)
+	defer response.Body.Close()
+	if err != nil {
+		log.Println(err)
+		return errors.New("the IPAM API returned invalid data")
+	}
+	return nil
+}
+
+func ReleaseIPAddress(hostname string) error {
+	ip, err := getIPFromHostname(hostname)
+	if err != nil {
+		log.Println(err)
+		return errors.New("hostname lookup in IPAM failed")
+	}
+	err = deleteAddress(ip)
+	if err != nil {
+		log.Println(err)
+		return errors.New("failed to delete address in IPAM")
+	}
+	return nil
 }

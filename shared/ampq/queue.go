@@ -31,13 +31,13 @@ func (conn Conn) StartConsumer(queueName string, routingKey string, handler func
 	// Boilerplate pulled from https://qvault.io/2020/04/29/connecting-to-rabbitmq-in-golang/#:~:text=RabbitMQ%20is%20a%20great%20message%20broker%20with%20awesome,social%20media%20posts%20through%20our%20Go%20services%20daily.
 
 	// create the queue if it doesn't already exist
-	_, err := conn.Channel.QueueDeclare(queueName, true, false, false, false, nil)
-	if err != nil {
+	//_, err := conn.Channel.QueueDeclare(queueName, true, false, false, false, nil)
+	/*if err != nil {
 		return err
-	}
+	}*/
 
 	// bind the queue to the routing key
-	err = conn.Channel.QueueBind(queueName, routingKey, "events", false, nil)
+	err := conn.Channel.QueueBind(queueName, routingKey, "builder-exchange", false, nil)
 	if err != nil {
 		return err
 	}

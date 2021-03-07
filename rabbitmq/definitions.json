@@ -10,7 +10,7 @@
     "name": "/"
   }],
   "permissions": [{
-    "user": "captain",
+    "user": "me",
     "vhost": "/",
     "configure": ".*",
     "write": ".*",
@@ -32,8 +32,7 @@
     "durable": true,
     "auto_delete": false,
     "arguments": {
-      "x-dead-letter-exchange": "builder-queue.dead",
-      "x-message-ttl": 5000
+      "x-dead-letter-exchange": "builder-queue.dead"
     }
   }, {
     "name": "builder-queue.dead",
