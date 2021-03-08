@@ -131,7 +131,7 @@ func GetIPAddress(hostname string) (string, error) {
 	return ip, nil
 }
 
-func getIPFromHostname(hostname string) (string, error) {
+func GetIPFromHostname(hostname string) (string, error) {
 	url := fmt.Sprintf("api/%s/addresses/search_hostname/%s/", os.Getenv("IPAM_APP_NAME"), hostname)
 	client, request, err := prepareIpamRequest("GET", url, nil)
 	if err != nil {
@@ -172,7 +172,7 @@ func deleteAddress(ip string) error {
 }
 
 func ReleaseIPAddress(hostname string) error {
-	ip, err := getIPFromHostname(hostname)
+	ip, err := GetIPFromHostname(hostname)
 	if err != nil {
 		log.Println(err)
 		return errors.New("hostname lookup in IPAM failed")

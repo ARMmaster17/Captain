@@ -16,6 +16,6 @@ vendor/
 
 builder/conf/*.pub
 builder/conf/*.key
-builder/conf/*.priv
+builder/conf/*.private
 *.env
 .idea/*

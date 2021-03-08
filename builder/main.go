@@ -1,67 +1,23 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/ARMmaster17/Captain/shared/ampq"
+	"github.com/ARMmaster17/Captain/shared/ipam"
+	"github.com/ARMmaster17/Captain/shared/locking"
+	"github.com/ARMmaster17/Captain/shared/prep"
 	"github.com/streadway/amqp"
-	"go.etcd.io/etcd/client/v3"
-	"go.etcd.io/etcd/client/v3/concurrency"
 	"log"
 	"os"
 	"time"
 )
 
-func connectToLockDB() (*concurrency.Session, error) {
-	endpoint := os.Getenv("ETCD_URI")
-	config := clientv3.Config{
-		Endpoints: []string{endpoint},
-	}
-	cli, err := clientv3.New(config)
-	if err != nil {
-		log.Println(err)
-		return &concurrency.Session{}, errors.New("unable to create etcd client")
-	}
-	s, err := concurrency.NewSession(cli)
-	if err != nil {
-		log.Println(err)
-		return &concurrency.Session{}, errors.New("unable to create etcd session")
-	}
-	return s, nil
-}
-
-func getLockableMutex(resource string) (*concurrency.Mutex, *context.Context, error) {
-	session, err := connectToLockDB()
-	if err != nil {
-		log.Println(err)
-		return &concurrency.Mutex{}, nil, errors.New("unable to connect to etcd")
-	}
-	lock := concurrency.NewMutex(session, fmt.Sprintf("/%s/", resource))
-	ctx := context.Background()
-	return lock, &ctx, nil
-}
-
-func lockResource(mutex concurrency.Mutex, context context.Context) error {
-	log.Println("Obtaining lock...")
-	err := mutex.Lock(context)
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to lock resource")
-	}
-	log.Println("Lock obtained")
-	return nil
-}
-func unlockResource(mutex concurrency.Mutex, context context.Context) error {
-	log.Println("Unlocking resource...")
-	err := mutex.Unlock(context)
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to unlock resource")
-	}
-	log.Println("Resource unlocked")
-	return nil
+type Message struct {
+	Operation string `json:"operation"`
+	Plane     Plane  `json:"plane"`
+	Prep	[]string	`json:"prep"`
 }
 
 func startListening() error {
@@ -80,30 +36,44 @@ func startListening() error {
 	return nil
 }
 
-
 func handleMessage(d amqp.Delivery) bool {
 	if d.Body == nil {
 		log.Println("empty message received")
 		return true
 	}
-	plane := Plane{}
-	err := json.Unmarshal(d.Body, &plane)
+	var message Message
+	err := json.Unmarshal(d.Body, &message)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to parse message JSON")
 		return true
 	}
-	log.Printf("Recieved request to build plane %s in %d:%d:%d configuration\n", plane.Name, plane.CPU, plane.RAM, plane.Storage)
-	mutex, context, err := getLockableMutex("pve-lxc-create")
+	if message.Plane.Name == "" {
+		log.Println("No plane name given in payload")
+		return true
+	}
+	if message.Operation == "build" {
+		return handleBuildMessage(message)
+	} else if message.Operation == "destroy" {
+		return handleDestroyMessage(message)
+	} else {
+		log.Println(fmt.Sprintf("Unknown operation: %s", message.Operation))
+		return true
+	}
+
+}
+
+func handleBuildMessage(message Message) bool {
+	log.Printf("Recieved request to build plane %s in %d:%d:%d configuration\n", message.Plane.Name, message.Plane.CPU, message.Plane.RAM, message.Plane.Storage)
+	mutex, context, err := locking.GetLockableMutex("pve-lxc-create")
 	if err != nil {
 		log.Println(err)
-		log.Println("unable to parse message JSON")
+		log.Println("unable to create mutex")
 		// TODO: might be smart to return false and let another container try
 		return true
 	}
-	// TODO: remove debugging statements
 	log.Println("Acquiring lock on pve-lxc-create...")
-	err = lockResource(*mutex, *context)
+	err = locking.LockResource(*mutex, *context)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to lock resource")
@@ -111,24 +81,53 @@ func handleMessage(d amqp.Delivery) bool {
 		return true
 	}
 	log.Println("Acquired lock")
-	vmid, err := makePlane(plane)
+	vmid, err := makePlane(message.Plane)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to execute plane build request")
-		_ = unlockResource(*mutex, *context)
+		_ = locking.UnlockResource(*mutex, *context)
 		return true
 	}
-	log.Printf("Plane %s built and deployed with VMID of %s", plane.Name, vmid)
-	time.Sleep(45 * time.Second)
+	log.Printf("Plane %s built and deployed with VMID of %s", message.Plane.Name, vmid)
+	_ = locking.UnlockResource(*mutex, *context)
+	hostname, err := getFQDNHostname(message.Plane.Name)
+	if err != nil {
+		log.Println(err)
+		log.Println("unable to build FQDN of container")
+		// TODO: Possibly queue destruction of container?
+		return true
+	}
+	//////////////////////////////////////////
+	// TODO: Get rid of IP lookup
+	ip, err := ipam.GetIPFromHostname(hostname)
+	if err != nil {
+		log.Println(err)
+		log.Println("Failed to lookup IP address in IPAM")
+		return true
+	}
+	if len(message.Prep) > 0 {
+		//////////////////////////////////////////
+		// TODO: Wait on PX status rather than arbitrary timeout
+		time.Sleep(45 * time.Second)
+		err = prep.DeployPlan(hostname, ip, message.Prep)
+		if err != nil {
+			log.Println(err)
+			log.Println("pre-flight prep failed")
+			// TODO: Possibly queue destruction of container?
+			return true
+		}
+	}
+	return true
+}
+
+func handleDestroyMessage(message Message) bool {
 	log.Println("Destroying plane")
-	err = destroyPlane(plane)
+	err := destroyPlane(message.Plane)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to destroy plane")
-		_ = unlockResource(*mutex, *context)
 		return true
 	}
-	_ = unlockResource(*mutex, *context)
 	return true
 }
 

@@ -1,6 +1,7 @@
 FROM golang:1.16-buster
 
 ADD . /go/src/github.com/ARMmaster17/Captain/
+ADD ./builder/conf/ /etc/captain/builder/
 WORKDIR /go/src/
 #ENV GOPATH=/go/src/
 #ENV GO111MODULE=auto
