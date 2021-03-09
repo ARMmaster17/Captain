@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/ARMmaster17/Captain/shared/ampq"
 	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/ARMmaster17/Captain/shared/proxmox"
 	"gopkg.in/yaml.v2"
@@ -11,13 +12,6 @@ import (
 	"strings"
 	"time"
 )
-
-type Plane struct {
-	Name	string	`yaml:"name"`
-	CPU		int		`yaml:"cpu"`
-	RAM		int		`yaml:"ram"`
-	Storage	int		`yaml:"storage"`
-}
 
 type AllPlaneConfig struct {
 	Nameservers	[]string	`yaml:"nameservers"`
@@ -31,17 +25,17 @@ type AllPlaneConfig struct {
 	CIDR		int			`yaml:"cidr"`
 }
 
-func planeDefaultOverlapBuild(tlc Plane) (Plane, error) {
+func planeDefaultOverlapBuild(tlc ampq.Plane) (ampq.Plane, error) {
 	defaultConfig, err := ioutil.ReadFile("./conf/plane_default.yaml")
 	if err != nil {
 		log.Println(err)
-		return Plane{}, errors.New("unable to read default plane config values")
+		return ampq.Plane{}, errors.New("unable to read default plane config values")
 	}
-	var defaultPlane = Plane{}
+	var defaultPlane = ampq.Plane{}
 	err = yaml.Unmarshal(defaultConfig, &defaultPlane)
 	if err != nil {
 		log.Println(err)
-		return Plane{}, errors.New("unable to parse default plane config values")
+		return ampq.Plane{}, errors.New("unable to parse default plane config values")
 	}
 	if tlc.Name != "" {
 		defaultPlane.Name = tlc.Name
@@ -82,7 +76,7 @@ func getFQDNHostname(name string) (string, error) {
 	return fmt.Sprintf("%s.%s", name, allPlaneConfig.Domain), nil
 }
 
-func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
+func buildPlaneConfig(tlc ampq.Plane) (proxmox.MachineConfig, error) {
 	planeConfig, err := planeDefaultOverlapBuild(tlc)
 	if err != nil {
 		log.Println(err)
@@ -132,7 +126,7 @@ func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
 	}, nil
 }
 
-func makePlane(plane Plane) (string, error) {
+func makePlane(plane ampq.Plane) (string, error) {
 	machineConfig, err := buildPlaneConfig(plane)
 	if err != nil {
 		log.Println(err)
@@ -146,7 +140,7 @@ func makePlane(plane Plane) (string, error) {
 	return vmid, nil
 }
 
-func destroyPlane(plane Plane) error {
+func destroyPlane(plane ampq.Plane) error {
 	hostname, err := getFQDNHostname(plane.Name)
 	if err != nil {
 		log.Println(err)

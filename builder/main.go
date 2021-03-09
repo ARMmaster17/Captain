@@ -14,12 +14,6 @@ import (
 	"time"
 )
 
-type Message struct {
-	Operation string `json:"operation"`
-	Plane     Plane  `json:"plane"`
-	Prep	[]string	`json:"prep"`
-}
-
 func startListening() error {
 	rabbitURI := os.Getenv("RABBITMQ_URI")
 	conn, err := ampq.GetQueueConnection(rabbitURI)
@@ -41,7 +35,7 @@ func handleMessage(d amqp.Delivery) bool {
 		log.Println("empty message received")
 		return true
 	}
-	var message Message
+	var message ampq.Message
 	err := json.Unmarshal(d.Body, &message)
 	if err != nil {
 		log.Println(err)
@@ -63,7 +57,7 @@ func handleMessage(d amqp.Delivery) bool {
 
 }
 
-func handleBuildMessage(message Message) bool {
+func handleBuildMessage(message ampq.Message) bool {
 	log.Printf("Recieved request to build plane %s in %d:%d:%d configuration\n", message.Plane.Name, message.Plane.CPU, message.Plane.RAM, message.Plane.Storage)
 	mutex, context, err := locking.GetLockableMutex("pve-lxc-create")
 	if err != nil {
@@ -97,15 +91,15 @@ func handleBuildMessage(message Message) bool {
 		// TODO: Possibly queue destruction of container?
 		return true
 	}
-	//////////////////////////////////////////
-	// TODO: Get rid of IP lookup
-	ip, err := ipam.GetIPFromHostname(hostname)
-	if err != nil {
-		log.Println(err)
-		log.Println("Failed to lookup IP address in IPAM")
-		return true
-	}
 	if len(message.Prep) > 0 {
+		//////////////////////////////////////////
+		// TODO: Get rid of IP lookup
+		ip, err := ipam.GetIPFromHostname(hostname)
+		if err != nil {
+			log.Println(err)
+			log.Println("Failed to lookup IP address in IPAM")
+			return true
+		}
 		//////////////////////////////////////////
 		// TODO: Wait on PX status rather than arbitrary timeout
 		time.Sleep(45 * time.Second)
@@ -120,7 +114,7 @@ func handleBuildMessage(message Message) bool {
 	return true
 }
 
-func handleDestroyMessage(message Message) bool {
+func handleDestroyMessage(message ampq.Message) bool {
 	log.Println("Destroying plane")
 	err := destroyPlane(message.Plane)
 	if err != nil {
