@@ -53,7 +53,7 @@ func planeDefaultOverlapBuild(tlc ampq.Plane) (ampq.Plane, error) {
 }
 
 func getAllPlaneConfig() (AllPlaneConfig, error) {
-	allPlaneConfigFile, err := ioutil.ReadFile("./conf/plane_config.yaml")
+	allPlaneConfigFile, err := ioutil.ReadFile("/etc/captain/builder/conf/plane_config.yaml")
 	if err != nil {
 		log.Println(err)
 		return AllPlaneConfig{}, errors.New("unable to import cluster-wide plane configuration")
@@ -98,7 +98,7 @@ func buildPlaneConfig(tlc ampq.Plane) (proxmox.MachineConfig, error) {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to obtain next available IP address")
 	}
-	publicKey, err := ioutil.ReadFile("./conf/key.pub")
+	publicKey, err := ioutil.ReadFile("/etc/captain/builder/conf/key.pub")
 	if err != nil {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to read cluster-wide public key")
