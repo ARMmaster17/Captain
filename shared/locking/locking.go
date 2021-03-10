@@ -29,9 +29,6 @@ func connectToLockDB() (*concurrency.Session, error) {
 }
 
 func GetLockableMutex(resource string) (*concurrency.Mutex, *context.Context, error) {
-	if os.Getenv("NO_LOCKING") == "yes" {
-		return &concurrency.Mutex{}, nil, nil
-	}
 	session, err := connectToLockDB()
 	if err != nil {
 		log.Println(err)
@@ -44,9 +41,6 @@ func GetLockableMutex(resource string) (*concurrency.Mutex, *context.Context, er
 
 func LockResource(mutex concurrency.Mutex, context context.Context) error {
 	log.Println("Obtaining lock...")
-	if os.Getenv("NO_LOCKING") == "yes" {
-		return nil
-	}
 	err := mutex.Lock(context)
 	if err != nil {
 		log.Println(err)
@@ -57,9 +51,6 @@ func LockResource(mutex concurrency.Mutex, context context.Context) error {
 }
 func UnlockResource(mutex concurrency.Mutex, context context.Context) error {
 	log.Println("Unlocking resource...")
-	if os.Getenv("NO_LOCKING") == "yes" {
-		return nil
-	}
 	err := mutex.Unlock(context)
 	if err != nil {
 		log.Println(err)
