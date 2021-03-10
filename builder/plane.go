@@ -26,7 +26,7 @@ type AllPlaneConfig struct {
 }
 
 func planeDefaultOverlapBuild(tlc ampq.Plane) (ampq.Plane, error) {
-	defaultConfig, err := ioutil.ReadFile("./conf/plane_default.yaml")
+	defaultConfig, err := ioutil.ReadFile("/etc/captain/builder/conf/plane_default.yaml")
 	if err != nil {
 		log.Println(err)
 		return ampq.Plane{}, errors.New("unable to read default plane config values")
