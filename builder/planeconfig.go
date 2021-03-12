@@ -3,14 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/shared/ampq"
-	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/ARMmaster17/Captain/shared/proxmox"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"strings"
-	"time"
 )
 
 type AllPlaneConfig struct {
@@ -67,16 +64,7 @@ func getAllPlaneConfig() (AllPlaneConfig, error) {
 	return allPlaneConfig, nil
 }
 
-func getFQDNHostname(name string) (string, error) {
-	allPlaneConfig, err := getAllPlaneConfig()
-	if err != nil {
-		log.Println(err)
-		return "", errors.New("unable to build cluster-wide plane configuration")
-	}
-	return fmt.Sprintf("%s.%s", name, allPlaneConfig.Domain), nil
-}
-
-func buildPlaneConfig(tlc ampq.Plane) (proxmox.MachineConfig, error) {
+func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
 	planeConfig, err := planeDefaultOverlapBuild(tlc)
 	if err != nil {
 		log.Println(err)
@@ -88,7 +76,7 @@ func buildPlaneConfig(tlc ampq.Plane) (proxmox.MachineConfig, error) {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to build cluster-wide plane configuration")
 	}
-	hostname, err := getFQDNHostname(tlc.Name)
+	hostname, err := tlc.getFQDNHostname()
 	if err != nil {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to build FQDN")
@@ -124,44 +112,4 @@ func buildPlaneConfig(tlc ampq.Plane) (proxmox.MachineConfig, error) {
 		Start: 1,
 		SSH: string(publicKey),
 	}, nil
-}
-
-func makePlane(plane ampq.Plane) (string, error) {
-	machineConfig, err := buildPlaneConfig(plane)
-	if err != nil {
-		log.Println(err)
-		return "", errors.New("an error occurred while building the plane configuration")
-	}
-	vmid, err := proxmox.CreateLxcContainer(machineConfig)
-	if err != nil {
-		log.Println(err)
-		return "", errors.New("an error occurred while building the plane")
-	}
-	return vmid, nil
-}
-
-func destroyPlane(plane ampq.Plane) error {
-	hostname, err := getFQDNHostname(plane.Name)
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to build FQDN")
-	}
-	err = ipam.ReleaseIPAddress(hostname)
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to release IP address")
-	}
-	vmid, err := proxmox.GetVmidFromHostname(hostname)
-	err = proxmox.StopLxcContainer(vmid)
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to stop container")
-	}
-	time.Sleep(30 * time.Second)
-	err = proxmox.DestroyLxcContainer(vmid)
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to destroy container")
-	}
-	return nil
 }

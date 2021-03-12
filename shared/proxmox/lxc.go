@@ -2,83 +2,101 @@ package proxmox
 
 import (
 	"errors"
-	"github.com/gorilla/schema"
-	"io/ioutil"
+	"fmt"
+	"github.com/ARMmaster17/Captain/shared/ipam"
+	"github.com/tidwall/gjson"
 	"log"
-	"net/http"
-	"net/url"
 	"os"
-	"strings"
 )
 
-func CreateLxcContainer(config MachineConfig) (string, error) {
-	vmid, err := getNextVmid()
+type LXC struct {
+	VMID string
+}
+
+func (p *Proxmox) LXCCreate(config MachineConfig) (*LXC, error) {
+	p.Authenticate()
+	vmid, err := p.getNextVmid()
 	if err != nil {
 		log.Println(err)
-		return "", errors.New("unable to obtain next available VMID")
+		return &LXC{}, errors.New("unable to obtain next available VMID")
 	}
 	config.VMID = vmid
-	encoder := schema.NewEncoder()
-	form := url.Values{}
-	parseErr := encoder.Encode(config, form)
-	if parseErr != nil {
-		log.Println(err)
-		return "", errors.New("unable to parse new LXC machine data")
-	}
-	values := form.Encode()
-	pxUrl := os.Getenv("PROXMOX_API_URL")
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	client, request, err := prepareRequest("POST", pxUrl+ "nodes/" + node + "/lxc", strings.NewReader(values))
+	_, err = p.Client.PostUrlEncode("nodes/" + node + "/lxc", config)
 	if err != nil {
 		log.Println(err)
-		return "", errors.New("failed prepare HTTP request for new LXC container")
+		return &LXC{}, errors.New("failed to create new LXC container")
 	}
-	request.Form = form
-	response, err := client.Do(&request)
-	if err != nil {
-		log.Println(err)
-		return "", errors.New("request to create container failed")
-	}
-	defer response.Body.Close()
-	return vmid, nil
+	return &LXC{
+		VMID: vmid,
+	}, nil
 }
 
-func DestroyLxcContainer(vmid string) error {
-	url := os.Getenv("PROXMOX_API_URL")
+func (l *LXC) Destroy(p *Proxmox) error {
+	p.Authenticate()
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	client, request, err := prepareRequest("DELETE", url + "nodes/" + node + "/lxc/" + vmid, nil)
+	_, err := p.Client.Delete("nodes/" + node + "/lxc/" + l.VMID)
 	if err != nil {
 		log.Println(err)
-		return errors.New("failed to prepare request to delete node")
-	}
-	response, err := client.Do(&request)
-	if err != nil || response.StatusCode != http.StatusOK {
-		log.Println(err)
-		return errors.New("request to delete node failed")
+		return errors.New("unable to destroy LXC container")
 	}
 	return nil
 }
 
-func StopLxcContainer(vmid string) error {
-	url := os.Getenv("PROXMOX_API_URL")
+func (l *LXC) Stop(p *Proxmox) error {
+	p.Authenticate()
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	client, request, err := prepareRequest("POST", url + "nodes/" + node + "/lxc/" + vmid + "/status/shutdown", nil)
+	_, err := p.Client.Post(fmt.Sprintf("nodes/%s/lxc/%s/status/shutdown", node, l.VMID), nil)
 	if err != nil {
 		log.Println(err)
-		return errors.New("unable to preprare LXC stop request")
-	}
-	response, err := client.Do(&request)
-	defer response.Body.Close()
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Println(err)
-		return errors.New("the IPAM API returned invalid data")
-	}
-	if err != nil || response.StatusCode != http.StatusOK {
-		log.Println(err)
-		log.Println(string(body))
-		log.Println(response.Header)
-		return errors.New("request to stop node failed")
+		return errors.New("unable to stop LXC container")
 	}
 	return nil
+}
+
+func (p *Proxmox) GetLXCFromHostname(hostname ipam.Hostname) (LXC, error) {
+	err := p.Authenticate()
+	if err != nil {
+		log.Println(err)
+		return LXC{}, errors.New("unable to query API for hostname/VMID association")
+	}
+	url := fmt.Sprintf("nodes/%s/lxc", os.Getenv("PROXMOX_DEFAULT_NODE"))
+	body, err := p.Client.Get(url)
+	if err != nil {
+		log.Println(err)
+		return LXC{}, errors.New("unable to query API for hostname/VMID association")
+	}
+	vmid := gjson.Get(string(body), "data.#(name==\"" + string(hostname) + "\").vmid").String()
+	if vmid == "" {
+		return LXC{}, errors.New("no VMID found for hostname " + string(hostname))
+	}
+	return LXC{
+		VMID: vmid,
+	}, nil
+}
+
+type MachineConfig struct {
+	VMID			string	`schema:"vmid"`
+	OsTemplate		string	`schema:"ostemplate"`
+	Net0			string	`schema:"net0"`
+	Hostname		string	`schema:"hostname"`
+	Cores			int		`schema:"cores"`
+	Memory			int		`schema:"memory"`
+	Swap			int		`schema:"swap"`
+	Nameservers		string	`schema:"nameserver"`
+	Storage			string	`schema:"storage"`
+	RootFS			string	`schema:"rootfs"`
+	OnBoot			int		`schema:"onboot"`
+	Unprivileged	int		`schema:"unprivileged"`
+	Start			int		`schema:"start"`
+	SSH				string	`schema:"ssh-public-keys"`
+}
+
+type NetworkConfig struct {
+	Name		string	`schema:"name"`
+	Bridge		string	`schema:"bridge"`
+	IP			string	`schema:"ip"`
+	Gateway		string	`schema:"gw"`
+	Firewall	int		`schema:"firewall"`
+	MTU			int		`schema:"mtu"`
 }

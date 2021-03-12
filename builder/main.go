@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ARMmaster17/Captain/shared/ampq"
+	"github.com/ARMmaster17/Captain/shared/captain"
 	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/ARMmaster17/Captain/shared/locking"
 	"github.com/ARMmaster17/Captain/shared/prep"
@@ -63,19 +64,17 @@ func handleBuildMessage(message ampq.Message) bool {
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to create mutex")
-		// TODO: might be smart to return false and let another container try
-		return true
+		return false
 	}
 	log.Println("Acquiring lock on pve-lxc-create...")
 	err = locking.LockResource(*mutex, *context)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to lock resource")
-		// TODO: might be smart to return false and let another container try
-		return true
+		return false
 	}
 	log.Println("Acquired lock")
-	vmid, err := makePlane(message.Plane)
+	vmid, err := captain.makePlane(message.Plane)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to execute plane build request")
@@ -84,7 +83,7 @@ func handleBuildMessage(message ampq.Message) bool {
 	}
 	log.Printf("Plane %s built and deployed with VMID of %s", message.Plane.Name, vmid)
 	_ = locking.UnlockResource(*mutex, *context)
-	hostname, err := getFQDNHostname(message.Plane.Name)
+	hostname, err := captain.getFQDNHostname(message.Plane.Name)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to build FQDN of container")
@@ -116,7 +115,7 @@ func handleBuildMessage(message ampq.Message) bool {
 
 func handleDestroyMessage(message ampq.Message) bool {
 	log.Println("Destroying plane")
-	err := destroyPlane(message.Plane)
+	err := captain.destroyPlane(message.Plane)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to destroy plane")
