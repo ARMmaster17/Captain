@@ -18,7 +18,7 @@ type HttpRestClient struct {
 	Headers map[string]string
 }
 
-// Creates a new HttpRestClient that will make all reqests from RootUrl with the specified settings.
+// Creates a new HttpRestClient that will make all requests from RootUrl with the specified settings.
 func NewHttpRestClient(rootUrl string, contentType string, ignoreTls bool) (*HttpRestClient, error) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreTls},
@@ -31,6 +31,8 @@ func NewHttpRestClient(rootUrl string, contentType string, ignoreTls bool) (*Htt
 	}, nil
 }
 
+// Performs a prepared request, injecting stored headers and other session info. Returns the body of the response
+// in string form.
 func (h *HttpRestClient) doRequest(request *http.Request) (string, error) {
 	for k, v := range h.Headers {
 		request.Header.Set(k, v)

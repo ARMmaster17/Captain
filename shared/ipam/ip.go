@@ -16,28 +16,28 @@ type AddressRequest struct {
 
 type IPAddress string
 
-func (i *IPAM) IPCreateFromFirstFree(hostname string) error {
+func (i *IPAM) IPCreateFromFirstFree(hostname Hostname) (IPAddress, error) {
 	i.Authenticate()
 	address, err := i.IPFirstFree()
 	if err != nil {
 		log.Println(err)
-		return errors.New("unable to obtain free IP address in block to register for host " + hostname)
+		return "", errors.New("unable to obtain free IP address in block to register for host " + string(hostname))
 	}
 	err = i.IPCreate(address, hostname)
 	if err != nil {
 		log.Println(err)
-		return errors.New("unable to register IP " + string(address))
+		return "", errors.New("unable to register IP " + string(address))
 	}
-	return nil
+	return address, nil
 }
 
-func (i *IPAM) IPCreate(address IPAddress, hostname string) error {
+func (i *IPAM) IPCreate(address IPAddress, hostname Hostname) error {
 	i.Authenticate()
 	url := fmt.Sprintf("api/%s/addresses/", os.Getenv("IPAM_APP_NAME"))
 	var addressRequest = AddressRequest{
 		SubnetID: "12",
 		IP:       string(address),
-		Hostname: hostname,
+		Hostname: string(hostname),
 	}
 	_, err := i.Client.PostUrlEncode(url, addressRequest)
 	if err != nil {

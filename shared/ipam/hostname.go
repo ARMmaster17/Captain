@@ -11,7 +11,7 @@ type Hostname string
 
 func (h *Hostname) Delete(i *IPAM) error {
 	i.Authenticate()
-	ip, err := h.getIP(i)
+	ip, err := h.GetIP(i)
 	if err != nil {
 		return errors.New("unable to lookup IP of hostname record to delete")
 	}
@@ -22,7 +22,7 @@ func (h *Hostname) Delete(i *IPAM) error {
 	return nil
 }
 
-func (h *Hostname) getIP(i *IPAM) (IPAddress, error) {
+func (h *Hostname) GetIP(i *IPAM) (IPAddress, error) {
 	i.Authenticate()
 	url := fmt.Sprintf("api/%s/addresses/search_hostname/%s/", os.Getenv("IPAM_APP_NAME"), h)
 	body, err := i.Client.Get(url)

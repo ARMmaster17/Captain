@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ARMmaster17/Captain/shared/ampq"
-	"github.com/ARMmaster17/Captain/shared/captain"
 	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/ARMmaster17/Captain/shared/locking"
 	"github.com/ARMmaster17/Captain/shared/prep"
@@ -74,7 +73,8 @@ func handleBuildMessage(message ampq.Message) bool {
 		return false
 	}
 	log.Println("Acquired lock")
-	vmid, err := captain.makePlane(message.Plane)
+	machineConfig, err := BuildPlaneConfig(&message.Plane)
+	vmid, err := message.Plane.Create(machineConfig)
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to execute plane build request")
@@ -83,7 +83,7 @@ func handleBuildMessage(message ampq.Message) bool {
 	}
 	log.Printf("Plane %s built and deployed with VMID of %s", message.Plane.Name, vmid)
 	_ = locking.UnlockResource(*mutex, *context)
-	hostname, err := captain.getFQDNHostname(message.Plane.Name)
+	hostname, err := message.Plane.GetFQDNHostname()
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to build FQDN of container")
@@ -93,7 +93,9 @@ func handleBuildMessage(message ampq.Message) bool {
 	if len(message.Prep) > 0 {
 		//////////////////////////////////////////
 		// TODO: Get rid of IP lookup
-		ip, err := ipam.GetIPFromHostname(hostname)
+		ipamAPI, err := ipam.NewIPAM()
+		h := ipam.Hostname(hostname)
+		ip, err := h.GetIP(ipamAPI)
 		if err != nil {
 			log.Println(err)
 			log.Println("Failed to lookup IP address in IPAM")
@@ -102,7 +104,7 @@ func handleBuildMessage(message ampq.Message) bool {
 		//////////////////////////////////////////
 		// TODO: Wait on PX status rather than arbitrary timeout
 		time.Sleep(45 * time.Second)
-		err = prep.DeployPlan(hostname, ip, message.Prep)
+		err = prep.DeployPlan(string(hostname), string(ip), message.Prep)
 		if err != nil {
 			log.Println(err)
 			log.Println("pre-flight prep failed")
@@ -115,7 +117,7 @@ func handleBuildMessage(message ampq.Message) bool {
 
 func handleDestroyMessage(message ampq.Message) bool {
 	log.Println("Destroying plane")
-	err := captain.destroyPlane(message.Plane)
+	err := message.Plane.Destroy()
 	if err != nil {
 		log.Println(err)
 		log.Println("unable to destroy plane")

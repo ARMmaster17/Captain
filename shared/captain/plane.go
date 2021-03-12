@@ -3,13 +3,9 @@ package captain
 import (
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/shared/ampq"
 	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/ARMmaster17/Captain/shared/proxmox"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"log"
-	"strings"
 	"time"
 )
 
@@ -43,14 +39,15 @@ func NewPlane(name string, cpu int, ram int, storage int) (Plane, error) {
 	}, nil
 }
 
-func (p *Plane) Create() (string, error) {
-	machineConfig, err := buildPlaneConfig(plane)
-	if err != nil {
-		log.Println(err)
-		return "", errors.New("an error occurred while building the plane configuration")
-	}
+func (p *Plane) Create(machineConfig proxmox.MachineConfig) (string, error) {
 	proxmoxAPI, err := proxmox.NewProxmox()
+	if err != nil {
+		return "", errors.New("unable to contact Proxmox API")
+	}
 	lxc, err := proxmoxAPI.LXCCreate(machineConfig)
+	if err != nil {
+		return "", errors.New("unable to create LXC container")
+	}
 	return lxc.VMID, nil
 }
 
@@ -59,7 +56,7 @@ func (p *Plane) Destroy() error {
 	if err != nil {
 		return errors.New("unable to contact IPAM API")
 	}
-	hostname, err := p.getFQDNHostname()
+	hostname, err := p.GetFQDNHostname()
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to build FQDN")
@@ -90,11 +87,12 @@ func (p *Plane) Destroy() error {
 	return nil
 }
 
-func (p *Plane) getFQDNHostname() (ipam.Hostname, error) {
-	allPlaneConfig, err := getAllPlaneConfig()
-	if err != nil {
-		log.Println(err)
-		return "", errors.New("unable to build cluster-wide plane configuration")
-	}
-	return ipam.Hostname(fmt.Sprintf("%s.%s", p.Name, allPlaneConfig.Domain)), nil
+func (p *Plane) GetFQDNHostname() (ipam.Hostname, error) {
+	//allPlaneConfig, err := getAllPlaneConfig()
+	//if err != nil {
+	//	log.Println(err)
+	//	return "", errors.New("unable to build cluster-wide plane configuration")
+	//}
+	// TODO: Fix somehow
+	return ipam.Hostname(fmt.Sprintf("%s.%s", p.Name, /*allPlaneConfig.Domain*/ "firecore.lab")), nil
 }

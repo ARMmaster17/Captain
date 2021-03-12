@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/ARMmaster17/Captain/shared/captain"
+	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/ARMmaster17/Captain/shared/proxmox"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -22,34 +24,7 @@ type AllPlaneConfig struct {
 	CIDR		int			`yaml:"cidr"`
 }
 
-func planeDefaultOverlapBuild(tlc ampq.Plane) (ampq.Plane, error) {
-	defaultConfig, err := ioutil.ReadFile("/etc/captain/builder/conf/plane_default.yaml")
-	if err != nil {
-		log.Println(err)
-		return ampq.Plane{}, errors.New("unable to read default plane config values")
-	}
-	var defaultPlane = ampq.Plane{}
-	err = yaml.Unmarshal(defaultConfig, &defaultPlane)
-	if err != nil {
-		log.Println(err)
-		return ampq.Plane{}, errors.New("unable to parse default plane config values")
-	}
-	if tlc.Name != "" {
-		defaultPlane.Name = tlc.Name
-	}
-	if tlc.CPU != 0 {
-		defaultPlane.CPU = tlc.CPU
-	}
-	if tlc.RAM != 0 {
-		defaultPlane.RAM = tlc.RAM
-	}
-	if tlc.Storage != 0 {
-		defaultPlane.Storage = tlc.Storage
-	}
-	return defaultPlane, nil
-}
-
-func getAllPlaneConfig() (AllPlaneConfig, error) {
+func NewAllPlaneConfig() (AllPlaneConfig, error) {
 	allPlaneConfigFile, err := ioutil.ReadFile("/etc/captain/builder/conf/plane_config.yaml")
 	if err != nil {
 		log.Println(err)
@@ -64,24 +39,56 @@ func getAllPlaneConfig() (AllPlaneConfig, error) {
 	return allPlaneConfig, nil
 }
 
-func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
-	planeConfig, err := planeDefaultOverlapBuild(tlc)
+func PlaneInjectDefaults(tlc *captain.Plane) error {
+	defaultConfig, err := ioutil.ReadFile("/etc/captain/builder/conf/plane_default.yaml")
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to read default plane config values")
+	}
+	var defaultPlane = captain.Plane{}
+	err = yaml.Unmarshal(defaultConfig, &defaultPlane)
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to parse default plane config values")
+	}
+	if tlc.Name != "" {
+		defaultPlane.Name = tlc.Name
+	}
+	if tlc.CPU != 0 {
+		defaultPlane.CPU = tlc.CPU
+	}
+	if tlc.RAM != 0 {
+		defaultPlane.RAM = tlc.RAM
+	}
+	if tlc.Storage != 0 {
+		defaultPlane.Storage = tlc.Storage
+	}
+	return nil
+}
+
+func BuildPlaneConfig(tlc *captain.Plane) (proxmox.MachineConfig, error) {
+	err := PlaneInjectDefaults(tlc)
 	if err != nil {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to build plane configuration")
 	}
 
-	allPlaneConfig, err := getAllPlaneConfig()
+	allPlaneConfig, err := NewAllPlaneConfig()
 	if err != nil {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to build cluster-wide plane configuration")
 	}
-	hostname, err := tlc.getFQDNHostname()
+	hostname, err := tlc.GetFQDNHostname()
 	if err != nil {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to build FQDN")
 	}
-	ip, err := ipam.GetIPAddress(hostname)
+	ipamAPI, err := ipam.NewIPAM()
+	if err != nil {
+		log.Println(err)
+		return proxmox.MachineConfig{}, errors.New("unable to contact IPAM API")
+	}
+	ip, err := ipamAPI.IPCreateFromFirstFree(ipam.Hostname(hostname))
 	if err != nil {
 		log.Println(err)
 		return proxmox.MachineConfig{}, errors.New("unable to obtain next available IP address")
@@ -100,13 +107,13 @@ func buildPlaneConfig(tlc Plane) (proxmox.MachineConfig, error) {
 			allPlaneConfig.Gateway,
 			allPlaneConfig.MTU,
 		),
-		Hostname: hostname,
-		Cores: planeConfig.CPU,
-		Memory: planeConfig.RAM,
-		Swap: planeConfig.RAM,
+		Hostname: string(hostname),
+		Cores: tlc.CPU,
+		Memory: tlc.RAM,
+		Swap: tlc.RAM,
 		Nameservers: strings.Join(allPlaneConfig.Nameservers, " "),
 		Storage: allPlaneConfig.DiskStore,
-		RootFS: fmt.Sprintf("%s:%d", allPlaneConfig.DiskStore, planeConfig.Storage),
+		RootFS: fmt.Sprintf("%s:%d", allPlaneConfig.DiskStore, tlc.Storage),
 		OnBoot: 1,
 		Unprivileged: 1,
 		Start: 1,
