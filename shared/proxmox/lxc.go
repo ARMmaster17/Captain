@@ -6,11 +6,10 @@ import (
 	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/tidwall/gjson"
 	"log"
-	"os"
 )
 
 type LXC struct {
-	VMID string
+	VMID string `json:"vmid"`
 }
 
 // Creates an LXC container with the specified parameters. Waits until
@@ -38,13 +37,16 @@ func (p *Proxmox) LXCCreateAsync(config MachineConfig) (*LXC, *Task, error) {
 		return &LXC{}, &Task{}, errors.New("unable to obtain next available VMID")
 	}
 	config.VMID = vmid
-	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	body, err := p.doPostUrlEncode("nodes/" + node + "/lxc", config)
+	node, err := p.GetLowestRAMUtilizationNode()
+	if err != nil {
+		log.Println("unable to find available Proxmox node")
+	}
+	body, err := p.doPostUrlEncode("nodes/" + node.Name + "/lxc", config)
 	if err != nil {
 		log.Println(err)
 		return &LXC{}, &Task{}, errors.New("failed to create new LXC container")
 	}
-	task, err := NewTask(body, node)
+	task, err := NewTask(body, node.Name)
 	if err != nil {
 		log.Println(err)
 		return &LXC{}, &Task{}, errors.New("failed to obtain status of LXC container creation")
@@ -55,8 +57,12 @@ func (p *Proxmox) LXCCreateAsync(config MachineConfig) (*LXC, *Task, error) {
 }
 
 func (l *LXC) Destroy(p *Proxmox) error {
-	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	_, err := p.doDelete(fmt.Sprintf("nodes/%s/lxc/%s", node, l.VMID))
+	node, err := p.FindNodeWithVMID(l.VMID)
+	if err != nil {
+		log.Println(err)
+		return errors.New("container to be destroyed does not exist")
+	}
+	_, err = p.doDelete(fmt.Sprintf("nodes/%s/lxc/%s", node.Name, l.VMID))
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to destroy LXC container")
@@ -65,13 +71,17 @@ func (l *LXC) Destroy(p *Proxmox) error {
 }
 
 func (l *LXC) Stop(p *Proxmox) error {
-	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	body, err := p.doPost(fmt.Sprintf("nodes/%s/lxc/%s/status/shutdown", node, l.VMID), nil)
+	node, err := p.FindNodeWithVMID(l.VMID)
+	if err != nil {
+		log.Println(err)
+		return errors.New("container to be destroyed does not exist")
+	}
+	body, err := p.doPost(fmt.Sprintf("nodes/%s/lxc/%s/status/shutdown", node.Name, l.VMID), nil)
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to stop LXC container")
 	}
-	task, err := NewTask(node, body)
+	task, err := NewTask(node.Name, body)
 	if err != nil {
 		log.Println(err)
 		return errors.New("failed to obtain status of LXC container creation")
@@ -85,19 +95,26 @@ func (l *LXC) Stop(p *Proxmox) error {
 }
 
 func (p *Proxmox) GetLXCFromHostname(hostname ipam.Hostname) (LXC, error) {
-	url := fmt.Sprintf("nodes/%s/lxc", os.Getenv("PROXMOX_DEFAULT_NODE"))
-	body, err := p.doGet(url)
+	nodeList, err := p.getNodes()
 	if err != nil {
 		log.Println(err)
-		return LXC{}, errors.New("unable to query API for hostname/VMID association")
+		return LXC{}, errors.New("unable to get list of nodes")
 	}
-	vmid := gjson.Get(string(body), "data.#(name==\"" + string(hostname) + "\").vmid").String()
-	if vmid == "" {
-		return LXC{}, errors.New("no VMID found for hostname " + string(hostname))
+	for _, node := range nodeList {
+		url := fmt.Sprintf("nodes/%s/lxc", node.Name)
+		body, err := p.doGet(url)
+		if err != nil {
+			log.Println(err)
+			return LXC{}, errors.New("unable to query API for hostname/VMID association")
+		}
+		vmid := gjson.Get(body, "data.#(name==\""+string(hostname)+"\").vmid").String()
+		if vmid != "" {
+			return LXC{
+				VMID: vmid,
+			}, nil
+		}
 	}
-	return LXC{
-		VMID: vmid,
-	}, nil
+	return LXC{}, errors.New("no VMID found for hostname " + string(hostname))
 }
 
 type MachineConfig struct {

@@ -6,6 +6,9 @@ import (
 	"log"
 )
 
+// Gets the next available VMID from the cluster. If this VMID will be used
+// for something, note that this operation is not thread-safe, and requires some
+// kind of external locking mechanism.
 func (p *Proxmox) getNextVmid() (string, error) {
 	body, err := p.doGet("cluster/nextid")
 	if err != nil {
