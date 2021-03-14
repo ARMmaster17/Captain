@@ -11,7 +11,6 @@ import (
 	"github.com/streadway/amqp"
 	"log"
 	"os"
-	"time"
 )
 
 func startListening() error {
@@ -101,9 +100,6 @@ func handleBuildMessage(message ampq.Message) bool {
 			log.Println("Failed to lookup IP address in IPAM")
 			return true
 		}
-		//////////////////////////////////////////
-		// TODO: Wait on PX status rather than arbitrary timeout
-		time.Sleep(45 * time.Second)
 		err = prep.DeployPlan(string(hostname), string(ip), message.Prep)
 		if err != nil {
 			log.Println(err)

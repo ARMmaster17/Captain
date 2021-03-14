@@ -6,7 +6,6 @@ import (
 	"github.com/ARMmaster17/Captain/shared/ipam"
 	"github.com/ARMmaster17/Captain/shared/proxmox"
 	"log"
-	"time"
 )
 
 const MaxCpu = 8192
@@ -70,15 +69,18 @@ func (p *Plane) Destroy() error {
 	proxmoxAPI, err := proxmox.NewProxmox()
 	if err != nil {
 		log.Println(err)
-		return errors.New("uanble to contact Proxmox API")
+		return errors.New("unable to contact Proxmox API")
 	}
 	lxc, err := proxmoxAPI.GetLXCFromHostname(h)
-	lxc.Stop(proxmoxAPI)
+	if err != nil {
+		log.Println(err)
+		return errors.New("unable to lookup VMID from hostname")
+	}
+	err = lxc.Stop(proxmoxAPI)
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to stop container")
 	}
-	time.Sleep(30 * time.Second)
 	err = lxc.Destroy(proxmoxAPI)
 	if err != nil {
 		log.Println(err)
