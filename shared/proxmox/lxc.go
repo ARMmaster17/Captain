@@ -16,11 +16,6 @@ type LXC struct {
 // Creates an LXC container with the specified parameters. Waits until
 // task returns complete before returning.
 func (p *Proxmox) LXCCreate(config MachineConfig) (*LXC, error) {
-	err := p.Authenticate()
-	if err != nil {
-		log.Println(err)
-		return &LXC{}, errors.New("unable to connect to Proxmox API")
-	}
 	lxc, task, err := p.LXCCreateAsync(config)
 	if err != nil {
 		log.Println(err)
@@ -37,11 +32,6 @@ func (p *Proxmox) LXCCreate(config MachineConfig) (*LXC, error) {
 // Creates and LXC container with the specified parameters. Returns a task to track
 // build completion while performing other tasks.
 func (p *Proxmox) LXCCreateAsync(config MachineConfig) (*LXC, *Task, error) {
-	err := p.Authenticate()
-	if err != nil {
-		log.Println(err)
-		return &LXC{}, &Task{}, errors.New("unable to connect to Proxmox API")
-	}
 	vmid, err := p.getNextVmid()
 	if err != nil {
 		log.Println(err)
@@ -49,7 +39,7 @@ func (p *Proxmox) LXCCreateAsync(config MachineConfig) (*LXC, *Task, error) {
 	}
 	config.VMID = vmid
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	body, err := p.Client.PostUrlEncode("nodes/" + node + "/lxc", config)
+	body, err := p.doPostUrlEncode("nodes/" + node + "/lxc", config)
 	if err != nil {
 		log.Println(err)
 		return &LXC{}, &Task{}, errors.New("failed to create new LXC container")
@@ -65,13 +55,8 @@ func (p *Proxmox) LXCCreateAsync(config MachineConfig) (*LXC, *Task, error) {
 }
 
 func (l *LXC) Destroy(p *Proxmox) error {
-	err := p.Authenticate()
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to connect to Proxmox API")
-	}
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	_, err = p.Client.Delete("nodes/" + node + "/lxc/" + l.VMID)
+	_, err := p.doDelete(fmt.Sprintf("nodes/%s/lxc/%s", node, l.VMID))
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to destroy LXC container")
@@ -80,13 +65,8 @@ func (l *LXC) Destroy(p *Proxmox) error {
 }
 
 func (l *LXC) Stop(p *Proxmox) error {
-	err := p.Authenticate()
-	if err != nil {
-		log.Println(err)
-		return errors.New("unable to connect to Proxmox API")
-	}
 	node := os.Getenv("PROXMOX_DEFAULT_NODE")
-	body, err := p.Client.Post(fmt.Sprintf("nodes/%s/lxc/%s/status/shutdown", node, l.VMID), nil)
+	body, err := p.doPost(fmt.Sprintf("nodes/%s/lxc/%s/status/shutdown", node, l.VMID), nil)
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to stop LXC container")
@@ -105,13 +85,8 @@ func (l *LXC) Stop(p *Proxmox) error {
 }
 
 func (p *Proxmox) GetLXCFromHostname(hostname ipam.Hostname) (LXC, error) {
-	err := p.Authenticate()
-	if err != nil {
-		log.Println(err)
-		return LXC{}, errors.New("unable to connect to Proxmox API")
-	}
 	url := fmt.Sprintf("nodes/%s/lxc", os.Getenv("PROXMOX_DEFAULT_NODE"))
-	body, err := p.Client.Get(url)
+	body, err := p.doGet(url)
 	if err != nil {
 		log.Println(err)
 		return LXC{}, errors.New("unable to query API for hostname/VMID association")

@@ -7,12 +7,7 @@ import (
 )
 
 func (p *Proxmox) getNextVmid() (string, error) {
-	err := p.Authenticate()
-	if err != nil {
-		log.Println(err)
-		return "", errors.New("unable to query API for next free VMID")
-	}
-	body, err := p.Client.Get("cluster/nextid")
+	body, err := p.doGet("cluster/nextid")
 	if err != nil {
 		log.Println(err)
 		return "", errors.New("unable to query API for next free VMID")

@@ -28,12 +28,7 @@ func NewTask(node string, body string) (Task, error) {
 }
 
 func (t *Task) IsRunning(p *Proxmox) (bool, error) {
-	err := p.Authenticate()
-	if err != nil {
-		log.Println(err)
-		return false, errors.New("unable to authenticate with Proxmox API")
-	}
-	body, err := p.Client.Get(fmt.Sprintf("nodes/%s/tasks/%s/status", t.Node, t.UPID))
+	body, err := p.doGet(fmt.Sprintf("nodes/%s/tasks/%s/status", t.Node, t.UPID))
 	if err != nil {
 		log.Println(err)
 		return false, errors.New("unable to check on status of task " + t.UPID)
