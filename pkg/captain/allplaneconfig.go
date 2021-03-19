@@ -3,8 +3,8 @@ package captain
 import (
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/ipam"
-	"github.com/ARMmaster17/Captain/proxmox"
+	"github.com/ARMmaster17/Captain/pkg/ipam"
+	"github.com/ARMmaster17/Captain/pkg/proxmox"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"

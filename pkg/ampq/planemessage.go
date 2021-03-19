@@ -1,6 +1,6 @@
 package ampq
 
-import "github.com/ARMmaster17/Captain/captain"
+import "github.com/ARMmaster17/Captain/pkg/captain"
 
 type Message struct {
 	Operation string        `json:"operation"`
