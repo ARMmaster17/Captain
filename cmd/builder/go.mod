@@ -1,4 +1,4 @@
-module github.com/ARMmaster17/Captain/builder
+module github.com/ARMmaster17/Captain/cmd/builder
 
 go 1.16
 
