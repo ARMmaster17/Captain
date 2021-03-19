@@ -1,11 +1,10 @@
-package main
+package captain
 
 import (
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/shared/captain"
-	"github.com/ARMmaster17/Captain/shared/ipam"
-	"github.com/ARMmaster17/Captain/shared/proxmox"
+	"github.com/ARMmaster17/Captain/ipam"
+	"github.com/ARMmaster17/Captain/proxmox"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -39,13 +38,13 @@ func NewAllPlaneConfig() (AllPlaneConfig, error) {
 	return allPlaneConfig, nil
 }
 
-func PlaneInjectDefaults(tlc *captain.Plane) error {
+func PlaneInjectDefaults(tlc *Plane) error {
 	defaultConfig, err := ioutil.ReadFile("/etc/captain/builder/conf/plane_default.yaml")
 	if err != nil {
 		log.Println(err)
 		return errors.New("unable to read default plane config values")
 	}
-	var defaultPlane = captain.Plane{}
+	var defaultPlane = Plane{}
 	err = yaml.Unmarshal(defaultConfig, &defaultPlane)
 	if err != nil {
 		log.Println(err)
@@ -66,7 +65,7 @@ func PlaneInjectDefaults(tlc *captain.Plane) error {
 	return nil
 }
 
-func BuildPlaneConfig(tlc *captain.Plane) (proxmox.MachineConfig, error) {
+func BuildPlaneConfig(tlc *Plane) (proxmox.MachineConfig, error) {
 	err := PlaneInjectDefaults(tlc)
 	if err != nil {
 		log.Println(err)

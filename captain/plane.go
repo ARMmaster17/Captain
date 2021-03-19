@@ -3,8 +3,8 @@ package captain
 import (
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/shared/ipam"
-	"github.com/ARMmaster17/Captain/shared/proxmox"
+	"github.com/ARMmaster17/Captain/ipam"
+	"github.com/ARMmaster17/Captain/proxmox"
 	"log"
 )
 

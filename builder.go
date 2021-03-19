@@ -1,13 +1,13 @@
-package main
+package Captain
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/shared/ampq"
-	"github.com/ARMmaster17/Captain/shared/ipam"
-	"github.com/ARMmaster17/Captain/shared/locking"
-	"github.com/ARMmaster17/Captain/shared/prep"
+	"github.com/ARMmaster17/Captain/ampq"
+	"github.com/ARMmaster17/Captain/ipam"
+	"github.com/ARMmaster17/Captain/locking"
+	"github.com/ARMmaster17/Captain/prep"
 	"github.com/streadway/amqp"
 	"log"
 	"os"

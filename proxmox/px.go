@@ -2,7 +2,7 @@ package proxmox
 
 import (
 	"errors"
-	http2 "github.com/ARMmaster17/Captain/shared/http"
+	http2 "github.com/ARMmaster17/Captain/http"
 	"github.com/tidwall/gjson"
 	"log"
 	"os"

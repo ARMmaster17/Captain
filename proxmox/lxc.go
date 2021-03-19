@@ -3,7 +3,7 @@ package proxmox
 import (
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/shared/ipam"
+	"github.com/ARMmaster17/Captain/ipam"
 	"github.com/tidwall/gjson"
 	"log"
 )

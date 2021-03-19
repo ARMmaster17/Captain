@@ -5,7 +5,7 @@ import (
 )
 
 func Test_NewPlane(t *testing.T) {
-
+	plane_helper(t, "test", 1, 512, 8, false)
 }
 
 func plane_helper(t *testing.T, name string, cpu int, ram int, storage int, shouldError bool) {
