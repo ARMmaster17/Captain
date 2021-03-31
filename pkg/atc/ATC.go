@@ -2,21 +2,12 @@ package atc
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"strconv"
 )
 
 func main() {
 
-}
-
-func prepDB() (*sql.DB, error) {
-	database, err := sql.Open("sqlite3", "./captain.db")
-	if err != nil {
-		return nil, fmt.Errorf("unable to initialize database with error: %w", err)
-	}
 }
 
 func executeDBCreateCommand(db *sql.DB, query string) error {
@@ -36,7 +27,7 @@ func executeDBCreateCommand(db *sql.DB, query string) error {
 }
 
 func RunATC() {
-	// Thread 1: checks current environment state against desired state in DB, making corrctions as needed
+	// Thread 1: checks current environment state against desired state in DB, making corrections as needed
 
 	// Get list of all monitored airspaces
 	// for each airspace>flight>formation
