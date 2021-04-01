@@ -8,10 +8,18 @@ import (
 	"fmt"
 )
 
-func prepDB() (*sql.DB, error) {
+func getDBConnection() (*sql.DB, error) {
 	database, err := sql.Open("sqlite3", "./captain.db")
 	if err != nil {
 		return nil, fmt.Errorf("unable to initialize database with error: %w", err)
+	}
+	return database, nil
+}
+
+func prepDB() (*sql.DB, error) {
+	database, err := getDBConnection()
+	if err != nil {
+		return nil, fmt.Errorf("unable to prepare to apply migrations to the database with error: %w", err)
 	}
 	driver, err := sqlite3.WithInstance(database, &sqlite3.Config{})
 	if err != nil {
@@ -22,4 +30,11 @@ func prepDB() (*sql.DB, error) {
 		"sqlite3", driver)
 	m.Steps(2)
 	return database, nil
+}
+
+func Execute(query string) error {
+	database, err := getDBConnection()
+	if err != nil {
+		return fmt.Errorf("unable to execute SQL '%s' with error: %w", query, err)
+	}
 }

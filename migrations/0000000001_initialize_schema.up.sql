@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS airspace (
-    AirspaceID int,
+    AirspaceID integer NOT NULL PRIMARY KEY,
     HumanName varchar(255),
     NetName varchar(255)
 );
