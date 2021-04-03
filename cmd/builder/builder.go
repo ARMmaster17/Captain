@@ -1,13 +1,14 @@
-package main
+package builder
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ARMmaster17/Captain/shared/ampq"
-	"github.com/ARMmaster17/Captain/shared/ipam"
-	"github.com/ARMmaster17/Captain/shared/locking"
-	"github.com/ARMmaster17/Captain/shared/prep"
+	"github.com/ARMmaster17/Captain/pkg/ampq"
+	"github.com/ARMmaster17/Captain/pkg/captain"
+	"github.com/ARMmaster17/Captain/pkg/ipam"
+	"github.com/ARMmaster17/Captain/pkg/locking"
+	"github.com/ARMmaster17/Captain/pkg/prep"
 	"github.com/streadway/amqp"
 	"log"
 	"os"
@@ -72,7 +73,7 @@ func handleBuildMessage(message ampq.Message) bool {
 		return false
 	}
 	log.Println("Acquired lock")
-	machineConfig, err := BuildPlaneConfig(&message.Plane)
+	machineConfig, err := captain.BuildPlaneConfig(&message.Plane)
 	vmid, err := message.Plane.Create(machineConfig)
 	if err != nil {
 		log.Println(err)
