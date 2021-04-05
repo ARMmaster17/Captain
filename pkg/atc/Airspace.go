@@ -12,10 +12,23 @@ type Airspace struct {
 }
 
 func CreateAirspace(humanName string, netName string) (*Airspace, error) {
-	err := DBExecuteWithParams("INSERT INTO airspace (HumanName, NetName) VALUES (?, ?)", humanName, netName)
+	results, err := DBQueryWithParams("INSERT INTO airspace (HumanName, NetName) VALUES (?, ?)", humanName, netName)
 	if err != nil {
 		return &Airspace{}, fmt.Errorf("unable to create airspace with error: %w", err)
 	}
+	if !results.Next() {
+		return &Airspace{}, fmt.Errorf("unable to create airspace with error: INSERT did not return an ID")
+	}
+	var idx int
+	err = results.Scan(&idx)
+	if err != nil {
+		return &Airspace{}, fmt.Errorf("unable to create airspace with error: %w", err)
+	}
+	result, err := FindByID(idx)
+	if err != nil {
+		return &Airspace{}, fmt.Errorf("unable to create airspace with error: %w", err)
+	}
+	return result, nil
 }
 
 func FindByID(id int) (*Airspace, error) {
@@ -39,6 +52,10 @@ func FindByID(id int) (*Airspace, error) {
 		HumanName: humanName,
 		NetName: netName,
 	}, nil
+}
+
+func FindAll() ([]Airspace, error) {
+
 }
 
 func (a *Airspace)Save() error {
