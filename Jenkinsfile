@@ -1,9 +1,3 @@
-node {
-  stage("Placeholder") {
-    echo "Hello!"
-  }
-}
-
 pipeline {
   agent any
   tools {
@@ -12,6 +6,9 @@ pipeline {
   stages {
     stage('Compile') {
       steps {
+        withCredentials([string(credentialsId: 'discord-server-webhook', variable: 'webhookURL')]) {
+          discordSend link: env.BUILD_URL, title: 'Captain Build' + env.JOB_NAME, webhookURL: webhookURL
+        }
         sh 'go build'
       }
     }
