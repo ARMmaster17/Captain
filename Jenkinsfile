@@ -20,7 +20,7 @@ pipeline {
         sh 'go test'
       }
     }
-    state('Notify') {
+    stage('Notify') {
       steps {
         withCredentials([string(credentialsId: 'discord-server-webhook', variable: 'webhookURL')]) {
           discordSend link: env.BUILD_URL, title: 'Captain Build' + env.JOB_NAME, webhookURL: webhookURL
