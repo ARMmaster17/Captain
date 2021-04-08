@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"github.com/go-playground/validator"
 )
 
 type Formation struct {
 	gorm.Model
-	Name string
-	CPU int
-	RAM int
-	BaseName	string
-	Domain		string
-	TargetCount	int
+	Name string `validate:"required,min=1"`
+	CPU int `validate:"required,gte=1,lte=8192"`
+	RAM int `validate:"required,gte=1,lte=307200"`
+	BaseName	string `validate:"alphanum,min=1,max=256"`
+	Domain		string `validate:"required,fqdn,min=1"`
+	TargetCount	int `validate:"required,gte=0"`
 	Planes []Plane
 	FlightID int
 	Flight Flight
@@ -96,4 +97,12 @@ func (f *Formation) getNextNum(offset int) int {
 		}
 	}
 	return nextNum + offset
+}
+
+func (f *Formation) Validate() error {
+	err := validator.New().Struct(f)
+	if err != nil {
+		return fmt.Errorf("invalid parameters for formation: %w", err)
+	}
+	return nil
 }

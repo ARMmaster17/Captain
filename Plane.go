@@ -8,22 +8,21 @@ import (
 
 type Plane struct {
 	gorm.Model
-	Num int `validate:"required,gte=0"`
-	VMID string
+	Num int `validate:"required,gte=1"`
+	VMID int `validate:"gte=0"`
 	FormationID int
-	Formation Formation
+	Formation Formation `validate:"-"`
 }
 
 func NewPlane(num int) (*Plane, error) {
 	plane := Plane{
 		Num: num,
 	}
-	var validate *validator.Validate
-	err := validate.Struct(plane)
+	err := plane.Validate()
 	if err != nil {
-		return nil, fmt.Errorf("invalid parameters for plane configurations: %w", err)
+		return nil, fmt.Errorf("unable to create plane with error: %w", err)
 	}
-	return &plane, err
+	return &plane, nil
 }
 
 func initPlanes(db *gorm.DB) error {
@@ -44,11 +43,23 @@ func (p *Plane) getFQDN() string {
 }
 
 func (p *Plane) BeforeCreate(tx *gorm.DB) error {
+	err := p.Validate()
+	if err != nil {
+		return fmt.Errorf("unable to create plane: %w", err)
+	}
 	// TODO: Glue in old code to create plane.
 	return nil
 }
 
 func (p *Plane) BeforeDelete(tx *gorm.DB) error {
 	// TODO: Glue in old code to delete plane.
+	return nil
+}
+
+func (p *Plane) Validate() error {
+	err := validator.New().Struct(p)
+	if err != nil {
+		return fmt.Errorf("invalid parameters for plane: %w", err)
+	}
 	return nil
 }

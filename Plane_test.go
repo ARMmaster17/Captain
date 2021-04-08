@@ -50,3 +50,30 @@ func TestPlaneNewValidNum(t *testing.T) {
 		t.Errorf("expected no error to be thrown with valid Num parameter")
 	}
 }
+
+func TestPlaneValidVMID(t *testing.T) {
+	p, err := NewPlane(1)
+	if err != nil {
+		t.Errorf("unexpected error: %s", err)
+	}
+	if p == nil {
+		t.Errorf("plane unexpectedly nil")
+	}
+	p.VMID = 100
+	err = p.Validate()
+	if err != nil {
+		t.Errorf("unexpected error with valid VMID: %s", err)
+	}
+}
+
+func TestPlaneInvalidVMID(t *testing.T) {
+	p, err := NewPlane(1)
+	if err != nil {
+		t.Errorf("unexpected error: %s", err)
+	}
+	p.VMID = -1
+	err = p.Validate()
+	if err == nil {
+		t.Errorf("expected an error with an invalid VMID")
+	}
+}
