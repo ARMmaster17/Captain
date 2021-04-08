@@ -1,30 +1,88 @@
 pipeline {
-  agent any
-  tools {
-    go 'golang-1.16'
-  }
-  environment {
-    GO11MODULE = 'on'
-  }
+  agent none
   stages {
-    stage('Compile') {
+    stage('Post Build Notification') {
+      agent any
       steps {
         withCredentials([string(credentialsId: 'discord-server-webhook', variable: 'webhookURL')]) {
           discordSend link: env.BUILD_URL, title: 'Captain Build' + env.JOB_NAME, webhookURL: webhookURL, description: "Build started"
         }
-        sh 'sudo apt-get install gcc -y'
-        sh 'go get .; go build'
       }
     }
-    stage('Test') {
-      steps {
-        sh 'go test'
+    stage('Compile + Test') {
+      parallel {
+        stage('Test Golang 1.13') {
+          agent any
+          tools {
+            go 'golang-1.13'
+          }
+          environment {
+            GO11MODULE = 'on'
+          }
+          steps {
+            sh 'sudo apt-get install gcc -y'
+            sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'go get .'
+            sh 'go build'
+            sh 'go test -v 2>&1 | go-junit-report > report.xml'
+            junit 'report.xml'
+          }
+        }
       }
-    }
-    stage('Notify') {
-      steps {
-        withCredentials([string(credentialsId: 'discord-server-webhook', variable: 'webhookURL')]) {
-          discordSend link: env.BUILD_URL, title: 'Captain Build' + env.JOB_NAME, webhookURL: webhookURL, description: "Build SUCCESS"
+      stage('Compile + Test') {
+      parallel {
+        stage('Test Golang 1.14') {
+          agent any
+          tools {
+            go 'golang-1.14'
+          }
+          environment {
+            GO11MODULE = 'on'
+          }
+          steps {
+            sh 'sudo apt-get install gcc -y'
+            sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'go get .'
+            sh 'go build'
+            sh 'go test -v 2>&1 | go-junit-report > report.xml'
+            junit 'report.xml'
+          }
+        }
+      }
+      stage('Test Golang 1.15') {
+          agent any
+          tools {
+            go 'golang-1.15'
+          }
+          environment {
+            GO11MODULE = 'on'
+          }
+          steps {
+            sh 'sudo apt-get install gcc -y'
+            sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'go get .'
+            sh 'go build'
+            sh 'go test -v 2>&1 | go-junit-report > report.xml'
+            junit 'report.xml'
+          }
+        }
+      }
+      stage('Test Golang 1.16') {
+          agent any
+          tools {
+            go 'golang-1.16'
+          }
+          environment {
+            GO11MODULE = 'on'
+          }
+          steps {
+            sh 'sudo apt-get install gcc -y'
+            sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'go get .'
+            sh 'go build'
+            sh 'go test -v 2>&1 | go-junit-report > report.xml'
+            junit 'report.xml'
+          }
         }
       }
     }
