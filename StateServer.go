@@ -26,5 +26,16 @@ func StartMonitoring() error {
 }
 
 func monitoringLoop(db *gorm.DB) error {
-	// Check each airspace (multi-threaded?)
+	var airspaces []Airspace
+	result := db.Find(&airspaces)
+	if result.Error != nil {
+		return fmt.Errorf("unable to retrieve list of airspaces with error: %w", result.Error)
+	}
+	for i := 0; i < len(airspaces); i++ {
+		err := airspaces[i].performHealthChecks(db)
+		if err != nil {
+			return fmt.Errorf("unable to perform healthchecks on airspace %s with error: %w", airspaces[i].HumanName, err)
+		}
+	}
+	return nil
 }

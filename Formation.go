@@ -29,3 +29,25 @@ func initFormations(db *gorm.DB) error {
 	}
 	return nil
 }
+
+func (f *Formation) performHealthChecks(db *gorm.DB) error {
+	// Remove dead planes.
+	for i := 0; i < len(f.Planes); i++ {
+		// TODO: Run plane health checks.
+	}
+	// Check that the number of active (or planned) planes equals the target.
+	if len(f.Planes) < f.TargetCount {
+		var offset int = f.TargetCount - len(f.Planes)
+		// TODO: Generate unique names for new planes.
+		for i := 0; i < offset; i++ {
+			f.Planes = append(f.Planes, Plane{
+				Name: fmt.Sprintf("%s%d.%s", f.BaseName, i, f.Domain),
+			})
+		}
+		result := db.Save(f)
+		if result.Error != nil {
+			return fmt.Errorf("unable to update formation with new planes with error: %w", result.Error)
+		}
+	}
+	return nil
+}

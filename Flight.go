@@ -24,3 +24,13 @@ func initFlights(db *gorm.DB) error {
 	}
 	return nil
 }
+
+func (f *Flight) performHealthChecks(db *gorm.DB) error {
+	for i := 0; i < len(f.Formations); i++ {
+		err := f.Formations[i].performHealthChecks(db)
+		if err != nil {
+			return fmt.Errorf("unable to perform health check on formation %s with error: %w", f.Formations[i].Name, err)
+		}
+	}
+	return nil
+}

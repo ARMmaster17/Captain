@@ -30,7 +30,17 @@ func initAirspaces(db *gorm.DB) error {
 		}
 		result := db.Create(&airspace)
 		if result.Error != nil {
-			return fmt.Errorf("unable to create default airspace with error: %w", err)
+			return fmt.Errorf("unable to create default airspace with error: %w", result.Error)
+		}
+	}
+	return nil
+}
+
+func (a *Airspace) performHealthChecks(db *gorm.DB) error {
+	for i := 0; i < len(a.Flights); i++ {
+		err := a.Flights[i].performHealthChecks(db)
+		if err != nil {
+			return fmt.Errorf("unable to check health of flight %s with error: %w", a.Flights[i].Name, err)
 		}
 	}
 	return nil

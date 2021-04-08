@@ -12,6 +12,7 @@ pipeline {
         withCredentials([string(credentialsId: 'discord-server-webhook', variable: 'webhookURL')]) {
           discordSend link: env.BUILD_URL, title: 'Captain Build' + env.JOB_NAME, webhookURL: webhookURL, description: "Build started"
         }
+        sh 'sudo apt-get install gcc'
         sh 'go get ./; go build'
       }
     }
