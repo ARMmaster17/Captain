@@ -9,7 +9,7 @@ pipeline {
         withCredentials([string(credentialsId: 'discord-server-webhook', variable: 'webhookURL')]) {
           discordSend link: env.BUILD_URL, title: 'Captain Build' + env.JOB_NAME, webhookURL: webhookURL, description: "Build started"
         }
-        sh 'go build'
+        sh 'cd pkg/atc; go build'
       }
     }
     stage('Test') {
