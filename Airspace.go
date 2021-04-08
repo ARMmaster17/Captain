@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"github.com/rs/zerolog/log"
 )
 
 type Airspace struct {
@@ -13,17 +14,21 @@ type Airspace struct {
 }
 
 func initAirspaces(db *gorm.DB) error {
+	log.Debug().Msg("initializing flights")
 	err := initFlights(db)
 	if err != nil {
 		return fmt.Errorf("unable to migrate airspace schema dependencies with error: %w", err)
 	}
+	log.Debug().Msg("performing airspace schema migrations")
 	err = db.AutoMigrate(&Airspace{})
 	if err != nil {
 		return fmt.Errorf("unable to migrate airspace schema with error: %w", err)
 	}
+	log.Trace().Msg("checking if default airspace exists")
 	var airspaceCount int64
 	db.Model(&Airspace{}).Count(&airspaceCount)
 	if airspaceCount == 0 {
+		log.Trace().Msg("default airspace does not exist, creating...")
 		airspace := Airspace{
 			HumanName: "Default Airspace",
 			NetName: "default",
@@ -37,7 +42,9 @@ func initAirspaces(db *gorm.DB) error {
 }
 
 func (a *Airspace) performHealthChecks(db *gorm.DB) error {
+	// TODO: Preload flights since they are lazy-loaded from the database.
 	for i := 0; i < len(a.Flights); i++ {
+		log.Trace().Str("airspace", a.NetName).Str("flight", a.Flights[i].Name).Msg("checking health of flight")
 		err := a.Flights[i].performHealthChecks(db)
 		if err != nil {
 			return fmt.Errorf("unable to check health of flight %s with error: %w", a.Flights[i].Name, err)
