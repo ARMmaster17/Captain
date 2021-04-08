@@ -25,7 +25,11 @@ pipeline {
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | go-junit-report > report.xml'
-            junit 'report.xml'
+          }
+          post {
+              always {
+                  junit 'report.xml'
+              }
           }
         }
       }
@@ -45,7 +49,11 @@ pipeline {
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | go-junit-report > report.xml'
-            junit 'report.xml'
+          }
+          post {
+              always {
+                  junit 'report.xml'
+              }
           }
         }
       }
@@ -63,7 +71,11 @@ pipeline {
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | go-junit-report > report.xml'
-            junit 'report.xml'
+          }
+          post {
+              always {
+                  junit 'report.xml'
+              }
           }
         }
       }
@@ -81,10 +93,13 @@ pipeline {
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | go-junit-report > report.xml'
-            junit 'report.xml'
+          }
+          post {
+              always {
+                  junit 'report.xml'
+              }
           }
         }
       }
     }
   }
-}
