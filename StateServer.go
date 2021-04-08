@@ -5,6 +5,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -34,7 +35,7 @@ func StartMonitoring() error {
 func monitoringLoop(db *gorm.DB) error {
 	log.Trace().Msg("retrieving all airspaces from database")
 	var airspaces []Airspace
-	result := db.Find(&airspaces)
+	result := db.Preload(clause.Associations).Find(&airspaces)
 	if result.Error != nil {
 		return fmt.Errorf("unable to retrieve list of airspaces with error: %w", result.Error)
 	}

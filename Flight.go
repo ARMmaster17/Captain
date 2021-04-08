@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
@@ -26,7 +27,12 @@ func initFlights(db *gorm.DB) error {
 }
 
 func (f *Flight) performHealthChecks(db *gorm.DB) error {
+	result := db.Where("flight_id = ?", f.ID).Find(&f.Formations)
+	if result.Error != nil {
+		return fmt.Errorf("unable to list formations for flight %s with error: %w", f.Name, result.Error)
+	}
 	for i := 0; i < len(f.Formations); i++ {
+		log.Trace().Str("flight", f.Name).Str("formation", f.Formations[i].Name).Msg("checking health of formation")
 		err := f.Formations[i].performHealthChecks(db)
 		if err != nil {
 			return fmt.Errorf("unable to perform health check on formation %s with error: %w", f.Formations[i].Name, err)

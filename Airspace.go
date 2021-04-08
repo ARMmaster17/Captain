@@ -42,7 +42,10 @@ func initAirspaces(db *gorm.DB) error {
 }
 
 func (a *Airspace) performHealthChecks(db *gorm.DB) error {
-	// TODO: Preload flights since they are lazy-loaded from the database.
+	result := db.Where("airspace_id = ?", a.ID).Find(&a.Flights)
+	if result.Error != nil {
+		return fmt.Errorf("unable to list flights for airspace %s with error: %w", a.HumanName, result.Error)
+	}
 	for i := 0; i < len(a.Flights); i++ {
 		log.Trace().Str("airspace", a.NetName).Str("flight", a.Flights[i].Name).Msg("checking health of flight")
 		err := a.Flights[i].performHealthChecks(db)
