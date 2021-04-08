@@ -3,14 +3,27 @@ package main
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"github.com/go-playground/validator"
 )
 
 type Plane struct {
 	gorm.Model
-	Num int
+	Num int `validate:"required,gte=0"`
 	VMID string
 	FormationID int
 	Formation Formation
+}
+
+func NewPlane(num int) (*Plane, error) {
+	plane := Plane{
+		Num: num,
+	}
+	var validate *validator.Validate
+	err := validate.Struct(plane)
+	if err != nil {
+		return nil, fmt.Errorf("invalid parameters for plane configurations: %w", err)
+	}
+	return &plane, err
 }
 
 func initPlanes(db *gorm.DB) error {
