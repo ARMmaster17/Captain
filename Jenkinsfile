@@ -32,9 +32,6 @@ pipeline {
               }
           }
         }
-      }
-      stage('Compile + Test') {
-      parallel {
         stage('Test Golang 1.14') {
           agent any
           tools {
@@ -56,8 +53,7 @@ pipeline {
               }
           }
         }
-      }
-      stage('Test Golang 1.15') {
+        stage('Test Golang 1.15') {
           agent any
           tools {
             go 'golang-1.15'
@@ -78,8 +74,7 @@ pipeline {
               }
           }
         }
-      }
-      stage('Test Golang 1.16') {
+        stage('Test Golang 1.16') {
           agent any
           tools {
             go 'golang-1.16'
@@ -103,3 +98,4 @@ pipeline {
       }
     }
   }
+}
