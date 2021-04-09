@@ -3,17 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
 )
 
 func StartMonitoring() error {
-	// TODO: Have this as a configurable option
-	var dbPath = "test.db"
-	log.Debug().Str("dbPath", dbPath).Msg("connecting to Sqlite3 database")
-	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	db, err := ConnectToDB()
 	if err != nil {
 		return fmt.Errorf("unable to open database with error: %w", err)
 	}
