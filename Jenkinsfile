@@ -22,6 +22,7 @@ pipeline {
           steps {
             sh 'sudo apt-get install gcc -y'
             sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'cd cmd/captain'
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
@@ -43,6 +44,7 @@ pipeline {
           steps {
             sh 'sudo apt-get install gcc -y'
             sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'cd cmd/captain'
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
@@ -64,6 +66,7 @@ pipeline {
           steps {
             sh 'sudo apt-get install gcc -y'
             sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'cd cmd/captain'
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
@@ -85,6 +88,7 @@ pipeline {
           steps {
             sh 'sudo apt-get install gcc -y'
             sh 'go get -u github.com/jstemmer/go-junit-report'
+            sh 'cd cmd/captain'
             sh 'go get .'
             sh 'go build'
             sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
