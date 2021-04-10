@@ -7,9 +7,10 @@ on:
     branches: [ main ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_CONN: sqlite3-file
     steps:
     - uses: actions/checkout@v2
 
