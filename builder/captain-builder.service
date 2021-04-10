@@ -1,9 +1,0 @@
-[Unit]
-Description=Captain Builder Service
-
-[Service]
-ExecStart=/usr/bin/captain-builder
-User=captain
-
-[Install]
-WantedBy=multi-user.target
