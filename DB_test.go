@@ -132,6 +132,8 @@ func HelperDBTestCleanup() {
 	_ = HelperDBCleanupConnectionFile()
 }
 
+// HELPER FUNCTIONS
+
 func HelperDBCreateConnectionEnv() {
 	_ = os.Setenv("CAPTAIN_DB", HelperDBGetStringFromTestDatabaseType(os.Getenv("DATABASE_CONN")))
 }
