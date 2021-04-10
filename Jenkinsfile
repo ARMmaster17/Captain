@@ -18,19 +18,18 @@ pipeline {
             values 'golang-1.13', 'golang-1.14', 'golang-1.15', 'golang-1.16'
           }
           axis {
-            name 'DATABASE_TYPE'
+            name 'DATABASE_CONN'
             values 'postgres', 'sqlite3-file', 'sqlite3-memory'
           }
         }
 
         stages {
-          stage('Test ' + GOLANG_VERSION) {
+          stage("Build+Test ${env.GOLANG_VERSION}") {
             tools {
-              go "GOLANG_VERSION"
+              go env.GOLANG_VERSION
             }
             environment {
               GO11MODULE = 'on'
-              DATABASE_CONN = DATABASE_TYPE
             }
             steps {
               sh 'go get -u github.com/jstemmer/go-junit-report'
