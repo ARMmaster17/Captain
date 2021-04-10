@@ -24,7 +24,7 @@ pipeline {
         }
 
         stages {
-          stage("Build+Test ${env.GOLANG_VERSION}") {
+          stage('Build+Test ${env.GOLANG_VERSION}') {
             tools {
               go env.GOLANG_VERSION
             }
