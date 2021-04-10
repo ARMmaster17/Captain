@@ -11,7 +11,7 @@ pipeline {
     }
     stage('Compile + Test') {
       matrix {
-        agent any
+        agent none
         axes {
           axis {
             name 'GOLANG_VERSION'
@@ -25,8 +25,9 @@ pipeline {
 
         stages {
           stage('Build+Test ${env.GOLANG_VERSION}') {
+            agent any
             tools {
-              go env.GOLANG_VERSION
+              go "${env.GOLANG_VERSION}"
             }
             environment {
               GO11MODULE = 'on'
