@@ -48,17 +48,16 @@ func (p *Plane) BeforeCreate(tx *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("unable to create plane: %w", err)
 	}
-	err = p.buildPlane()
+	err = p.buildPlane(tx)
 	if err != nil {
+		// TODO: Should detect what kind of error occurred
 		return fmt.Errorf("unable to trigger plane build with error: %w", err)
 	}
-	///////////////////////////////////////
 	return nil
 }
 
 func (p *Plane) BeforeDelete(tx *gorm.DB) error {
-	// TODO: Glue in old code to delete plane.
-	return nil
+	return p.destroyPlane()
 }
 
 func (p *Plane) Validate() error {
@@ -69,26 +68,29 @@ func (p *Plane) Validate() error {
 	return nil
 }
 
-func (p *Plane) buildPlane() error {
+func (p *Plane) buildPlane(db *gorm.DB) error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("building new plane")
 	px, err := ProxmoxAdapterConnect()
 	if err != nil {
 		return fmt.Errorf("unable to contact Proxmox cluster with error: %w", err)
 	}
-	planeConfig, err := ProxmoxBuildLxc(p)
+	err = ProxmoxBuildLxc(db, px, p)
 	if err != nil {
-		return fmt.Errorf("uanble to build plane configuration with error: %w", err)
+		return fmt.Errorf("unable to build plane: %w", err)
 	}
-	vmid, err := ProxmoxCreateLxc(px, planeConfig)
-	if err != nil {
-		return fmt.Errorf("unable to build plane with error: %w", err)
-	}
-	p.VMID = vmid
 	return nil
 }
 
 func (p *Plane) destroyPlane() error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("destroying plane")
+	px, err := ProxmoxAdapterConnect()
+	if err != nil {
+		return fmt.Errorf("unable to connect to Proxmox cluster: %w", err)
+	}
+	err = ProxmoxDestroyLxc(px, p)
+	if err != nil {
+		return fmt.Errorf("unable to destroy plane %s: %w", p.getFQDN(), err)
+	}
 	return nil
 }
 

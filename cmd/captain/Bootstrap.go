@@ -23,6 +23,10 @@ func BootstrapCluster() error {
 		return fmt.Errorf("unable to create airspace for Captain services: %w", err)
 	}
 	err = bootstrapCreateCaptainServices(db, airspace)
+	if err != nil {
+		return fmt.Errorf("unable to provision Captain stack: %w", err)
+	}
+	return nil
 }
 
 func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
@@ -60,6 +64,8 @@ func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
 	if err != nil {
 		return fmt.Errorf("unable to create core service planes: %w", err)
 	}
+
+	return nil
 }
 
 func bootstrapCreateSystemAirspace(db *gorm.DB) (*Airspace, error) {
