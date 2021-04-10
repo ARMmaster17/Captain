@@ -22,8 +22,8 @@ func TestDBDefaultConnectionString(t *testing.T) {
 		t.Errorf("unexpected error getting default connection string: %w", err)
 		return
 	}
-	if connString != "memory" {
-		t.Errorf("expected connection string \":memory:\", got %s", connString)
+	if connString != ":memory:" {
+		t.Errorf("expected connection string ':memory:', got %s", connString)
 	}
 }
 
@@ -84,7 +84,7 @@ func TestGetConfiguredDBDriverFile(t *testing.T) {
 	}
 	fmt.Println(db.Name())
 	HelperDBTestCleanup()
-	t.Skip()
+	t.Errorf(db.Name())/////////////////////////////////
 }
 
 func TestGetConfiguredDBDriverEnv(t *testing.T) {
@@ -96,7 +96,7 @@ func TestGetConfiguredDBDriverEnv(t *testing.T) {
 	}
 	fmt.Println(db.Name())
 	HelperDBTestCleanup()
-	t.Skip()
+	t.Errorf(db.Name())/////////////////////////////////
 }
 
 func HelperDBTestCleanup() {

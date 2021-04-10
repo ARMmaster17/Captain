@@ -9,7 +9,7 @@ pipeline {
         }
       }
     }
-    stage('Compile + Test') {
+    stage('Build') {
       matrix {
         agent none
         axes {
@@ -24,7 +24,7 @@ pipeline {
         }
 
         stages {
-          stage('Build+Test ${env.GOLANG_VERSION}') {
+          stage('Build+Test') {
             agent any
             tools {
               go "${env.GOLANG_VERSION}"
@@ -39,7 +39,7 @@ pipeline {
               sh 'sudo mkdir /etc/captain'
               sh 'sudo chmod 777 /etc/captain'
               sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
-              sh 'rm -rf /etc/captain'
+              sh 'sudo rm -rf /etc/captain'
             }
             post {
               always {
