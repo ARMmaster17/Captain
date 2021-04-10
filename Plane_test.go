@@ -59,7 +59,7 @@ func TestPlaneValidVMID(t *testing.T) {
 	if p == nil {
 		t.Errorf("plane unexpectedly nil")
 	}
-	p.VMID = 100
+	p.ProxmoxIdentifier = 100
 	err = p.Validate()
 	if err != nil {
 		t.Errorf("unexpected error with valid VMID: %s", err)
@@ -71,7 +71,7 @@ func TestPlaneInvalidVMID(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %s", err)
 	}
-	p.VMID = -1
+	p.ProxmoxIdentifier = -1
 	err = p.Validate()
 	if err == nil {
 		t.Errorf("expected an error with an invalid VMID")

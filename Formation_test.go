@@ -219,7 +219,7 @@ func TestFormationMissingDisk(t *testing.T) {
 		TargetCount: 1,
 	}
 	err := f.Validate()
-	if err != nil {
+	if err == nil {
 		t.Errorf("expected an error with missing disk parameter")
 	}
 }

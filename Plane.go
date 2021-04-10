@@ -10,7 +10,7 @@ import (
 type Plane struct {
 	gorm.Model
 	Num int `validate:"required,gte=1"`
-	VMID int `validate:"gte=0"`
+	ProxmoxIdentifier int `validate:"gte=0"`
 	FormationID int
 	Formation Formation `validate:"-"`
 }
