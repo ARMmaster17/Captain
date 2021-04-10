@@ -10,89 +10,42 @@ pipeline {
       }
     }
     stage('Compile + Test') {
-      parallel {
-        stage('Test Golang 1.13') {
-          agent any
-          tools {
-            go 'golang-1.13'
+      matrix {
+        agent any
+        axes {
+          axis {
+            name 'GOLANG_VERSION'
+            values 'golang-1.13', 'golang-1.14', 'golang-1.15', 'golang-1.16'
           }
-          environment {
-            GO11MODULE = 'on'
-          }
-          steps {
-            sh 'sudo apt-get install gcc -y'
-            sh 'go get -u github.com/jstemmer/go-junit-report'
-            sh 'go get .'
-            sh 'go build'
-            sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
-          }
-          post {
-              always {
-                  junit 'report.xml'
-              }
+          axis {
+            name 'DATABASE_TYPE'
+            values 'postgres', 'sqlite3-file' 'sqlite3-memory'
           }
         }
-        stage('Test Golang 1.14') {
-          agent any
-          tools {
-            go 'golang-1.14'
-          }
-          environment {
-            GO11MODULE = 'on'
-          }
-          steps {
-            sh 'sudo apt-get install gcc -y'
-            sh 'go get -u github.com/jstemmer/go-junit-report'
-            sh 'go get .'
-            sh 'go build'
-            sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
-          }
-          post {
+
+        stages {
+          stage('Test ${GOLANG_VERSION}') {
+            tools {
+              go "${GOLANG_VERSION}"
+            }
+            environment {
+              GO11MODULE = 'on'
+              DATABASE_TYPE = "${DATABASE_TYPE}"
+            }
+            steps {
+              sh 'go get -u github.com/jstemmer/go-junit-report'
+              sh 'go get .'
+              sh 'go build'
+              sh 'mkdir /etc/captain'
+              sh 'chmod 777 /etc/captain'
+              sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
+              sh 'rm -rf /etc/captain'
+            }
+            post {
               always {
-                  junit 'report.xml'
+                junit 'report.xml'
               }
-          }
-        }
-        stage('Test Golang 1.15') {
-          agent any
-          tools {
-            go 'golang-1.15'
-          }
-          environment {
-            GO11MODULE = 'on'
-          }
-          steps {
-            sh 'sudo apt-get install gcc -y'
-            sh 'go get -u github.com/jstemmer/go-junit-report'
-            sh 'go get .'
-            sh 'go build'
-            sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
-          }
-          post {
-              always {
-                  junit 'report.xml'
-              }
-          }
-        }
-        stage('Test Golang 1.16') {
-          agent any
-          tools {
-            go 'golang-1.16'
-          }
-          environment {
-            GO11MODULE = 'on'
-          }
-          steps {
-            sh 'sudo apt-get install gcc -y'
-            sh 'go get -u github.com/jstemmer/go-junit-report'
-            sh 'go get .'
-            sh 'go build'
-            sh 'go test -v 2>&1 | /home/administrator/go/bin/go-junit-report > report.xml'
-          }
-          post {
-              always {
-                  junit 'report.xml'
-              }
+            }
           }
         }
       }
