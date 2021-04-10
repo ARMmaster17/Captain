@@ -19,7 +19,7 @@ pipeline {
           }
           axis {
             name 'DATABASE_TYPE'
-            values 'postgres', 'sqlite3-file' 'sqlite3-memory'
+            values 'postgres', 'sqlite3-file', 'sqlite3-memory'
           }
         }
 
