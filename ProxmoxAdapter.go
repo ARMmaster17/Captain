@@ -7,14 +7,13 @@ import (
 	"fmt"
 	"github.com/Telmate/proxmox-api-go/proxmox"
 	"gorm.io/gorm"
-	"io/ioutil"
 	"os"
 )
 
 func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 	tlsConf := &tls.Config{InsecureSkipVerify: true}
-	c, _ := proxmox.NewClient("URL", nil, tlsConf, 300)
-	err := c.Login(os.Getenv("PM_USER"), os.Getenv("PM_PASS"), "")
+	c, _ := proxmox.NewClient("CAPTAIN_PROXMOX_URL", nil, tlsConf, 300)
+	err := c.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
 	if err != nil {
 		return nil, fmt.Errorf("unable to authenticate with Proxmox cluster with error: %w", err)
 	}
@@ -22,38 +21,13 @@ func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 }
 
 func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
-	publicKey, err := ioutil.ReadFile("/etc/captain/builder/conf/key.pub")
+	defaults, err := getPlaneDefaults()
 	if err != nil {
-		return fmt.Errorf("unable to read cluster-wide public key with error: %w", err)
+		return fmt.Errorf("unable to get default plane parameters: %w", err)
 	}
 
-	// When https://github.com/Telmate/proxmox-api-go/pull/114 merges, this can be split up into smaller functions.
-	/*config := proxmox.ConfigLxc{
-		Ostemplate:         "pve-img:vztmpl/debian-10-standard_10.7-1_amd64.tar.gz",
-		Arch:               "amd64",
-		CMode:              "tty",
-		Console:            true,
-		Cores:              p.Formation.CPU,
-		CPULimit:           0,
-		CPUUnits:           1024,
-		Description:        "Managed by the Captain stack",
-		Hostname:           p.getFQDN(),
-		Memory:             p.Formation.RAM,
-		Nameserver:         "10.1.0.4",
-		Networks:           nil,
-		OnBoot:             true,
-		Protection:         false,
-		SearchDomain:       "firecore.lab",
-		SSHPublicKeys:      string(publicKey),
-		Start:              true,
-		Storage:            "pve-storage",
-		Swap:               p.Formation.RAM,
-		Template:           false,
-		Tty:                2,
-		Unprivileged:       true,
-	}*/
 	config := proxmox.NewConfigLxc()
-	config.Ostemplate = "pve-img:vztmpl/debian-10-standard_10.7-1_amd64.tar.gz"
+	config.Ostemplate = defaults.Proxmox.Image
 	config.Arch = "amd64"
 	config.CMode = "tty"
 	config.Console = true
@@ -63,14 +37,22 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	config.Description = "Managed by the Captain stack"
 	config.Hostname = p.getFQDN()
 	config.Memory = p.Formation.RAM
-	config.Nameserver = "10.1.0.4 8.8.8.8"
-	config.Networks = nil // TODO: Figure out how this is supposed to work
+	config.Nameserver = defaults.Network.Nameservers
+	config.Networks = proxmox.QemuDevices{
+		0 : {
+			"bridge": defaults.Proxmox.PublicNetwork,
+			"ip": "10.1.0.200/16",
+			"gw": defaults.Network.Gateway,
+			"fw": "0",
+			"mtu": defaults.Network.MTU,
+		},
+	}
 	config.OnBoot = true
 	config.Protection = false
-	config.SearchDomain = "firecore.lab"
-	config.SSHPublicKeys = string(publicKey)
+	config.SearchDomain = defaults.Network.SearchDomain
+	config.SSHPublicKeys = defaults.PublicKey
 	config.Start = true
-	config.Storage = "pve-storage"
+	config.Storage = defaults.Proxmox.DiskStorage
 	config.Swap = p.Formation.RAM
 	config.Template = false
 	config.Tty = 2
@@ -81,7 +63,7 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 		return fmt.Errorf("unable to retreive next available VMID with error: %w", err)
 	}
 	vmr := proxmox.NewVmRef(nextId)
-	vmr.SetNode("pxvh1")
+	vmr.SetNode(defaults.Proxmox.DefaultNode)
 	err = config.CreateLxc(vmr, client)
 	if err != nil {
 		return fmt.Errorf("unable to create LXC container with error: %w", err)
