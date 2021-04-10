@@ -1,3 +1,5 @@
+github.com/Telmate/proxmox-api-go v0.0.0-20210402150908-b9cc6607c070 h1:Up56ddjq6/wc46Ng+MDQYuDqVDHQMmbV+q8qSUImask=
+github.com/Telmate/proxmox-api-go v0.0.0-20210402150908-b9cc6607c070/go.mod h1:ayPkdmEKnlssqLQ9K1BE1jlsaYhXVwkoduXI30oQF0I=
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-playground/locales v0.13.0 h1:HyWk6mgj5qFqCT5fjGBuRArbVDfE4hi8+e8ceBS/t7Q=
