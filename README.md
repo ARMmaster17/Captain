@@ -14,7 +14,7 @@ Captain is a container orchestration and streamlined PaaS provider for Proxmox-b
 ## Getting Started
 1. Install Proxmox on at least one server (you may also use a hypervisor such as VirtualBox in place of a physical server).
 2. Create an LXC container (or VM) in Proxmox using any (reasonable) Linux distro. Install the golang compiler and `make`.
-3. Run the following commands, substituting where needed.
+3. Run the following commands:
 ```shell
 git clone https://github.com/ARMmaster17/Captain
 cd Captain
@@ -33,8 +33,8 @@ go build
    | `CAPTAIN_PRIVATE_KEY` | Absolute filepath to your private key so Captain can provision new planes. |
 
 6. Edit `defaults.yaml` in the captain directory to match the configuration of your network and Proxmox cluster setup. This is also where you provide your public SSH key.
-7. Start captain by running `./captain`.
-8. Optionally you may create a SystemD service file so Captain runs on startup.
+7. Start Captain by running `./captain`.
+8. Optionally you may create a SystemD service file so Captain runs on system startup.
 
 If leave `db.conf` blank and don't set `CAPTAIN_DB`, by default Captain will run with an in-memory database that will be cleared on each restart. This is fine for testing, but to run an actual cluster it is recommended to use a Sqlite3 file or PostgreSQL database.
 
