@@ -9,6 +9,7 @@ func TestFormationValidParams(t *testing.T) {
 		Name:        "SQL Cluster 1",
 		CPU:         1,
 		RAM:         256,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -24,6 +25,7 @@ func TestFormationInvalidName(t *testing.T) {
 		Name:		 "",
 		CPU:         1,
 		RAM:         256,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -38,6 +40,7 @@ func TestFormationMissingName(t *testing.T) {
 	f := Formation{
 		CPU:         1,
 		RAM:         256,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -53,6 +56,7 @@ func TestFormationInvalidCPU(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         256,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -68,6 +72,7 @@ func TestFormationInvalidMinRAM(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         0,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -83,6 +88,7 @@ func TestFormationInvalidMaxRAM(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -98,6 +104,7 @@ func TestFormationMissingBaseName(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -113,6 +120,7 @@ func TestFormationBadBaseName(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "!@#$%^&*()",
 		Domain:      "example.com",
 		TargetCount: 1,
@@ -128,6 +136,7 @@ func TestFormationMissingDomain(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "sql",
 		TargetCount: 1,
 	}
@@ -142,6 +151,7 @@ func TestFormationEmptyDomain(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "",
 		TargetCount: 1,
@@ -157,6 +167,7 @@ func TestFormationBadDomain(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "!@#$%^&*()",
 		TargetCount: 1,
@@ -172,6 +183,7 @@ func TestFormationMissingTargetCount(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 	}
@@ -186,6 +198,7 @@ func TestFormationInvalidTargetCount(t *testing.T) {
 		Name:		"SQL Cluster 1",
 		CPU:         0,
 		RAM:         307201,
+		Disk:		 8,
 		BaseName:    "sql",
 		Domain:      "example.com",
 		TargetCount: -1,
@@ -193,5 +206,36 @@ func TestFormationInvalidTargetCount(t *testing.T) {
 	err := f.Validate()
 	if err == nil {
 		t.Errorf("expected an error with invalid TargetCount")
+	}
+}
+
+func TestFormationMissingDisk(t *testing.T) {
+	f := Formation{
+		Name:		"SQL Cluster 1",
+		CPU:         0,
+		RAM:         307201,
+		BaseName:    "sql",
+		Domain:      "example.com",
+		TargetCount: 1,
+	}
+	err := f.Validate()
+	if err != nil {
+		t.Errorf("expected an error with missing disk parameter")
+	}
+}
+
+func TestFormationBadDiskMin(t *testing.T) {
+	f := Formation{
+		Name:		"SQL Cluster 1",
+		CPU:         0,
+		RAM:         307201,
+		Disk:		 0,
+		BaseName:    "sql",
+		Domain:      "example.com",
+		TargetCount: 1,
+	}
+	err := f.Validate()
+	if err == nil {
+		t.Errorf("expected an error with invalid disk parameter")
 	}
 }

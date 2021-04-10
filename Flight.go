@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
 type Flight struct {
 	gorm.Model
-	Name string
-	Formations []Formation
+	Name string `validate:"required,min=1"`
+	Formations []Formation `validate:"-"`
 	AirspaceID int
-	Airspace Airspace
+	Airspace Airspace `validate:"-"`
 }
 
 func initFlights(db *gorm.DB) error {
@@ -37,6 +38,22 @@ func (f *Flight) performHealthChecks(db *gorm.DB) error {
 		if err != nil {
 			return fmt.Errorf("unable to perform health check on formation %s with error: %w", f.Formations[i].Name, err)
 		}
+	}
+	return nil
+}
+
+func (f *Flight) BeforeCreate(tx *gorm.DB) error {
+	err := f.Validate()
+	if err != nil {
+		return fmt.Errorf("unable to validate flight: %w", err)
+	}
+	return nil
+}
+
+func (f *Flight) Validate() error {
+	err := validator.New().Struct(f)
+	if err != nil {
+		return fmt.Errorf("invalid flight object: %w", err)
 	}
 	return nil
 }

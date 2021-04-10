@@ -107,3 +107,11 @@ func (f *Formation) Validate() error {
 	}
 	return nil
 }
+
+func (f *Formation) BeforeCreate(tx *gorm.DB) error {
+	err := f.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid formation object: %w", err)
+	}
+	return nil
+}
