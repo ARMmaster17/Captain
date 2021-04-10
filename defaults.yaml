@@ -1,0 +1,11 @@
+publickey: x
+network:
+  nameservers: 8.8.8.8 8.8.4.4
+  searchdomain: ""
+  gateway: 10.1.0.1
+  mtu: 1450
+proxmox:
+  image: "pve-img:vztmpl/debian-10-standard_10.7-1_amd64.tar.gz"
+  publicnetwork: internal
+  diskstorage: pve-storage
+  defaultnode: pxvh1
