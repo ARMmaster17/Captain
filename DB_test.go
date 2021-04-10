@@ -82,9 +82,23 @@ func TestGetConfiguredDBDriverFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error connnecting to database: %w", err)
 	}
-	fmt.Println(db.Name())
+	switch dbtype := os.Getenv("DATABASE_CONN"); dbtype {
+	case "postgres":
+		if db.Name() != "postgres" {
+			t.Errorf("expected DB adapter of type 'postgres', got '%s'", db.Name())
+		}
+	case "sqlite3-file":
+		if db.Name() != "sqlite" {
+			t.Errorf("expected DB adapter of type 'sqlite', got '%s'", db.Name())
+		}
+	case "sqlite3-memory":
+		if db.Name() != "sqlite" {
+			t.Errorf("expected DB adapter of type 'sqlite', got '%s'", db.Name())
+		}
+	default:
+		t.Errorf("invalid DATABASE_CONN")
+	}
 	HelperDBTestCleanup()
-	t.Errorf(db.Name())/////////////////////////////////
 }
 
 func TestGetConfiguredDBDriverEnv(t *testing.T) {
@@ -94,9 +108,23 @@ func TestGetConfiguredDBDriverEnv(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error connnecting to database: %w", err)
 	}
-	fmt.Println(db.Name())
+	switch dbtype := os.Getenv("DATABASE_CONN"); dbtype {
+	case "postgres":
+		if db.Name() != "postgres" {
+			t.Errorf("expected DB adapter of type 'postgres', got '%s'", db.Name())
+		}
+	case "sqlite3-file":
+		if db.Name() != "sqlite" {
+			t.Errorf("expected DB adapter of type 'sqlite', got '%s'", db.Name())
+		}
+	case "sqlite3-memory":
+		if db.Name() != "sqlite" {
+			t.Errorf("expected DB adapter of type 'sqlite', got '%s'", db.Name())
+		}
+	default:
+		t.Errorf("invalid DATABASE_CONN")
+	}
 	HelperDBTestCleanup()
-	t.Errorf(db.Name())/////////////////////////////////
 }
 
 func HelperDBTestCleanup() {

@@ -25,7 +25,7 @@ func getConfiguredDBDriver() (gorm.Dialector, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve database configuration: %w", err)
 	}
-	psqlMatch, _ := regexp.Match("$postgresql://", []byte(dbString))
+	psqlMatch, _ := regexp.Match("$postgres://", []byte(dbString))
 	if psqlMatch {
 		return postgres.Open(dbString), nil
 	}
