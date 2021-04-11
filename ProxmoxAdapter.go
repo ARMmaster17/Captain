@@ -12,7 +12,7 @@ import (
 
 func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 	tlsConf := &tls.Config{InsecureSkipVerify: true}
-	c, _ := proxmox.NewClient("CAPTAIN_PROXMOX_URL", nil, tlsConf, 300)
+	c, _ := proxmox.NewClient(os.Getenv("CAPTAIN_PROXMOX_URL"), nil, tlsConf, 300)
 	err := c.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
 	if err != nil {
 		return nil, fmt.Errorf("unable to authenticate with Proxmox cluster with error: %w", err)
