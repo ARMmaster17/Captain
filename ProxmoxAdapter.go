@@ -85,7 +85,10 @@ func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
 		return fmt.Errorf("unable to stop LXC container: %w", err)
 	}
 	time.Sleep(10 * time.Second)
-	_, err = proxmoxOverrideDeleteVmParams(client, vmr, nil)
+	_, err = proxmoxOverrideDeleteVmParams(client, vmr, map[string]interface{}{
+		"force": 1,
+		"purge": 1,
+	})
 	if err != nil {
 		return fmt.Errorf("unable to delete LXC container for plane %s: %w", p.getFQDN(), err)
 	}
@@ -98,6 +101,8 @@ func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef, params
 		return "", err
 	}
 	fmt.Printf("VMR TYPE: %s", vmr.GetVmType())
+	fmt.Printf("VMR ID: %d", vmr.VmId())
+	fmt.Printf("VMR NODE: %s", vmr.Node())
 	reqBody := proxmox.ParamsToBody(params)
 	url := fmt.Sprintf("/nodes/%s/%s/%d", vmr.Node(), vmr.GetVmType(), vmr.VmId())
 	var taskResponse map[string]interface{}
