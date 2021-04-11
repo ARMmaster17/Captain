@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"github.com/Telmate/proxmox-api-go/proxmox"
 	"gorm.io/gorm"
+	"io/ioutil"
 	"os"
+	"time"
 )
 
 func ProxmoxAdapterConnect() (*proxmox.Client, error) {
@@ -78,10 +80,46 @@ func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
 	if err != nil {
 		return fmt.Errorf("unable to obtain reference to underlying LXC container for plane %s: %w", p.getFQDN(), err)
 	}
-	_, err = client.DeleteVm(vmr)
-	// TODO: Should probably parse the exit string.
+	_, err = client.StopVm(vmr)
+	if err != nil {
+		return fmt.Errorf("unable to stop LXC container: %w", err)
+	}
+	time.Sleep(10 * time.Second)
+	_, err = proxmoxOverrideDeleteVmParams(client, vmr, nil)
 	if err != nil {
 		return fmt.Errorf("unable to delete LXC container for plane %s: %w", p.getFQDN(), err)
 	}
 	return nil
+}
+
+func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef, params map[string]interface{}) (string, error) {
+	err := c.CheckVmRef(vmr)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("VMR TYPE: %s", vmr.GetVmType())
+	reqBody := proxmox.ParamsToBody(params)
+	url := fmt.Sprintf("/nodes/%s/%s/%d", vmr.Node(), vmr.GetVmType(), vmr.VmId())
+	var taskResponse map[string]interface{}
+	session, err := proxmox.NewSession(os.Getenv("CAPTAIN_PROXMOX_URL"), nil, &tls.Config{
+		InsecureSkipVerify: true,
+	})
+	if err != nil {
+		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+	}
+	err = session.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
+	if err != nil {
+		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+	}
+	resp, err := session.RequestJSON("DELETE", url, nil, nil, &reqBody, &taskResponse)
+	if err != nil {
+		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+	}
+	fmt.Printf("DELETE SC: %d", resp.StatusCode)
+	rbody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+	}
+	fmt.Println(string(rbody))
+	return "", nil
 }
