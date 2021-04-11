@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	bootstrapOnly := flag.Bool("boostrap", false, "runs stripped-down version of Captain to build the Captain stack from a single worker node.")
+	bootstrapOnly := flag.Bool("boostrap", false, "Runs a stripped-down version of Captain to build the entire Captain stack from a single worker node.")
+	apiPort := *flag.Int("apiport", 5000, "Specifies the port to listen on for API requests. Defaults to 5000.")
 
 
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
@@ -25,8 +26,17 @@ func main() {
 		return
 	}
 
-	err := StartMonitoring()
+	apiServer := &APIServer{}
+	err := apiServer.Start()
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("Captain API server has fatally crashed")
+		return
+	}
+	apiServer.Serve(apiPort)
+
+	err = StartMonitoring()
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("Captain has fatally crashed")
+		return
 	}
 }
