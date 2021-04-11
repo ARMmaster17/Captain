@@ -48,7 +48,7 @@ func (p *Plane) BeforeCreate(tx *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("unable to create plane: %w", err)
 	}
-	result := tx.First(p.Formation, p.FormationID)
+	result := tx.First(&p.Formation, p.FormationID)
 	if result.Error != nil {
 		return fmt.Errorf("unable to get formation ID %d for new plane: %w", p.FormationID, err)
 	}
