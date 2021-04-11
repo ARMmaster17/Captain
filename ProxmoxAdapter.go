@@ -116,7 +116,7 @@ func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef, params
 	if err != nil {
 		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
 	}
-	resp, err := session.RequestJSON("DELETE", url, nil, nil, &reqBody, &taskResponse)
+	resp, err := session.RequestJSON("DELETE", url, nil, nil, nil, &taskResponse)
 	if err != nil {
 		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
 	}
