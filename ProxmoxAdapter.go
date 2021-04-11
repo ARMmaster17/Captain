@@ -70,10 +70,6 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 		return fmt.Errorf("unable to create LXC container with error: %w", err)
 	}
 	p.ProxmoxIdentifier = vmr.VmId()
-	result := db.Save(p)
-	if result.Error != nil {
-		return fmt.Errorf("unable to save new VMID of plane in DB: %w", err)
-	}
 	return nil
 }
 
