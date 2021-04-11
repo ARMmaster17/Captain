@@ -201,7 +201,7 @@ type RESTFlight struct {
 
 func (a *APIServer) registerFlightHandlers() {
 	a.router.HandleFunc("/flights", a.getFlights).Methods("GET")
-	a.router.HandleFunc("/airspace/{aid:[0-9+}/flights", a.getFlightsInAirspace).Methods("GET")
+	a.router.HandleFunc("/airspace/{aid:[0-9+]}/flights", a.getFlightsInAirspace).Methods("GET")
 	a.router.HandleFunc("/flight", a.createFlight).Methods("POST")
 	a.router.HandleFunc("/flight/{id:[0-9]+}", a.getFlight).Methods("GET")
 	a.router.HandleFunc("/flight/{id:[0-9]+}", a.updateFlight).Methods("PUT")
@@ -363,7 +363,7 @@ type RESTFormation struct {
 
 func (a *APIServer) registerFormationHandlers() {
 	a.router.HandleFunc("/formations", a.getFormations).Methods("GET")
-	a.router.HandleFunc("/flight/{fid:[0-9+}/formations", a.getFormationsInFlight).Methods("GET")
+	a.router.HandleFunc("/flight/{fid:[0-9+]}/formations", a.getFormationsInFlight).Methods("GET")
 	a.router.HandleFunc("/formation", a.createFormation).Methods("POST")
 	a.router.HandleFunc("/formation/{id:[0-9]+}", a.getFormation).Methods("GET")
 	a.router.HandleFunc("/formation/{id:[0-9]+}", a.updateFormation).Methods("PUT")
