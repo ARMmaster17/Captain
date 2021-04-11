@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/Telmate/proxmox-api-go/proxmox"
 	"gorm.io/gorm"
+	"net/http"
 	"os"
 )
 
@@ -40,10 +41,11 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	config.Nameserver = defaults.Network.Nameservers
 	config.Networks = proxmox.QemuDevices{
 		0 : {
+			"name": "eth0",
 			"bridge": defaults.Proxmox.PublicNetwork,
 			"ip": "10.1.0.200/16",
 			"gw": defaults.Network.Gateway,
-			"fw": "0",
+			"firewall": "0",
 			"mtu": defaults.Network.MTU,
 		},
 	}
@@ -69,10 +71,6 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 		return fmt.Errorf("unable to create LXC container with error: %w", err)
 	}
 	p.ProxmoxIdentifier = vmr.VmId()
-	result := db.Save(p)
-	if result.Error != nil {
-		return fmt.Errorf("unable to save new VMID of plane in DB: %w", err)
-	}
 	return nil
 }
 
@@ -81,10 +79,43 @@ func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
 	if err != nil {
 		return fmt.Errorf("unable to obtain reference to underlying LXC container for plane %s: %w", p.getFQDN(), err)
 	}
-	_, err = client.DeleteVm(vmr)
-	// TODO: Should probably parse the exit string.
+	_, err = client.StopVm(vmr)
+	if err != nil {
+		return fmt.Errorf("unable to stop LXC container: %w", err)
+	}
+	err = proxmoxOverrideDeleteVmParams(client, vmr)
 	if err != nil {
 		return fmt.Errorf("unable to delete LXC container for plane %s: %w", p.getFQDN(), err)
+	}
+	return nil
+}
+
+// This method replaces the method with the same name in the proxmox library because there is a bug where if you pass
+// an empty struct to any DELETE endpoint, the Proxmox API returns an error. This method overrides that by passing
+// nil to the underlying Session object.
+func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef) error {
+	err := c.CheckVmRef(vmr)
+	if err != nil {
+		return err
+	}
+	url := fmt.Sprintf("/nodes/%s/%s/%d", vmr.Node(), vmr.GetVmType(), vmr.VmId())
+	var taskResponse map[string]interface{}
+	session, err := proxmox.NewSession(os.Getenv("CAPTAIN_PROXMOX_URL"), nil, &tls.Config{
+		InsecureSkipVerify: true,
+	})
+	if err != nil {
+		return fmt.Errorf("unable to connect to the Proxmox API: %w", err)
+	}
+	err = session.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
+	if err != nil {
+		return fmt.Errorf("unable to authenticate with the Proxmox API: %w", err)
+	}
+	resp, err := session.RequestJSON("DELETE", url, nil, nil, nil, &taskResponse)
+	if err != nil {
+		return fmt.Errorf("unable to send DELETE request to the Proxmox API: %w", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("the Proxmxox API returned status code %d", resp.StatusCode)
 	}
 	return nil
 }

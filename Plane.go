@@ -48,6 +48,14 @@ func (p *Plane) BeforeCreate(tx *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("unable to create plane: %w", err)
 	}
+	result := tx.First(&p.Formation, p.FormationID)
+	if result.Error != nil {
+		return fmt.Errorf("unable to get formation ID %d for new plane: %w", p.FormationID, err)
+	}
+	err = p.Formation.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid formation configuration for plane: %w", err)
+	}
 	err = p.buildPlane(tx)
 	if err != nil {
 		// TODO: Should detect what kind of error occurred
