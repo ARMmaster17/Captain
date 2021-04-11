@@ -43,7 +43,7 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 			"bridge": defaults.Proxmox.PublicNetwork,
 			"ip": "10.1.0.200/16",
 			"gw": defaults.Network.Gateway,
-			"fw": "0",
+			"firewall": "0",
 			"mtu": defaults.Network.MTU,
 		},
 	}
