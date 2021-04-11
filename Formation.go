@@ -63,7 +63,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 				Num: f.getNextNum(i),
 				FormationID: int(f.ID),
 			}
-			result := db.Save(newPlane)
+			result := db.Save(&newPlane)
 			if result.Error != nil {
 				return fmt.Errorf("unable to update formation with new planes with error: %w", result.Error)
 			}
