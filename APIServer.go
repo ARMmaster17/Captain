@@ -514,7 +514,16 @@ func (a *APIServer) updateFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondWithJSON(w, http.StatusCreated, as)
+	a.respondOKWithJson(w, RESTFormation{
+		FlightID: formation.FlightID,
+		Name: formation.Name,
+		CPU: formation.CPU,
+		RAM: formation.RAM,
+		Disk: formation.Disk,
+		BaseName: formation.BaseName,
+		Domain: formation.Domain,
+		TargetCount: as.TargetCount,
+	})
 }
 
 func (a *APIServer) deleteFormation(w http.ResponseWriter, r *http.Request) {

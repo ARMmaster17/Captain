@@ -7,9 +7,8 @@ import (
 	"fmt"
 	"github.com/Telmate/proxmox-api-go/proxmox"
 	"gorm.io/gorm"
-	"io/ioutil"
+	"net/http"
 	"os"
-	"time"
 )
 
 func ProxmoxAdapterConnect() (*proxmox.Client, error) {
@@ -84,47 +83,39 @@ func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
 	if err != nil {
 		return fmt.Errorf("unable to stop LXC container: %w", err)
 	}
-	time.Sleep(10 * time.Second)
-	_, err = proxmoxOverrideDeleteVmParams(client, vmr, map[string]interface{}{
-		"force": 1,
-		"purge": 1,
-	})
+	err = proxmoxOverrideDeleteVmParams(client, vmr)
 	if err != nil {
 		return fmt.Errorf("unable to delete LXC container for plane %s: %w", p.getFQDN(), err)
 	}
 	return nil
 }
 
-func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef, params map[string]interface{}) (string, error) {
+// This method replaces the method with the same name in the proxmox library because there is a bug where if you pass
+// an empty struct to any DELETE endpoint, the Proxmox API returns an error. This method overrides that by passing
+// nil to the underlying Session object.
+func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef) error {
 	err := c.CheckVmRef(vmr)
 	if err != nil {
-		return "", err
+		return err
 	}
-	fmt.Printf("VMR TYPE: %s", vmr.GetVmType())
-	fmt.Printf("VMR ID: %d", vmr.VmId())
-	fmt.Printf("VMR NODE: %s", vmr.Node())
-	reqBody := proxmox.ParamsToBody(params)
 	url := fmt.Sprintf("/nodes/%s/%s/%d", vmr.Node(), vmr.GetVmType(), vmr.VmId())
 	var taskResponse map[string]interface{}
 	session, err := proxmox.NewSession(os.Getenv("CAPTAIN_PROXMOX_URL"), nil, &tls.Config{
 		InsecureSkipVerify: true,
 	})
 	if err != nil {
-		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+		return fmt.Errorf("unable to connect to the Proxmox API: %w", err)
 	}
 	err = session.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
 	if err != nil {
-		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+		return fmt.Errorf("unable to authenticate with the Proxmox API: %w", err)
 	}
 	resp, err := session.RequestJSON("DELETE", url, nil, nil, nil, &taskResponse)
 	if err != nil {
-		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+		return fmt.Errorf("unable to send DELETE request to the Proxmox API: %w", err)
 	}
-	fmt.Printf("DELETE SC: %d", resp.StatusCode)
-	rbody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", fmt.Errorf("INTERNAL ERROR: %w", err)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("the Proxmxox API returned status code %d", resp.StatusCode)
 	}
-	fmt.Println(string(rbody))
-	return "", nil
+	return nil
 }
