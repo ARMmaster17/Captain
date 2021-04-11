@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 )
 
 type Airspace struct {
