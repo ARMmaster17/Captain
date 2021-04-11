@@ -59,13 +59,15 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 		var offset = f.TargetCount - len(f.Planes)
 		// TODO: Generate unique names for new planes.
 		for i := 0; i < offset; i++ {
-			f.Planes = append(f.Planes, Plane{
+			newPlane := Plane{
 				Num: f.getNextNum(i),
-			})
-		}
-		result := db.Save(f)
-		if result.Error != nil {
-			return fmt.Errorf("unable to update formation with new planes with error: %w", result.Error)
+				FormationID: int(f.ID),
+			}
+			result := db.Save(newPlane)
+			if result.Error != nil {
+				return fmt.Errorf("unable to update formation with new planes with error: %w", result.Error)
+			}
+			f.Planes = append(f.Planes, newPlane)
 		}
 	}
 
