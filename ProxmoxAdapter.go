@@ -40,6 +40,7 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	config.Nameserver = defaults.Network.Nameservers
 	config.Networks = proxmox.QemuDevices{
 		0 : {
+			"name": "eth0",
 			"bridge": defaults.Proxmox.PublicNetwork,
 			"ip": "10.1.0.200/16",
 			"gw": defaults.Network.Gateway,
