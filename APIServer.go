@@ -3,16 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"net/http"
-	"strconv"
 )
 
 type APIServer struct {
 	router *mux.Router
-	db *gorm.DB
+	db     *gorm.DB
 }
 
 func (a *APIServer) Start() error {
@@ -64,9 +65,9 @@ func (a *APIServer) respondWithJSON(w http.ResponseWriter, code int, payload int
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type RESTAirspace struct {
-	ID uint
+	ID        uint
 	HumanName string
-	NetName string
+	NetName   string
 }
 
 func (a *APIServer) registerAirspaceHandlers() {
@@ -112,9 +113,9 @@ func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 	var restAirspaces []RESTAirspace
 	for i, _ := range airspaces {
 		restAirspaces = append(restAirspaces, RESTAirspace{
-			ID: airspaces[i].ID,
+			ID:        airspaces[i].ID,
 			HumanName: airspaces[i].HumanName,
-			NetName: airspaces[i].NetName,
+			NetName:   airspaces[i].NetName,
 		})
 	}
 	a.respondOKWithJson(w, restAirspaces)
@@ -169,7 +170,7 @@ func (a *APIServer) createAirspace(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	airspace := Airspace{
 		HumanName: as.HumanName,
-		NetName: as.NetName,
+		NetName:   as.NetName,
 	}
 	result := a.db.Create(&airspace)
 	if result.Error != nil {
@@ -227,12 +228,11 @@ func (a *APIServer) getAirspace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a.respondOKWithJson(w, RESTAirspace{
-			ID: airspace.ID,
-			HumanName: airspace.HumanName,
-			NetName: airspace.NetName,
+		ID:        airspace.ID,
+		HumanName: airspace.HumanName,
+		NetName:   airspace.NetName,
 	})
 }
-
 
 // swagger:operation PUT /airspace/{id} airspace UpdateAirspace
 // Updates an airspace.
@@ -348,8 +348,8 @@ func (a *APIServer) deleteAirspace(w http.ResponseWriter, r *http.Request) {
 
 type RESTFlight struct {
 	AirspaceID uint
-	ID uint
-	Name string
+	ID         uint
+	Name       string
 }
 
 func (a *APIServer) registerFlightHandlers() {
@@ -372,7 +372,7 @@ func (a *APIServer) getFlights(w http.ResponseWriter, r *http.Request) {
 	var restFlights []RESTFlight
 	for i, _ := range flights {
 		restFlights = append(restFlights, RESTFlight{
-			ID: flights[i].ID,
+			ID:   flights[i].ID,
 			Name: flights[i].Name,
 		})
 	}
@@ -398,7 +398,7 @@ func (a *APIServer) getFlightsInAirspace(w http.ResponseWriter, r *http.Request)
 	var restFlights []RESTFlight
 	for i, _ := range flights {
 		restFlights = append(restFlights, RESTFlight{
-			ID: flights[i].ID,
+			ID:   flights[i].ID,
 			Name: flights[i].Name,
 		})
 	}
@@ -416,7 +416,7 @@ func (a *APIServer) createFlight(w http.ResponseWriter, r *http.Request) {
 	// TODO: Verify that AirspaceID exists.
 	flight := Flight{
 		AirspaceID: int(as.AirspaceID),
-		Name: as.Name,
+		Name:       as.Name,
 	}
 	result := a.db.Create(&flight)
 	if result.Error != nil {
@@ -450,6 +450,41 @@ func (a *APIServer) getFlight(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// swagger:operation PUT /flight/{id} flight UpdateFlight
+// Updates a flight.
+// Updates the properties of a flight. Note that only the Name property can be changed after creation.
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: id
+//   in: path
+//   schema:
+//     type: integer
+//   required: true
+//   description: Unique ID of the airspace to get.
+// - name: Flight
+//   in: body
+//   description: Human-readable name for this flight
+//   schema:
+//     required:
+//       - Name
+//     type: object
+//     properties:
+//       Name:
+//         type: string
+//         description: Human-readable name for flight.
+// responses:
+//   '200':
+//     description: Request processed
+//     schema:
+//       type: object
+//       properties:
+//         NetName:
+//           type: string
+//           description: Name used for identification in API calls and other Captain tooling.
+//   '500':
+//     description: Internal server error, possibly a database or validation error.
 func (a *APIServer) updateFlight(w http.ResponseWriter, r *http.Request) {
 	var as RESTFlight
 	decoder := json.NewDecoder(r.Body)
@@ -521,14 +556,14 @@ func (a *APIServer) deleteFlight(w http.ResponseWriter, r *http.Request) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type RESTFormation struct {
-	FlightID int
-	ID uint
-	Name string
-	CPU int
-	RAM int
-	Disk int
-	BaseName string
-	Domain string
+	FlightID    int
+	ID          uint
+	Name        string
+	CPU         int
+	RAM         int
+	Disk        int
+	BaseName    string
+	Domain      string
 	TargetCount int
 }
 
@@ -552,15 +587,15 @@ func (a *APIServer) getFormations(w http.ResponseWriter, r *http.Request) {
 	var restFormations []RESTFormation
 	for i, _ := range formations {
 		restFormations = append(restFormations, RESTFormation{
-			ID: formations[i].ID,
-			Name: formations[i].Name,
-			CPU: formations[i].CPU,
-			RAM: formations[i].RAM,
-			Disk: formations[i].Disk,
-			BaseName: formations[i].BaseName,
-			Domain: formations[i].Domain,
+			ID:          formations[i].ID,
+			Name:        formations[i].Name,
+			CPU:         formations[i].CPU,
+			RAM:         formations[i].RAM,
+			Disk:        formations[i].Disk,
+			BaseName:    formations[i].BaseName,
+			Domain:      formations[i].Domain,
 			TargetCount: formations[i].TargetCount,
-			FlightID: formations[i].FlightID,
+			FlightID:    formations[i].FlightID,
 		})
 	}
 	a.respondOKWithJson(w, restFormations)
@@ -585,15 +620,15 @@ func (a *APIServer) getFormationsInFlight(w http.ResponseWriter, r *http.Request
 	var restFormations []RESTFormation
 	for i, _ := range formations {
 		restFormations = append(restFormations, RESTFormation{
-			ID: formations[i].ID,
-			Name: formations[i].Name,
-			CPU: formations[i].CPU,
-			RAM: formations[i].RAM,
-			Disk: formations[i].Disk,
-			BaseName: formations[i].BaseName,
-			Domain: formations[i].Domain,
+			ID:          formations[i].ID,
+			Name:        formations[i].Name,
+			CPU:         formations[i].CPU,
+			RAM:         formations[i].RAM,
+			Disk:        formations[i].Disk,
+			BaseName:    formations[i].BaseName,
+			Domain:      formations[i].Domain,
 			TargetCount: formations[i].TargetCount,
-			FlightID: formations[i].FlightID,
+			FlightID:    formations[i].FlightID,
 		})
 	}
 	a.respondOKWithJson(w, restFormations)
@@ -609,13 +644,13 @@ func (a *APIServer) createFormation(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	// TODO: Verify that FlightID exists.
 	formation := Formation{
-		FlightID: as.FlightID,
-		Name: as.Name,
-		CPU: as.CPU,
-		RAM: as.RAM,
-		Disk: as.Disk,
-		BaseName: as.BaseName,
-		Domain: as.Domain,
+		FlightID:    as.FlightID,
+		Name:        as.Name,
+		CPU:         as.CPU,
+		RAM:         as.RAM,
+		Disk:        as.Disk,
+		BaseName:    as.BaseName,
+		Domain:      as.Domain,
 		TargetCount: as.TargetCount,
 	}
 	result := a.db.Create(&formation)
@@ -644,13 +679,13 @@ func (a *APIServer) getFormation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a.respondOKWithJson(w, RESTFormation{
-		FlightID: as.FlightID,
-		Name: as.Name,
-		CPU: as.CPU,
-		RAM: as.RAM,
-		Disk: as.Disk,
-		BaseName: as.BaseName,
-		Domain: as.Domain,
+		FlightID:    as.FlightID,
+		Name:        as.Name,
+		CPU:         as.CPU,
+		RAM:         as.RAM,
+		Disk:        as.Disk,
+		BaseName:    as.BaseName,
+		Domain:      as.Domain,
 		TargetCount: as.TargetCount,
 	})
 }
@@ -686,13 +721,13 @@ func (a *APIServer) updateFormation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a.respondOKWithJson(w, RESTFormation{
-		FlightID: formation.FlightID,
-		Name: formation.Name,
-		CPU: formation.CPU,
-		RAM: formation.RAM,
-		Disk: formation.Disk,
-		BaseName: formation.BaseName,
-		Domain: formation.Domain,
+		FlightID:    formation.FlightID,
+		Name:        formation.Name,
+		CPU:         formation.CPU,
+		RAM:         formation.RAM,
+		Disk:        formation.Disk,
+		BaseName:    formation.BaseName,
+		Domain:      formation.Domain,
 		TargetCount: as.TargetCount,
 	})
 }
