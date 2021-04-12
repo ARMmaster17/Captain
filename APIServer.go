@@ -86,6 +86,19 @@ func (a *APIServer) registerAirspaceHandlers() {
 // responses:
 //   '200':
 //     description: Request processed
+//     schema:
+//       type: array
+//       items:
+//         properties:
+//           ID:
+//             type: integer
+//             description: Unique airspace ID in state database.
+//           HumanName:
+//             type: string
+//             description: Human-readable name for airspace.
+//           NetName:
+//             type: string
+//             description: Name used for DNS name building, and internal queries against the state database.
 //   '500':
 //     description: Internal server error, possibly a database error.
 func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
@@ -114,14 +127,36 @@ func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 // produces:
 // - application/json
 // parameters:
-// - name: HumanName
+// - name: Airspace
 //   in: body
 //   description: Human-readable name for this airspace
-//   required: true
-//   type: string
+//   schema:
+//     required:
+//       - HumanName
+//       - NetName
+//     type: object
+//     properties:
+//       HumanName:
+//         type: string
+//         description: Human-readable name for airspace.
+//       NetName:
+//         type: string
+//         description: Name used for DNS name building, and internal queries against the state database.
 // responses:
 //   '200':
 //     description: Request processed
+//     schema:
+//       type: object
+//       properties:
+//         ID:
+//           type: integer
+//           description: Unique airspace ID in state database.
+//         HumanName:
+//           type: string
+//           description: Human-readable name for airspace.
+//         NetName:
+//           type: string
+//           description: Name used for DNS name building, and internal queries against the state database.
 //   '500':
 //     description: Internal server error, possibly a database or validation error.
 func (a *APIServer) createAirspace(w http.ResponseWriter, r *http.Request) {
@@ -146,6 +181,36 @@ func (a *APIServer) createAirspace(w http.ResponseWriter, r *http.Request) {
 	a.respondWithJSON(w, http.StatusCreated, as)
 }
 
+// swagger:operation GET /airspace/{id} airspace GetAirspace
+// Get an airspace managed by this ATC instance.
+// Gets an airspace stored in the state database. Does not auto-populate the Flight field.
+// ---
+// produces:
+// - application/json
+// paramters:
+// - name: id
+//   in: path
+//   schema:
+//     type: integer
+//   required: true
+//   description: Unique ID of the airspace to get.
+// responses:
+//   '200':
+//     description: Request processed
+//     schema:
+//       type: object
+//       properties:
+//         ID:
+//           type: integer
+//           description: Unique airspace ID in state database.
+//         HumanName:
+//           type: string
+//           description: Human-readable name for airspace.
+//         NetName:
+//           type: string
+//           description: Name used for DNS name building, and internal queries against the state database.
+//   '500':
+//     description: Internal server error, possibly a database error.
 func (a *APIServer) getAirspace(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -168,6 +233,48 @@ func (a *APIServer) getAirspace(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+
+// swagger:operation PUT /airspace/{id} airspace UpdateAirspace
+// Updates an airspace.
+// Updates the properties of an airspace. Note that only the HumanName can be changed after creation.
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: id
+//   in: path
+//   schema:
+//     type: integer
+//   required: true
+//   description: Unique ID of the airspace to get.
+// - name: Airspace
+//   in: body
+//   description: Human-readable name for this airspace
+//   schema:
+//     required:
+//       - HumanName
+//     type: object
+//     properties:
+//       HumanName:
+//         type: string
+//         description: Human-readable name for airspace.
+// responses:
+//   '200':
+//     description: Request processed
+//     schema:
+//       type: object
+//       properties:
+//         ID:
+//           type: integer
+//           description: Unique airspace ID in state database.
+//         HumanName:
+//           type: string
+//           description: Human-readable name for airspace.
+//         NetName:
+//           type: string
+//           description: Name used for DNS name building, and internal queries against the state database.
+//   '500':
+//     description: Internal server error, possibly a database or validation error.
 func (a *APIServer) updateAirspace(w http.ResponseWriter, r *http.Request) {
 	var as RESTAirspace
 	decoder := json.NewDecoder(r.Body)
@@ -201,6 +308,24 @@ func (a *APIServer) updateAirspace(w http.ResponseWriter, r *http.Request) {
 	a.respondWithJSON(w, http.StatusCreated, as)
 }
 
+// swagger:operation DELETE /airspace/{id} airspace DeleteAirspace
+// Get an airspace managed by this ATC instance.
+// Gets an airspace stored in the state database. Does not auto-populate the Flight field.
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: id
+//   in: path
+//   schema:
+//     type: integer
+//   required: true
+//   description: Unique ID of the airspace to get.
+// responses:
+//   '200':
+//     description: Request processed
+//   '500':
+//     description: Internal server error, possibly a database error.
 func (a *APIServer) deleteAirspace(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -357,6 +482,24 @@ func (a *APIServer) updateFlight(w http.ResponseWriter, r *http.Request) {
 	a.respondWithJSON(w, http.StatusCreated, as)
 }
 
+// swagger:operation DELETE /flight/{id} flight DeleteFlight
+// Deletes a flight from the state database.
+// Deletes a flight, and any dependent formations and planes.
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: id
+//   in: path
+//   schema:
+//     type: integer
+//   required: true
+//   description: Unique ID of the flight to delete.
+// responses:
+//   '200':
+//     description: Request processed
+//   '500':
+//     description: Internal server error, possibly a database error.
 func (a *APIServer) deleteFlight(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
