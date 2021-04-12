@@ -77,6 +77,17 @@ func (a *APIServer) registerAirspaceHandlers() {
 	a.router.HandleFunc("/airspace/{id:[0-9]+}", a.deleteAirspace).Methods("DELETE")
 }
 
+// swagger:operation GET /airspaces airspace GetAirspaces
+// Get all airspaces managed by this ATC instance.
+// Gets a list of all airspaces stored in the state database. Does not auto-populate the Flight field.
+// ---
+// produces:
+// - application/json
+// responses:
+//   '200':
+//     description: Request processed
+//   '500':
+//     description: Internal server error, possibly a database error.
 func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 	var airspaces []Airspace
 	result := a.db.Find(&airspaces)
@@ -96,6 +107,23 @@ func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 	a.respondOKWithJson(w, restAirspaces)
 }
 
+// swagger:operation POST /airspace airspace CreateAirspace
+// Creates an airspace
+// Creates an isolated environment for flights and formations to be provisioned.
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: HumanName
+//   in: body
+//   description: Human-readable name for this airspace
+//   required: true
+//   type: string
+// responses:
+//   '200':
+//     description: Request processed
+//   '500':
+//     description: Internal server error, possibly a database or validation error.
 func (a *APIServer) createAirspace(w http.ResponseWriter, r *http.Request) {
 	var as RESTAirspace
 	decoder := json.NewDecoder(r.Body)

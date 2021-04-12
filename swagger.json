@@ -1,0 +1,67 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Schemes: [http]",
+    "title": "Captain ATC API",
+    "version": "0.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/airspace": {
+      "post": {
+        "description": "Creates an airspace\nCreates an isolated environment for flights and formations to be provisioned.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "airspace"
+        ],
+        "operationId": "CreateAirspace",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Human-readable name for this airspace",
+            "name": "HumanName",
+            "in": "body",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed"
+          },
+          "500": {
+            "description": "Internal server error, possibly a database or validation error."
+          }
+        }
+      }
+    },
+    "/airspaces": {
+      "get": {
+        "description": "Gets a list of all airspaces stored in the state database. Does not auto-populate the Flight field.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "airspace"
+        ],
+        "summary": "Get all airspaces managed by this ATC instance.",
+        "operationId": "GetAirspaces",
+        "responses": {
+          "200": {
+            "description": "Request processed"
+          },
+          "500": {
+            "description": "Internal server error, possibly a database error."
+          }
+        }
+      }
+    }
+  }
+}
