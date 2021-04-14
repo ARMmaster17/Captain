@@ -11,11 +11,20 @@ import (
 	"gorm.io/gorm"
 )
 
+// Maintains the state of an APIServer instance. Provides caching of DB connections to speed up queries. The APIServer
+// is responsible for responding to external HTTP requests, and updating the state of the Captain stack using the
+// state database.
 type APIServer struct {
+	// HTTP router that responds to all incoming requests. Mostly stateless.
 	router *mux.Router
+	// Cached database connection instance to speed up queries and ease the load on the database. According to the
+	// Gorm documentation, sharing an instance also provides thread-safe locking when working with local databases
+	// such as Sqlite3.
 	db     *gorm.DB
 }
 
+// Initializes the APIServer instance. Connects to the database and caches the connection for use by HTTP route
+// handlers. CRUD routes for all REST... objects are mapped to the HTTP router.
 func (a *APIServer) Start() error {
 	a.router = mux.NewRouter()
 	var err error
@@ -29,10 +38,13 @@ func (a *APIServer) Start() error {
 	return nil
 }
 
+// Starts the HTTP APIServer on a new thread that listens on the specified port.
 func (a *APIServer) Serve(port int) {
 	go http.ListenAndServe(fmt.Sprintf(":%d", port), a.router)
 }
 
+// Registers the HTTP REST routes for each of the 4 models stored in the state database. Each model is reponsible for
+// mapping its own CRUD endpoints.
 func (a *APIServer) registerHandlers() {
 	a.registerAirspaceHandlers()
 	a.registerFlightHandlers()
@@ -40,18 +52,27 @@ func (a *APIServer) registerHandlers() {
 	//a.registerPlaneHandlers()
 }
 
+// Responds to an HTTP REST request with a generic 500 error. Good for hiding internal error messages that might pose
+// a security threat, or may not be necessary to pass on to the end user. If this response is used, it is expected that
+// the endpoint logic handles logging the error stack to stdout or stderr.
 func (a *APIServer) respondWithError(w http.ResponseWriter) {
 	a.respondWithErrorMessage(w, "Internal server error")
 }
 
+// Responds to an HTTP REST request with a 500 error code and the specified message. Good for when things break, but
+// telling the end user would be both safe and helpful (e.g. validation errors). If this response is used, it is
+// expected that the endpoint logic handles logging the error stack to stdout or stderr.
 func (a *APIServer) respondWithErrorMessage(w http.ResponseWriter, message string) {
 	a.respondWithJSON(w, http.StatusInternalServerError, map[string]string{"error": message})
 }
 
+// Responds to an HTTP REST request with a success code and the specified payload, which will be converted into JSON.
 func (a *APIServer) respondOKWithJson(w http.ResponseWriter, payload interface{}) {
 	a.respondWithJSON(w, http.StatusOK, payload)
 }
 
+// Responds to an HTTP REST request with the specified code, and the specified payload, which will be converted into a
+// JSON object.
 func (a *APIServer) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
