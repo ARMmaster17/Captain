@@ -2,7 +2,10 @@ package main
 
 // Lots of this code was initially borrowed from http://marcio.io/2015/07/handling-1-million-requests-per-minute-with-golang/.
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 type BuilderDispatcher struct {
 	BuilderPool chan chan BuilderJob
@@ -40,7 +43,12 @@ var (
 
 // Job represents the job to be run
 type BuilderJob struct {
-	Payload Payload
+	Payload BuilderPayload
+}
+
+type BuilderPayload struct {
+	NewVMID int
+	Plane Plane
 }
 
 // A buffered channel that we can send work requests on.
@@ -71,8 +79,14 @@ func (w Builder) Start() {
 			select {
 			case job := <-w.JobChannel:
 				// we have received a work request.
-				if err := job.Payload.UploadToS3(); err != nil {
-					log.Errorf("Error uploading to S3: %s", err.Error())
+				job.Payload.Plane.Validate()
+				newPlane := Plane{
+					Num: f.getNextNum(i),
+					FormationID: int(f.ID),
+				}
+				result := db.Save(&newPlane)
+				if result.Error != nil {
+					return fmt.Errorf("unable to update formation with new planes with error: %w", result.Error)
 				}
 
 			case <-w.quit:
