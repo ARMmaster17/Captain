@@ -25,12 +25,15 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - name: Test & publish code coverage
+    - name: Test
+      run: go test -v -coverprofile=cover.out ./...
+
+    - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
       env:
         CC_TEST_REPORTER_ID: c19b466b4c3e08a48f23e2c883a52c68bc7b2a3b2f52ab914224004b5a990df3
       with:
-        coverageCommand: go test -v -coverprofile=cover.out ./...
         prefix: Captain
+        debug: true
         coverageLocations: |
           ${{github.workspace}}/cover.out
