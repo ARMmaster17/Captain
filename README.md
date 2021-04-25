@@ -1,6 +1,8 @@
 ![Logo](https://github.com/ARMmaster17/Captain/raw/main/static/Captain.png)
 # Captain
 [![Go](https://github.com/ARMmaster17/Captain/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/ARMmaster17/Captain/actions/workflows/go.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ade54503d0d7daec431f/maintainability)](https://codeclimate.com/github/ARMmaster17/Captain/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ade54503d0d7daec431f/test_coverage)](https://codeclimate.com/github/ARMmaster17/Captain/test_coverage)
 
 Captain is a container orchestration and streamlined PaaS provider for Proxmox-based datacenters. Captain can:
 - Quickly create LXC containers based on a set of common defaults.
