@@ -36,4 +36,4 @@ jobs:
         prefix: Captain
         debug: true
         coverageLocations: |
-          ${{github.workspace}}/cover.out
+          ${{github.workspace}}/cover.out:gocov
