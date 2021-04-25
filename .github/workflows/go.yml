@@ -26,4 +26,12 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: go test -v -coverprofile=cover.out ./...
+
+    - name: Publish code coverage
+      uses: paambaati/codeclimate-action@v2.7.5
+      env:
+        CC_TEST_REPORTER_ID: c19b466b4c3e08a48f23e2c883a52c68bc7b2a3b2f52ab914224004b5a990df3
+      with:
+        prefix: github.com/ARMmaster17/Captain
+        coverageLocations: ${{github.workspace}}/cover.out:gocov
