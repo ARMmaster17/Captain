@@ -33,4 +33,5 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: c19b466b4c3e08a48f23e2c883a52c68bc7b2a3b2f52ab914224004b5a990df3
       with:
-        coverageLocations: cover.out
+        coverageLocations: |
+          ${{github.workspace}}/cover.out:gocov
