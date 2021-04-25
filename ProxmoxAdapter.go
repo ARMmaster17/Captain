@@ -11,6 +11,8 @@ import (
 	"os"
 )
 
+// Connect to Proxmox using a third party library. This provider driver handles the implentation of plane creation,
+// management, and deletion and the specifics of running these operations on a Proxmox cluster.
 func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 	tlsConf := &tls.Config{InsecureSkipVerify: true}
 	c, _ := proxmox.NewClient(os.Getenv("CAPTAIN_PROXMOX_URL"), nil, tlsConf, 300)
@@ -21,6 +23,8 @@ func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 	return c, nil
 }
 
+// Converts from a plane structure to a JSON object that can be passed to the Proxmox API to create a new plane
+// instance. Also handles loading of defaults from defaults.yaml.
 func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	defaults, err := getPlaneDefaults()
 	if err != nil {
@@ -74,6 +78,9 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	return nil
 }
 
+// Handles the destruction of the underlying LXC container. At the present moment, the third-party library has a bug
+// with API calls the use the DELETE HTTP method. As such, this library calls a method that overrides the broken method
+// to properly delete the container.
 func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
 	vmr, err := client.GetVmRefByName(p.getFQDN())
 	if err != nil {

@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+// Main entry point of the application. Handles the creation of the requested number of workers for each task, and sets
+// them up to use pipe-based IPC or an external MQ service for communication.
 func main() {
 	bootstrapOnly := flag.Bool("boostrap", false, "Runs a stripped-down version of Captain to build the entire Captain stack from a single worker node.")
 	apiPort := *flag.Int("apiport", 5000, "Specifies the port to listen on for API requests. Defaults to 5000.")

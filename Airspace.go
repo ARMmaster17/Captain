@@ -6,14 +6,21 @@ import (
 	"gorm.io/gorm"
 )
 
+// Airspace model. Represents an isolated space for applications to run independent of other airspaces.
 type Airspace struct {
 	gorm.Model
+	// A human-friendly name to be used in GUIs and CLI outputs for identification purposes.
 	HumanName string
+	// A computer friendly name. In the future, this name will be used in the FQDN of any flights in the airspace
+	// (e.x. formation1.flight.airspace.example.com).
 	NetName string
 	Flights []Flight
 }
 
+// Performs migrations on the Airspace schema. Will also create a default airspace if no airspaces exist
+// in the state database. Will also trigger all dependent migrations as well.
 func initAirspaces(db *gorm.DB) error {
+	// Initialize dependent schemas first.
 	log.Debug().Msg("initializing flights")
 	err := initFlights(db)
 	if err != nil {
@@ -24,6 +31,7 @@ func initAirspaces(db *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("unable to migrate airspace schema with error: %w", err)
 	}
+	// Create a default airspace if none exist.
 	log.Trace().Msg("checking if default airspace exists")
 	var airspaceCount int64
 	db.Model(&Airspace{}).Count(&airspaceCount)
@@ -41,6 +49,7 @@ func initAirspaces(db *gorm.DB) error {
 	return nil
 }
 
+// Checks the health of all dependent objects in the airspace.
 func (a *Airspace) performHealthChecks(db *gorm.DB) error {
 	result := db.Where("airspace_id = ?", a.ID).Find(&a.Flights)
 	if result.Error != nil {

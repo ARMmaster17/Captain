@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// Starts a monitoring server. Ideally this should be run on it's own thread. This server will, at the specified
+// interval, check the desired state in the database, and compare it to the actual state as reported by the underlying
+// provider drivers and what is reported by the state database after all health checks are completed.
 func StartMonitoring() error {
 	db, err := ConnectToDB()
 	if err != nil {
@@ -28,6 +31,8 @@ func StartMonitoring() error {
 	}
 }
 
+// This function is called once per monitoring interval. Checks that each object represented in the state database is
+// healthy, and within the requested operating parameters. If not, the object is modified until the issue is mitigated.
 func monitoringLoop(db *gorm.DB) error {
 	log.Trace().Msg("retrieving all airspaces from database")
 	var airspaces []Airspace
