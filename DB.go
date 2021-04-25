@@ -11,6 +11,7 @@ import (
 	"regexp"
 )
 
+// Creates a connection to the configured database with the proper type of sql* instance.
 func ConnectToDB() (*gorm.DB, error) {
 	log.Debug().Msg("connecting to database")
 	dialector, err := getConfiguredDBDriver()
@@ -20,6 +21,8 @@ func ConnectToDB() (*gorm.DB, error) {
 	return gorm.Open(dialector, &gorm.Config{})
 }
 
+// Checks the user-supplied configuration and returns the proper adapter for the configured database type. By default
+// Sqlite3 is used with an in-memory database if all configuration values are blank or invalid.
 func getConfiguredDBDriver() (gorm.Dialector, error) {
 	dbString, err := getDBConnectionString()
 	if err != nil {
@@ -32,6 +35,9 @@ func getConfiguredDBDriver() (gorm.Dialector, error) {
 	return sqlite.Open(dbString), nil
 }
 
+// Returns the active connection string configuration. Priority is given first to db.conf, and then to the environment
+// variable CAPTAIN_DB. Otherwise an in-memory Sqlite3 configuration is returned if all other configuration values are
+// blank or invalid.
 func getDBConnectionString() (string, error) {
 	// Check for db.conf file.
 	_, err := os.Stat("/etc/captain/db.conf")

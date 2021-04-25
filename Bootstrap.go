@@ -6,6 +6,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// Creates the entire Captain stack on target Proxmox cluster. Assumes that the current ATC instance is running in
+// standalone mode with a Sqlite3 database. After this procedure runs, the standalone ATC instance will be converted
+// into cluster mode using a Postgres database with distributed builders.
 func BootstrapCluster() error {
 	log.Info().Msg("bootstrapping cluster...")
 	log.Debug().Msg("connecting to database")
@@ -29,6 +32,8 @@ func BootstrapCluster() error {
 	return nil
 }
 
+// Handles the actual creation of the Captain Stack. Assumes that the local ATC instance has been fully initialized
+// and is ready to start creating formations.
 func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
 	airspace.Flights = append(airspace.Flights, Flight{
 		Name: "Captain Core Services",
@@ -68,6 +73,9 @@ func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
 	return nil
 }
 
+// Ensures that this node is clean and does not have any other initialized airspaces. If this node is clean, a managed
+// airspace will be created that holds all the internal services used by Captain to avoid collisions with user-created
+// flights and formations.
 func bootstrapCreateSystemAirspace(db *gorm.DB) (*Airspace, error) {
 	airspacesExist, err := bootstrapCheckIfAirspacesAlreadyExist(db)
 	if err != nil {
@@ -87,6 +95,8 @@ func bootstrapCreateSystemAirspace(db *gorm.DB) (*Airspace, error) {
 	return &systemAirspace, nil
 }
 
+// Verifies that only the default airspace exists in the state database. Used to verify that the ATC instance is in the
+// proper state for bootstrapping.
 func bootstrapCheckIfAirspacesAlreadyExist(db *gorm.DB) (bool, error) {
 	var airspaces []Airspace
 	result := db.Find(&airspaces)
