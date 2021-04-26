@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Added changelog.md.
+- Added `CHANGELOG.md`.
+- Added security policy in `SECURITY.md`.
+
+### Security
+- Defined security policy to provide security patches for latest patch version of the latest minor release.
 
 ## [v0.0.1] - 2021-04-25
 
