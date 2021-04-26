@@ -1,6 +1,7 @@
 ![Logo](https://github.com/ARMmaster17/Captain/raw/main/static/Captain.png)
 # Captain
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ARMmaster17/Captain?sort=semver)
 [![Go](https://github.com/ARMmaster17/Captain/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/ARMmaster17/Captain/actions/workflows/go.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ade54503d0d7daec431f/maintainability)](https://codeclimate.com/github/ARMmaster17/Captain/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ade54503d0d7daec431f/test_coverage)](https://codeclimate.com/github/ARMmaster17/Captain/test_coverage)
