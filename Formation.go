@@ -77,11 +77,15 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 	if len(f.Planes) < f.TargetCount {
 		log.Debug().Str("formation", f.Name).Msgf("formation currently has %d planes, expected %d", len(f.Planes), f.TargetCount)
 		var offset = f.TargetCount - len(f.Planes)
-		// TODO: Generate unique names for new planes.
 		for i := 0; i < offset; i++ {
-			// TODO: Trigger job in BuilderQueue
-
-			f.Planes = append(f.Planes, newPlane)
+			BuilderJobQueue <- BuilderJob{
+				BuilderPayload{
+					Plane{
+						Formation:   *f,
+						FormationID: int(f.ID),
+					},
+				},
+			}
 		}
 	}
 

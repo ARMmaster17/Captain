@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ARMmaster17/Captain/db"
 	"net/http"
 	"strconv"
 
@@ -29,7 +30,7 @@ func (a *APIServer) Start() error {
 	a.router = mux.NewRouter()
 	var err error
 	if a.db == nil {
-		a.db, err = ConnectToDB()
+		a.db, err = db.ConnectToDB()
 		if err != nil {
 			return fmt.Errorf("unable to connect to database: %w", err)
 		}
