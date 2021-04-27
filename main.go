@@ -2,9 +2,14 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"os"
+)
+
+var (
+	Version string
 )
 
 // Main entry point of the application. Handles the creation of the requested number of workers for each task, and sets
@@ -18,7 +23,7 @@ func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	// TODO: Read verbosity level from command line args
 
-	log.Info().Msg("Captain v0.0.0 is starting up")
+	log.Info().Msg(fmt.Sprintf("Captain %s is starting up", getApplicationVersion()))
 
 	if *bootstrapOnly {
 		err := BootstrapCluster()
@@ -41,4 +46,10 @@ func main() {
 		log.Fatal().Stack().Err(err).Msg("Captain has fatally crashed")
 		return
 	}
+}
+
+// There is a bug in how 'go test' is implemented. This method does not
+// have a unit test.
+func getApplicationVersion() string {
+	return Version
 }

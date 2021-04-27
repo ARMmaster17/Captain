@@ -19,3 +19,5 @@ builder/conf/*.key
 builder/conf/*.private
 *.env
 .idea/*
+
+cover.out

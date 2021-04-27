@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `CHANGELOG.md`.
 - Added security policy in `SECURITY.md`.
+- Added automated versioning to compiled output.
 
 ### Security
 - Defined security policy to provide security patches for latest patch version of the latest minor release.
