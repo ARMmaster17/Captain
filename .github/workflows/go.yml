@@ -18,9 +18,6 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.13
-    
-    - name: Create configuration directory
-      run: sudo mkdir /etc/captain && sudo chmod 777 /etc/captain
 
     - name: Build
       run: make build
