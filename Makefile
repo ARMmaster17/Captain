@@ -18,7 +18,8 @@ uninstall:
 	rmdir /etc/captain
 
 init-data-dir:
-	mkdir /etc/captain
+	sudo mkdir /etc/captain
+	sudo chmod 777 -R /etc/captain
 	cp defaults.yaml /etc/captain/defaults.yaml
 
 install:
