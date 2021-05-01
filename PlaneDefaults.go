@@ -51,7 +51,7 @@ type defaultplaneproxmox struct {
 // Loads the plane defaults from a file. In the future, this may also respond to environment variables an inject them
 // into the final struct.
 func getPlaneDefaults() (*defaultplane, error) {
-	defaultFile, err := ioutil.ReadFile("defaults.yaml")
+	defaultFile, err := ioutil.ReadFile("/etc/captain/defaults.yaml")
 	if err != nil {
 		return nil, fmt.Errorf("unable to read defaults.yaml: %w", err)
 	}
