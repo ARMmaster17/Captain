@@ -1,0 +1,12 @@
+[Unit]
+Description=Captain ATC service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/captain
+ExecStart=/usr/local/bin/captain
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
