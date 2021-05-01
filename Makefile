@@ -22,6 +22,12 @@ init-data-dir:
 	sudo chmod 777 -R /etc/captain
 	cp defaults.yaml /etc/captain/defaults.yaml
 
+install-service:
+	sudo cp captain.service /etc/systemd/system/captain.service
+	sudo systemctl daemon-reload
+	sudo systemctl enable captain
+	sudo systemctl start captain
+
 install:
 	$(MAKE) build
 	cp $(BINARY) /usr/local/bin/$(BINARY)
