@@ -81,15 +81,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 		wg := new(sync.WaitGroup)
 		wg.Add(offset)
 		for i := 0; i < offset; i++ {
-			builder := Builder{
-				ID: i,
-			}
-			log.Trace().Str("formation", f.Name).Msgf("firing off builder %d/%d to build plane", i, offset)
-			go builder.buildPlane(Plane{
-				Formation: *f,
-				FormationID: int(f.ID),
-				Num: f.getNextNum(i),
-			}, wg)
+			f.launchBuilder(i, offset, wg)
 		}
 		log.Trace().Str("formation", f.Name).Msgf("waiting for %d builder threads to return", offset)
 		wg.Wait()
@@ -114,6 +106,18 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 	}
 
 	return nil
+}
+
+func (f *Formation) launchBuilder(id int, totalBuilders int, wg *sync.WaitGroup) {
+	builder := Builder{
+		ID: id,
+	}
+	log.Trace().Str("formation", f.Name).Msgf("firing off builder %d/%d to build plane", id, totalBuilders)
+	go builder.buildPlane(Plane{
+		Formation: *f,
+		FormationID: int(f.ID),
+		Num: f.getNextNum(id),
+	}, wg)
 }
 
 // Gets the next available unique ID within a formation.

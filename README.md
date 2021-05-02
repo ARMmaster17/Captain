@@ -37,8 +37,6 @@ make install
 5. Edit `/etc/captain/defaults.yaml` in the captain directory to match the configuration of your network and Proxmox cluster setup. This is also where you provide your public SSH key.
 6. Start Captain by running `captain`, or install the Systemd service with `make install-service`.
 
-If leave `db.conf` blank and don't set `CAPTAIN_DB`, by default Captain will run with an in-memory database that will be cleared on each restart. This is fine for testing, but to run an actual cluster it is recommended to use a Sqlite3 file or PostgreSQL database.
-
 ## Managing a Captain Cluster
 First a bit of terminology. The highest level in Captain is called an *airspace*. An airspace is an isolated group of instances. For example, one airspace can hold all production instances of an app, and each developer gets their own airspace for testing purposes.
 
