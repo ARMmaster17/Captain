@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	db2 "github.com/ARMmaster17/Captain/db"
 	"github.com/go-playground/assert"
 	"sync"
@@ -16,9 +17,10 @@ func TestBuilderCreateDestroyCycle(t *testing.T) {
 	}
 	flight := Flight{
 		Name:       "Test Flight",
-		AirspaceID: 0,
+		AirspaceID: 1,
 	}
-	db.Create(&flight)
+	tx := db.Create(&flight)
+	assert.Equal(t, tx.Error, nil)
 	formation := Formation{
 		Name:        "TestFormation",
 		CPU:         1,
@@ -29,7 +31,8 @@ func TestBuilderCreateDestroyCycle(t *testing.T) {
 		TargetCount: 0,
 		FlightID:    int(flight.ID),
 	}
-	db.Create(&formation)
+	tx = db.Create(&formation)
+	assert.Equal(t, tx.Error, err)
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 	builder.buildPlane(Plane{
@@ -37,8 +40,12 @@ func TestBuilderCreateDestroyCycle(t *testing.T) {
 		FormationID: int(formation.ID),
 		Num: formation.getNextNum(0),
 	}, wg)
+	fmt.Println(formation.ID)
 	// TODO: Check that plane got built right.
-	db.Where("formation_id = ?", &formation.ID).Delete(Plane{})
-	db.Delete(Formation{}, &formation.ID)
-	db.Delete(Flight{}, &flight.ID)
+	tx = db.Where("formation_id = ?", formation.ID).Delete(&Plane{})
+	assert.Equal(t, tx.Error, err)
+	tx = db.Delete(&Formation{}, formation.ID)
+	assert.Equal(t, tx.Error, err)
+	tx = db.Delete(&Flight{}, flight.ID)
+	assert.Equal(t, tx.Error, err)
 }
