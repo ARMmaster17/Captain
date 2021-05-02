@@ -47,7 +47,7 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 		0 : {
 			"name": "eth0",
 			"bridge": defaults.Proxmox.PublicNetwork,
-			"ip": "10.1.0.200/16",
+			"ip": "dhcp",
 			"gw": defaults.Network.Gateway,
 			"firewall": "0",
 			"mtu": defaults.Network.MTU,

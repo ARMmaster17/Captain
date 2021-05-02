@@ -3,7 +3,9 @@
 The format of this file is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v0.1.0] - 2021-05-02
+
+The MVP release of Captain. Supports the ability to create and destroy containers as requested through a REST API.
 
 ### Added
 - Created a changelog.
@@ -21,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `db.conf` is no longer allowed for database configuration. Use `CAPTAIN_DB` instead.
 - `:memory:` database type for SQLite3 driver no longer works and has been removed.
 
+### Fixed
+- LXC containers now use DHCP for IP address assignment rather than a hard-coded value.
+
 ### Security
 - Defined security policy to provide security patches for latest patch version of the latest minor release.
 
@@ -35,5 +40,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project logo in `README.md`.
 - Unit testing and code coverage in CI pipeline.
 
-[unreleased]: https://github.com/ARMmaster17/Captain/compare/v0.0.1...HEAD
+[v0.1.0]: https://github.com/ARMmaster17/Captain/releases/tag/v0.1.0
 [v0.0.1]: https://github.com/ARMmaster17/Captain/releases/tag/v0.0.1
