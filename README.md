@@ -24,21 +24,18 @@ git clone https://github.com/ARMmaster17/Captain
 cd Captain
 make install
 ```
-4. Optionally, you may create a file at `/etc/captain/db.conf`. Enter a valid PostgreSQL URL (e.g. `postgres://...`) or a valid file path for Sqlite3 to use (e.g. `test.db`).
-5. Set the following environment variables to match your Proxmox configuration.
+4. Set the following environment variables to match your Proxmox configuration.
    
    | Name | Value |
    |---|---|
-   | `CAPTAIN_DB` | Optionally, this variable can be specified in place of creating `db.conf`. |
+   | `CAPTAIN_DB` | Path to a SQLite3 file or a Postgres connection string starting with `postgres://...`. |
    | `CAPTAIN_PROXMOX_USER` | The fully qualified username of a user with privileges to create and destroy VMs/containers. (ex. `root@pam`) |
    | `CAPTAIN_PROXMOX_PASSWORD` | Password to specified proxmox user. |
-   | `CAPTAIN_PROXMOX_URL` | Full path to Proxmox host. (ex. `https://192.168.1.2:8006/`) |
+   | `CAPTAIN_PROXMOX_URL` | Full path to Proxmox host. (ex. `https://192.168.1.2:8006/api2/json`) |
    | `CAPTAIN_PRIVATE_KEY` | Absolute filepath to your private key so Captain can provision new planes. |
 
-6. Edit `/etc/captain/defaults.yaml` in the captain directory to match the configuration of your network and Proxmox cluster setup. This is also where you provide your public SSH key.
-7. Start Captain by running `captain`, or install the Systemd service with `make install-service`.
-
-If leave `db.conf` blank and don't set `CAPTAIN_DB`, by default Captain will run with an in-memory database that will be cleared on each restart. This is fine for testing, but to run an actual cluster it is recommended to use a Sqlite3 file or PostgreSQL database.
+5. Edit `/etc/captain/defaults.yaml` in the captain directory to match the configuration of your network and Proxmox cluster setup. This is also where you provide your public SSH key.
+6. Start Captain by running `captain`, or install the Systemd service with `make install-service`.
 
 ## Managing a Captain Cluster
 First a bit of terminology. The highest level in Captain is called an *airspace*. An airspace is an isolated group of instances. For example, one airspace can hold all production instances of an app, and each developer gets their own airspace for testing purposes.

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ARMmaster17/Captain/db"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -12,7 +13,7 @@ import (
 // interval, check the desired state in the database, and compare it to the actual state as reported by the underlying
 // provider drivers and what is reported by the state database after all health checks are completed.
 func StartMonitoring() error {
-	db, err := ConnectToDB()
+	db, err := db.ConnectToDB()
 	if err != nil {
 		return fmt.Errorf("unable to open database with error: %w", err)
 	}

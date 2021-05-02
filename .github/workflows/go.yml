@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_CONN: sqlite3-file
     steps:
     - uses: actions/checkout@v2
 
@@ -24,6 +22,9 @@ jobs:
 
     - name: Test
       run: make test
+      env:
+        CAPTAIN_DRY_RUN: TRUE
+        CAPTAIN_DB: test.db
 
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
@@ -32,3 +33,10 @@ jobs:
       with:
         prefix: github.com/ARMmaster17/Captain
         coverageLocations: ${{github.workspace}}/cover.out:gocov
+
+    - name: Publish unit test results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: report.xml
+        report_individual_runs: "true"

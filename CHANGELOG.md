@@ -10,9 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Security policy defined in `SECURITY.md`.
 - Automated versioning to compiled output.
 - Installation script with GNU make.
+- Builder jobs are now multi-threaded.
+- Setting `CAPTAIN_DRY_RUN` to `TRUE` will allow users to simulate Captain without modifying the hypervisor state.
 
 ### Changed
 - `defaults.yaml` is now stored at `/etc/captain/defaults.yaml`.
+
+### Removed
+- Use of `DATABASE_CONN` to override database driver type in CI environment.
+- `db.conf` is no longer allowed for database configuration. Use `CAPTAIN_DB` instead.
+- `:memory:` database type for SQLite3 driver no longer works and has been removed.
 
 ### Security
 - Defined security policy to provide security patches for latest patch version of the latest minor release.

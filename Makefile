@@ -3,11 +3,12 @@ VERSION=`git describe --tags`
 LDFLAGS=-ldflags="-w -s -X main.Version=$(VERSION)"
 
 build:
-	go build -v $(LDFLAGS) -o $(BINARY) ./...
+	go build -v $(LDFLAGS) -o $(BINARY) github.com/ARMmaster17/Captain
 
 test:
 	$(MAKE) init-data-dir
-	go test -v -coverprofile=cover.out ./...
+	go get -u github.com/jstemmer/go-junit-report
+	go test -v -coverprofile=cover.out ./... 2>&1 | go-junit-report > report.xml
 
 clean:
 	rm ./$(BINARY)

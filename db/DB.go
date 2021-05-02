@@ -1,12 +1,11 @@
-package main
+package db
 
 import (
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"gorm.io/driver/sqlite"
 	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"io/ioutil"
 	"os"
 	"regexp"
 )
@@ -39,27 +38,10 @@ func getConfiguredDBDriver() (gorm.Dialector, error) {
 // variable CAPTAIN_DB. Otherwise an in-memory Sqlite3 configuration is returned if all other configuration values are
 // blank or invalid.
 func getDBConnectionString() (string, error) {
-	// Check for db.conf file.
-	_, err := os.Stat("/etc/captain/db.conf")
-	if os.IsNotExist(err) {
-		log.Debug().Msg("configuration file db.conf not found")
-	} else {
-		content, err := ioutil.ReadFile("/etc/captain/db.conf")
-		if err != nil {
-			return "", fmt.Errorf("unable to read db.conf: %w", err)
-		}
-		if string(content) == "" {
-			return "", fmt.Errorf("db.conf is empty")
-		}
-		return string(content), nil
-	}
-
 	// Check the environment variable CAPTAIN_DB
 	envVarString := os.Getenv("CAPTAIN_DB")
 	if envVarString != "" {
 		return envVarString, nil
 	}
-
-	// Use a default Sqlite3 database path
-	return ":memory:", nil
+	return "", fmt.Errorf("no DB string is configured in CAPTAIN_DB")
 }
