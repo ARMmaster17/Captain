@@ -22,8 +22,6 @@ func StartMonitoring() error {
 	if err != nil {
 		return fmt.Errorf("unable to migrate database with error: %w", err)
 	}
-	log.Info().Msg("starting builders")
-	InitBuilderDispatcher(1)
 	log.Info().Msg("beginning monitoring loop on all airspaces")
 	for {
 		err = monitoringLoop(db)

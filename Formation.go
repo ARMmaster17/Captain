@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"github.com/go-playground/validator"
+	"sync"
 )
 
-// A formation is the lowest-level object that is directly addressable by the user (within the context of Captain). A
+// Formation is the lowest-level object that is directly addressable by the user (within the context of Captain). A
 // formation manages a group of planes that are scaled up and down automatically. A formation is a logical representation
 // of an internal service for an application. For example, all web servers that serve the same web app would be
 // considered part of the same formation. All planes in a formation will be exactly the same except for the FQDN.
@@ -77,16 +78,21 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 	if len(f.Planes) < f.TargetCount {
 		log.Debug().Str("formation", f.Name).Msgf("formation currently has %d planes, expected %d", len(f.Planes), f.TargetCount)
 		var offset = f.TargetCount - len(f.Planes)
+		wg := new(sync.WaitGroup)
+		wg.Add(offset)
 		for i := 0; i < offset; i++ {
-			BuilderJobQueue <- BuilderJob{
-				BuilderPayload{
-					Plane{
-						Formation:   *f,
-						FormationID: int(f.ID),
-					},
-				},
+			builder := Builder{
+				ID: i,
 			}
+			log.Trace().Str("formation", f.Name).Msgf("firing off builder %d/%d to build plane", i, offset)
+			go builder.buildPlane(Plane{
+				Formation: *f,
+				FormationID: int(f.ID),
+				Num: f.getNextNum(i),
+			}, wg)
 		}
+		log.Trace().Str("formation", f.Name).Msgf("waiting for %d builder threads to return", offset)
+		wg.Wait()
 	}
 
 	// Reload plane list in case changes were made

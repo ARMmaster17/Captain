@@ -1,11 +1,12 @@
 package main
 
 import (
+	db2 "github.com/ARMmaster17/Captain/db"
 	"testing"
 )
 
 func TestE2EMonitoringLoop(t *testing.T) {
-	db, err := ConnectToDB()
+	db, err := db2.ConnectToDB()
 	if err != nil {
 		t.Errorf("unable to open database with error: %w", err)
 		return

@@ -21,3 +21,6 @@ builder/conf/*.private
 .idea/*
 
 cover.out
+
+test.db
+dev.db

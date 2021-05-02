@@ -5,6 +5,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"os"
 )
 
 // Represents a running instance on any provider, such as an LXC container, a VM, or a Docker/Kubernetes container
@@ -98,6 +99,9 @@ func (p *Plane) Validate() error {
 // is done by the underlying provider driver.
 func (p *Plane) buildPlane(db *gorm.DB) error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("building new plane")
+	if os.Getenv("CAPTAIN_DRY_RUN") == "TRUE" {
+		return nil
+	}
 	px, err := ProxmoxAdapterConnect()
 	if err != nil {
 		return fmt.Errorf("unable to contact Proxmox cluster with error: %w", err)
@@ -113,6 +117,9 @@ func (p *Plane) buildPlane(db *gorm.DB) error {
 // rules that may be attached to the running instance (handled by the underlying provider driver).
 func (p *Plane) destroyPlane() error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("destroying plane")
+	if os.Getenv("CAPTAIN_DRY_RUN") == "TRUE" {
+		return nil
+	}
 	px, err := ProxmoxAdapterConnect()
 	if err != nil {
 		return fmt.Errorf("unable to connect to Proxmox cluster: %w", err)
