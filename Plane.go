@@ -5,7 +5,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"os"
+	"strings"
 )
 
 // Represents a running instance on any provider, such as an LXC container, a VM, or a Docker/Kubernetes container
@@ -99,7 +99,7 @@ func (p *Plane) Validate() error {
 // is done by the underlying provider driver.
 func (p *Plane) buildPlane(db *gorm.DB) error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("building new plane")
-	if os.Getenv("CAPTAIN_DRY_RUN") == "TRUE" {
+	if strings.Contains("CAPTAIN_DRY_RUN", "TRUE") {
 		return nil
 	}
 	px, err := ProxmoxAdapterConnect()
@@ -117,7 +117,7 @@ func (p *Plane) buildPlane(db *gorm.DB) error {
 // rules that may be attached to the running instance (handled by the underlying provider driver).
 func (p *Plane) destroyPlane() error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("destroying plane")
-	if os.Getenv("CAPTAIN_DRY_RUN") == "TRUE" {
+	if strings.Contains("CAPTAIN_DRY_RUN", "TRUE") {
 		return nil
 	}
 	px, err := ProxmoxAdapterConnect()
