@@ -38,7 +38,7 @@ func TestBuilderCreateDestroyCycle(t *testing.T) {
 		Num: formation.getNextNum(0),
 	}, wg)
 	// TODO: Check that plane got built right.
-	db.Where("formation_id = ?", formation.ID).Delete(Plane{})
-	db.Delete(Formation{}, formation.ID)
-	db.Delete(Flight{}, flight.ID)
+	db.Where("formation_id = ?", &formation.ID).Delete(Plane{})
+	db.Delete(Formation{}, &formation.ID)
+	db.Delete(Flight{}, &flight.ID)
 }

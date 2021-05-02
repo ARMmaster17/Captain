@@ -99,7 +99,6 @@ func (p *Plane) Validate() error {
 // is done by the underlying provider driver.
 func (p *Plane) buildPlane(db *gorm.DB) error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("building new plane")
-	fmt.Printf("Value of CAPTAIN_DRY_RUN: '%s'\n", os.Getenv("CAPTAIN_DRY_RUN"))
 	if os.Getenv("CAPTAIN_DRY_RUN") != "" {
 		return nil
 	}
@@ -118,7 +117,6 @@ func (p *Plane) buildPlane(db *gorm.DB) error {
 // rules that may be attached to the running instance (handled by the underlying provider driver).
 func (p *Plane) destroyPlane() error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("destroying plane")
-	fmt.Printf("Value of CAPTAIN_DRY_RUN: '%s'\n", os.Getenv("CAPTAIN_DRY_RUN"))
 	if os.Getenv("CAPTAIN_DRY_RUN") != "" {
 		return nil
 	}
