@@ -1,6 +1,7 @@
 ![Logo](https://github.com/ARMmaster17/Captain/raw/main/static/Captain.png)
 # Captain
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ARMmaster17/Captain?sort=semver)
 [![Go](https://github.com/ARMmaster17/Captain/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/ARMmaster17/Captain/actions/workflows/go.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ade54503d0d7daec431f/maintainability)](https://codeclimate.com/github/ARMmaster17/Captain/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ade54503d0d7daec431f/test_coverage)](https://codeclimate.com/github/ARMmaster17/Captain/test_coverage)
@@ -21,8 +22,7 @@ Captain is a container orchestration and streamlined PaaS provider for Proxmox-b
 ```shell
 git clone https://github.com/ARMmaster17/Captain
 cd Captain
-go get .
-go build
+make install
 ```
 4. Optionally, you may create a file at `/etc/captain/db.conf`. Enter a valid PostgreSQL URL (e.g. `postgres://...`) or a valid file path for Sqlite3 to use (e.g. `test.db`).
 5. Set the following environment variables to match your Proxmox configuration.
@@ -35,9 +35,8 @@ go build
    | `CAPTAIN_PROXMOX_URL` | Full path to Proxmox host. (ex. `https://192.168.1.2:8006/`) |
    | `CAPTAIN_PRIVATE_KEY` | Absolute filepath to your private key so Captain can provision new planes. |
 
-6. Edit `defaults.yaml` in the captain directory to match the configuration of your network and Proxmox cluster setup. This is also where you provide your public SSH key.
-7. Start Captain by running `./captain`.
-8. Optionally you may create a SystemD service file so Captain runs on system startup.
+6. Edit `/etc/captain/defaults.yaml` in the captain directory to match the configuration of your network and Proxmox cluster setup. This is also where you provide your public SSH key.
+7. Start Captain by running `captain`, or install the Systemd service with `make install-service`.
 
 If leave `db.conf` blank and don't set `CAPTAIN_DB`, by default Captain will run with an in-memory database that will be cleared on each restart. This is fine for testing, but to run an actual cluster it is recommended to use a Sqlite3 file or PostgreSQL database.
 
