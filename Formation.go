@@ -33,7 +33,7 @@ type Formation struct {
 	Domain		string `validate:"required,fqdn,min=1"`
 	// Desired number of planes that should be operational at any given moment. At each health check interval,
 	// remediations will be made to adjust the number of healthy planes in service until it equals this number.
-	TargetCount	int `validate:"required,gte=0"`
+	TargetCount	int `validate:"gte=0"`
 	Planes []Plane `validate:"-"`
 	FlightID int
 	Flight Flight `validate:"-"`
