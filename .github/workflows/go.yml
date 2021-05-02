@@ -9,9 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      CAPTAIN_DRY_RUN: TRUE
-      CAPTAIN_DB: test.db
     steps:
     - uses: actions/checkout@v2
 
@@ -25,6 +22,9 @@ jobs:
 
     - name: Test
       run: make test
+      env:
+        CAPTAIN_DRY_RUN: TRUE
+        CAPTAIN_DB: test.db
 
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
