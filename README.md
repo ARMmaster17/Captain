@@ -20,6 +20,7 @@ Captain is a container orchestration and streamlined PaaS provider for Proxmox-b
 1. Install Proxmox on at least one server (you may also use a hypervisor such as VirtualBox in place of a physical server).
 2. Create an LXC container (or VM) in Proxmox using any (reasonable) Linux distro. Install the golang compiler and `make`.
 3. Run the following commands:
+
 ```shell
 git clone https://github.com/ARMmaster17/Captain
 cd Captain
