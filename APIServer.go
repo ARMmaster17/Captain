@@ -68,7 +68,7 @@ func (a *APIServer) respondWithErrorMessage(w http.ResponseWriter, message strin
 }
 
 // Responds to an HTTP REST request with a success code and the specified payload, which will be converted into JSON.
-func (a *APIServer) respondOKWithJson(w http.ResponseWriter, payload interface{}) {
+func (a *APIServer) respondOKWithJSON(w http.ResponseWriter, payload interface{}) {
 	a.respondWithJSON(w, http.StatusOK, payload)
 }
 
@@ -140,7 +140,7 @@ func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 			NetName:   airspaces[i].NetName,
 		})
 	}
-	a.respondOKWithJson(w, restAirspaces)
+	a.respondOKWithJSON(w, restAirspaces)
 }
 
 // swagger:operation POST /airspace airspace CreateAirspace
@@ -249,7 +249,7 @@ func (a *APIServer) getAirspace(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTAirspace{
+	a.respondOKWithJSON(w, RESTAirspace{
 		ID:        airspace.ID,
 		HumanName: airspace.HumanName,
 		NetName:   airspace.NetName,
@@ -398,7 +398,7 @@ func (a *APIServer) getFlights(w http.ResponseWriter, r *http.Request) {
 			Name: flights[i].Name,
 		})
 	}
-	a.respondOKWithJson(w, restFlights)
+	a.respondOKWithJSON(w, restFlights)
 }
 
 func (a *APIServer) getFlightsInAirspace(w http.ResponseWriter, r *http.Request) {
@@ -424,7 +424,7 @@ func (a *APIServer) getFlightsInAirspace(w http.ResponseWriter, r *http.Request)
 			Name: flights[i].Name,
 		})
 	}
-	a.respondOKWithJson(w, restFlights)
+	a.respondOKWithJSON(w, restFlights)
 }
 
 func (a *APIServer) createFlight(w http.ResponseWriter, r *http.Request) {
@@ -465,7 +465,7 @@ func (a *APIServer) getFlight(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTFlight{
+	a.respondOKWithJSON(w, RESTFlight{
 		AirspaceID: uint(flight.AirspaceID),
 		ID:         flight.ID,
 		Name:       flight.Name,
@@ -620,7 +620,7 @@ func (a *APIServer) getFormations(w http.ResponseWriter, r *http.Request) {
 			FlightID:    formations[i].FlightID,
 		})
 	}
-	a.respondOKWithJson(w, restFormations)
+	a.respondOKWithJSON(w, restFormations)
 }
 
 func (a *APIServer) getFormationsInFlight(w http.ResponseWriter, r *http.Request) {
@@ -653,7 +653,7 @@ func (a *APIServer) getFormationsInFlight(w http.ResponseWriter, r *http.Request
 			FlightID:    formations[i].FlightID,
 		})
 	}
-	a.respondOKWithJson(w, restFormations)
+	a.respondOKWithJSON(w, restFormations)
 }
 
 func (a *APIServer) createFormation(w http.ResponseWriter, r *http.Request) {
@@ -700,7 +700,7 @@ func (a *APIServer) getFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTFormation{
+	a.respondOKWithJSON(w, RESTFormation{
 		FlightID:    as.FlightID,
 		Name:        as.Name,
 		CPU:         as.CPU,
@@ -742,7 +742,7 @@ func (a *APIServer) updateFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTFormation{
+	a.respondOKWithJSON(w, RESTFormation{
 		FlightID:    formation.FlightID,
 		Name:        formation.Name,
 		CPU:         formation.CPU,
