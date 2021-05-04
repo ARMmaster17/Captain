@@ -64,11 +64,11 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	config.Tty = 2
 	config.Unprivileged = true
 
-	nextId, err := client.GetNextID(0)
+	nextID, err := client.GetNextID(0)
 	if err != nil {
 		return fmt.Errorf("unable to retreive next available VMID with error: %w", err)
 	}
-	vmr := proxmox.NewVmRef(nextId)
+	vmr := proxmox.NewVmRef(nextID)
 	vmr.SetNode(defaults.Proxmox.DefaultNode)
 	err = config.CreateLxc(vmr, client)
 	if err != nil {
