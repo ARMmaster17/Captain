@@ -16,6 +16,7 @@ The MVP release of Captain. Supports the ability to create and destroy container
 - Setting `CAPTAIN_DRY_RUN` to `TRUE` will allow users to simulate Captain without modifying the hypervisor state.
 
 ### Changed
+
 - `defaults.yaml` is now stored at `/etc/captain/defaults.yaml`.
 
 ### Removed
