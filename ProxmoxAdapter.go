@@ -118,7 +118,7 @@ func proxmoxOverrideDeleteVMParams(c *proxmox.Client, vmr *proxmox.VmRef) error 
 		return fmt.Errorf("unable to authenticate with the Proxmox API: %w", err)
 	}
 	resp, err := session.RequestJSON("DELETE", url, nil, nil, nil, &taskResponse)
-	if err != nil {
+	if err != nil || resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unable to send DELETE request to the Proxmox API: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {

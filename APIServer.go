@@ -589,6 +589,19 @@ type RESTFormation struct {
 	TargetCount int
 }
 
+func convertToRESTFormation(as Formation) RESTFormation {
+	return RESTFormation{
+		FlightID:    as.FlightID,
+		Name:        as.Name,
+		CPU:         as.CPU,
+		RAM:         as.RAM,
+		Disk:        as.Disk,
+		BaseName:    as.BaseName,
+		Domain:      as.Domain,
+		TargetCount: as.TargetCount,
+	}
+}
+
 func (a *APIServer) registerFormationHandlers() {
 	a.router.HandleFunc("/formations", a.getFormations).Methods("GET")
 	a.router.HandleFunc("/flight/{fid:[0-9+]}/formations", a.getFormationsInFlight).Methods("GET")
@@ -608,17 +621,7 @@ func (a *APIServer) getFormations(w http.ResponseWriter, r *http.Request) {
 	}
 	var restFormations []RESTFormation
 	for i := range formations {
-		restFormations = append(restFormations, RESTFormation{
-			ID:          formations[i].ID,
-			Name:        formations[i].Name,
-			CPU:         formations[i].CPU,
-			RAM:         formations[i].RAM,
-			Disk:        formations[i].Disk,
-			BaseName:    formations[i].BaseName,
-			Domain:      formations[i].Domain,
-			TargetCount: formations[i].TargetCount,
-			FlightID:    formations[i].FlightID,
-		})
+		restFormations = append(restFormations, convertToRESTFormation(formations[i]))
 	}
 	a.respondOKWithJSON(w, restFormations)
 }
@@ -641,17 +644,7 @@ func (a *APIServer) getFormationsInFlight(w http.ResponseWriter, r *http.Request
 	}
 	var restFormations []RESTFormation
 	for i := range formations {
-		restFormations = append(restFormations, RESTFormation{
-			ID:          formations[i].ID,
-			Name:        formations[i].Name,
-			CPU:         formations[i].CPU,
-			RAM:         formations[i].RAM,
-			Disk:        formations[i].Disk,
-			BaseName:    formations[i].BaseName,
-			Domain:      formations[i].Domain,
-			TargetCount: formations[i].TargetCount,
-			FlightID:    formations[i].FlightID,
-		})
+		restFormations = append(restFormations, convertToRESTFormation(formations[i]))
 	}
 	a.respondOKWithJSON(w, restFormations)
 }
@@ -700,16 +693,7 @@ func (a *APIServer) getFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJSON(w, RESTFormation{
-		FlightID:    as.FlightID,
-		Name:        as.Name,
-		CPU:         as.CPU,
-		RAM:         as.RAM,
-		Disk:        as.Disk,
-		BaseName:    as.BaseName,
-		Domain:      as.Domain,
-		TargetCount: as.TargetCount,
-	})
+	a.respondOKWithJSON(w, convertToRESTFormation(as))
 }
 
 func (a *APIServer) updateFormation(w http.ResponseWriter, r *http.Request) {
@@ -742,16 +726,7 @@ func (a *APIServer) updateFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJSON(w, RESTFormation{
-		FlightID:    formation.FlightID,
-		Name:        formation.Name,
-		CPU:         formation.CPU,
-		RAM:         formation.RAM,
-		Disk:        formation.Disk,
-		BaseName:    formation.BaseName,
-		Domain:      formation.Domain,
-		TargetCount: as.TargetCount,
-	})
+	a.respondOKWithJSON(w, convertToRESTFormation(formation))
 }
 
 func (a *APIServer) deleteFormation(w http.ResponseWriter, r *http.Request) {
