@@ -640,7 +640,7 @@ func (a *APIServer) getFormationsInFlight(w http.ResponseWriter, r *http.Request
 		return
 	}
 	var restFormations []RESTFormation
-	for i, _ := range formations {
+	for i := range formations {
 		restFormations = append(restFormations, RESTFormation{
 			ID:          formations[i].ID,
 			Name:        formations[i].Name,
