@@ -35,6 +35,7 @@ The MVP release of Captain. Supports the ability to create and destroy container
 ## [v0.0.1] - 2021-04-25
 
 ### Added
+
 - Plane creation through LXC provider driver.
 - State synchronization with Postgres or Sqlite3 database.
 - REST API for receiving commands from external tools.
