@@ -1,0 +1,18 @@
+plugins:
+  git-legal:
+    enabled: true
+    config:
+      allow_affero_copyleft: false
+      allow_strong_copyleft: false
+  fixme:
+    enabled: true
+  gofmt:
+    enabled: true
+  golint:
+    enabled: true
+    config:
+      min_confidence: 0.9
+  govet:
+    enabled: true
+  markdownlint:
+    enabled: true
