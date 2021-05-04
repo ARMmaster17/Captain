@@ -133,7 +133,7 @@ func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var restAirspaces []RESTAirspace
-	for i, _ := range airspaces {
+	for i := range airspaces {
 		restAirspaces = append(restAirspaces, RESTAirspace{
 			ID:        airspaces[i].ID,
 			HumanName: airspaces[i].HumanName,
