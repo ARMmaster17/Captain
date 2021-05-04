@@ -68,7 +68,7 @@ func (a *APIServer) respondWithErrorMessage(w http.ResponseWriter, message strin
 }
 
 // Responds to an HTTP REST request with a success code and the specified payload, which will be converted into JSON.
-func (a *APIServer) respondOKWithJson(w http.ResponseWriter, payload interface{}) {
+func (a *APIServer) respondOKWithJSON(w http.ResponseWriter, payload interface{}) {
 	a.respondWithJSON(w, http.StatusOK, payload)
 }
 
@@ -133,14 +133,14 @@ func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var restAirspaces []RESTAirspace
-	for i, _ := range airspaces {
+	for i := range airspaces {
 		restAirspaces = append(restAirspaces, RESTAirspace{
 			ID:        airspaces[i].ID,
 			HumanName: airspaces[i].HumanName,
 			NetName:   airspaces[i].NetName,
 		})
 	}
-	a.respondOKWithJson(w, restAirspaces)
+	a.respondOKWithJSON(w, restAirspaces)
 }
 
 // swagger:operation POST /airspace airspace CreateAirspace
@@ -249,7 +249,7 @@ func (a *APIServer) getAirspace(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTAirspace{
+	a.respondOKWithJSON(w, RESTAirspace{
 		ID:        airspace.ID,
 		HumanName: airspace.HumanName,
 		NetName:   airspace.NetName,
@@ -392,13 +392,13 @@ func (a *APIServer) getFlights(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var restFlights []RESTFlight
-	for i, _ := range flights {
+	for i := range flights {
 		restFlights = append(restFlights, RESTFlight{
 			ID:   flights[i].ID,
 			Name: flights[i].Name,
 		})
 	}
-	a.respondOKWithJson(w, restFlights)
+	a.respondOKWithJSON(w, restFlights)
 }
 
 func (a *APIServer) getFlightsInAirspace(w http.ResponseWriter, r *http.Request) {
@@ -418,13 +418,13 @@ func (a *APIServer) getFlightsInAirspace(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var restFlights []RESTFlight
-	for i, _ := range flights {
+	for i := range flights {
 		restFlights = append(restFlights, RESTFlight{
 			ID:   flights[i].ID,
 			Name: flights[i].Name,
 		})
 	}
-	a.respondOKWithJson(w, restFlights)
+	a.respondOKWithJSON(w, restFlights)
 }
 
 func (a *APIServer) createFlight(w http.ResponseWriter, r *http.Request) {
@@ -465,7 +465,7 @@ func (a *APIServer) getFlight(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTFlight{
+	a.respondOKWithJSON(w, RESTFlight{
 		AirspaceID: uint(flight.AirspaceID),
 		ID:         flight.ID,
 		Name:       flight.Name,
@@ -589,6 +589,19 @@ type RESTFormation struct {
 	TargetCount int
 }
 
+func convertToRESTFormation(as Formation) RESTFormation {
+	return RESTFormation{
+		FlightID:    as.FlightID,
+		Name:        as.Name,
+		CPU:         as.CPU,
+		RAM:         as.RAM,
+		Disk:        as.Disk,
+		BaseName:    as.BaseName,
+		Domain:      as.Domain,
+		TargetCount: as.TargetCount,
+	}
+}
+
 func (a *APIServer) registerFormationHandlers() {
 	a.router.HandleFunc("/formations", a.getFormations).Methods("GET")
 	a.router.HandleFunc("/flight/{fid:[0-9+]}/formations", a.getFormationsInFlight).Methods("GET")
@@ -607,20 +620,10 @@ func (a *APIServer) getFormations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var restFormations []RESTFormation
-	for i, _ := range formations {
-		restFormations = append(restFormations, RESTFormation{
-			ID:          formations[i].ID,
-			Name:        formations[i].Name,
-			CPU:         formations[i].CPU,
-			RAM:         formations[i].RAM,
-			Disk:        formations[i].Disk,
-			BaseName:    formations[i].BaseName,
-			Domain:      formations[i].Domain,
-			TargetCount: formations[i].TargetCount,
-			FlightID:    formations[i].FlightID,
-		})
+	for i := range formations {
+		restFormations = append(restFormations, convertToRESTFormation(formations[i]))
 	}
-	a.respondOKWithJson(w, restFormations)
+	a.respondOKWithJSON(w, restFormations)
 }
 
 func (a *APIServer) getFormationsInFlight(w http.ResponseWriter, r *http.Request) {
@@ -640,20 +643,10 @@ func (a *APIServer) getFormationsInFlight(w http.ResponseWriter, r *http.Request
 		return
 	}
 	var restFormations []RESTFormation
-	for i, _ := range formations {
-		restFormations = append(restFormations, RESTFormation{
-			ID:          formations[i].ID,
-			Name:        formations[i].Name,
-			CPU:         formations[i].CPU,
-			RAM:         formations[i].RAM,
-			Disk:        formations[i].Disk,
-			BaseName:    formations[i].BaseName,
-			Domain:      formations[i].Domain,
-			TargetCount: formations[i].TargetCount,
-			FlightID:    formations[i].FlightID,
-		})
+	for i := range formations {
+		restFormations = append(restFormations, convertToRESTFormation(formations[i]))
 	}
-	a.respondOKWithJson(w, restFormations)
+	a.respondOKWithJSON(w, restFormations)
 }
 
 func (a *APIServer) createFormation(w http.ResponseWriter, r *http.Request) {
@@ -700,16 +693,7 @@ func (a *APIServer) getFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTFormation{
-		FlightID:    as.FlightID,
-		Name:        as.Name,
-		CPU:         as.CPU,
-		RAM:         as.RAM,
-		Disk:        as.Disk,
-		BaseName:    as.BaseName,
-		Domain:      as.Domain,
-		TargetCount: as.TargetCount,
-	})
+	a.respondOKWithJSON(w, convertToRESTFormation(as))
 }
 
 func (a *APIServer) updateFormation(w http.ResponseWriter, r *http.Request) {
@@ -742,16 +726,7 @@ func (a *APIServer) updateFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
-	a.respondOKWithJson(w, RESTFormation{
-		FlightID:    formation.FlightID,
-		Name:        formation.Name,
-		CPU:         formation.CPU,
-		RAM:         formation.RAM,
-		Disk:        formation.Disk,
-		BaseName:    formation.BaseName,
-		Domain:      formation.Domain,
-		TargetCount: as.TargetCount,
-	})
+	a.respondOKWithJSON(w, convertToRESTFormation(formation))
 }
 
 func (a *APIServer) deleteFormation(w http.ResponseWriter, r *http.Request) {

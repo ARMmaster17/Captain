@@ -109,7 +109,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 }
 
 func (f *Formation) launchBuilder(id int, totalBuilders int, wg *sync.WaitGroup) {
-	builder := Builder{
+	builder := builder{
 		ID: id,
 	}
 	log.Trace().Str("formation", f.Name).Msgf("firing off builder %d/%d to build plane", id, totalBuilders)

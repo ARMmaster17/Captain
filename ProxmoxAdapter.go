@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-// Connect to Proxmox using a third party library. This provider driver handles the implentation of plane creation,
+// ProxmoxAdapterConnect Connect to Proxmox using a third party library. This provider driver handles the implentation of plane creation,
 // management, and deletion and the specifics of running these operations on a Proxmox cluster.
 func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 	tlsConf := &tls.Config{InsecureSkipVerify: true}
@@ -23,7 +23,7 @@ func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 	return c, nil
 }
 
-// Converts from a plane structure to a JSON object that can be passed to the Proxmox API to create a new plane
+// ProxmoxBuildLxc Converts from a plane structure to a JSON object that can be passed to the Proxmox API to create a new plane
 // instance. Also handles loading of defaults from defaults.yaml.
 func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	defaults, err := getPlaneDefaults()
@@ -64,11 +64,11 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	config.Tty = 2
 	config.Unprivileged = true
 
-	nextId, err := client.GetNextID(0)
+	nextID, err := client.GetNextID(0)
 	if err != nil {
 		return fmt.Errorf("unable to retreive next available VMID with error: %w", err)
 	}
-	vmr := proxmox.NewVmRef(nextId)
+	vmr := proxmox.NewVmRef(nextID)
 	vmr.SetNode(defaults.Proxmox.DefaultNode)
 	err = config.CreateLxc(vmr, client)
 	if err != nil {
@@ -78,7 +78,7 @@ func ProxmoxBuildLxc(db *gorm.DB, client *proxmox.Client, p *Plane) error {
 	return nil
 }
 
-// Handles the destruction of the underlying LXC container. At the present moment, the third-party library has a bug
+// ProxmoxDestroyLxc Handles the destruction of the underlying LXC container. At the present moment, the third-party library has a bug
 // with API calls the use the DELETE HTTP method. As such, this library calls a method that overrides the broken method
 // to properly delete the container.
 func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
@@ -90,7 +90,7 @@ func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
 	if err != nil {
 		return fmt.Errorf("unable to stop LXC container: %w", err)
 	}
-	err = proxmoxOverrideDeleteVmParams(client, vmr)
+	err = proxmoxOverrideDeleteVMParams(client, vmr)
 	if err != nil {
 		return fmt.Errorf("unable to delete LXC container for plane %s: %w", p.getFQDN(), err)
 	}
@@ -100,7 +100,7 @@ func ProxmoxDestroyLxc(client *proxmox.Client, p *Plane) error {
 // This method replaces the method with the same name in the proxmox library because there is a bug where if you pass
 // an empty struct to any DELETE endpoint, the Proxmox API returns an error. This method overrides that by passing
 // nil to the underlying Session object.
-func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef) error {
+func proxmoxOverrideDeleteVMParams(c *proxmox.Client, vmr *proxmox.VmRef) error {
 	err := c.CheckVmRef(vmr)
 	if err != nil {
 		return err
@@ -118,7 +118,7 @@ func proxmoxOverrideDeleteVmParams(c *proxmox.Client, vmr *proxmox.VmRef) error 
 		return fmt.Errorf("unable to authenticate with the Proxmox API: %w", err)
 	}
 	resp, err := session.RequestJSON("DELETE", url, nil, nil, nil, &taskResponse)
-	if err != nil {
+	if err != nil || resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unable to send DELETE request to the Proxmox API: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {

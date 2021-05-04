@@ -7,15 +7,17 @@ import (
 	"sync"
 )
 
-type Builder struct {
+// Builder instance that handles the creation and destruction of planes. Thread-safe and uses a WaitGroup
+// to properly lock resources and not overwhelm the provider API.
+type builder struct {
 	ID			int
 }
 
-func (w Builder) logError(err error, msg string) {
+func (w builder) logError(err error, msg string) {
 	log.Err(err).Stack().Int("WorkerID", w.ID).Msg(msg)
 }
 
-func (w Builder) buildPlane(payload Plane, wg *sync.WaitGroup) {
+func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup) {
 	defer wg.Done()
 	// we have received a work request.
 	err := payload.Validate()

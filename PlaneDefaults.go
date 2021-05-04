@@ -12,9 +12,9 @@ import (
 type defaultplane struct {
 	// The SSH public key used by Captain for connecting to planes for provisioning, and monitoring if SSH monitoring
 	// is configured.
-	PublicKey string `yaml:"publickey"`
-	Network defaultplanenetwork `yaml:"network"`
-	Proxmox defaultplaneproxmox `yaml:"proxmox"`
+	PublicKey string              `yaml:"publickey"`
+	Network   defaultplanenetwork `yaml:"network"`
+	Proxmox   defaultplaneproxmox `yaml:"proxmox"`
 }
 
 // Defines public network settings for a plane. In the future when SDN isolation is implemented, these settings will
@@ -38,7 +38,7 @@ type defaultplanenetwork struct {
 // use these settings.
 type defaultplaneproxmox struct {
 	// The fully qualified name of the image to use for all planes.
-	Image string `yaml:"image"`
+	Image         string `yaml:"image"`
 	PublicNetwork string `yaml:"publicnetwork"`
 	// Name of storage device to use for storing the VM/container disk image. This should be the same on all nodes, or
 	// (preferrably) a network share on CephFS or NFS should be used.
