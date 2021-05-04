@@ -392,7 +392,7 @@ func (a *APIServer) getFlights(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var restFlights []RESTFlight
-	for i, _ := range flights {
+	for i := range flights {
 		restFlights = append(restFlights, RESTFlight{
 			ID:   flights[i].ID,
 			Name: flights[i].Name,
