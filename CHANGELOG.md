@@ -19,6 +19,7 @@ The MVP release of Captain. Supports the ability to create and destroy container
 - `defaults.yaml` is now stored at `/etc/captain/defaults.yaml`.
 
 ### Removed
+
 - Use of `DATABASE_CONN` to override database driver type in CI environment.
 - `db.conf` is no longer allowed for database configuration. Use `CAPTAIN_DB` instead.
 - `:memory:` database type for SQLite3 driver no longer works and has been removed.
