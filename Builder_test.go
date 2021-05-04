@@ -12,7 +12,7 @@ func TestBuilderCreateDestroyCycle(t *testing.T) {
 	db, err := db2.ConnectToDB()
 	assert.Equal(t, err, nil)
 
-	builder := Builder{
+	builder := builder{
 		ID: 1,
 	}
 	flight := Flight{
