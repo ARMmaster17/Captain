@@ -26,6 +26,7 @@ The MVP release of Captain. Supports the ability to create and destroy container
 - `:memory:` database type for SQLite3 driver no longer works and has been removed.
 
 ### Fixed
+
 - LXC containers now use DHCP for IP address assignment rather than a hard-coded value.
 
 ### Security
