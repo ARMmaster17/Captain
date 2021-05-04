@@ -29,6 +29,7 @@ The MVP release of Captain. Supports the ability to create and destroy container
 - LXC containers now use DHCP for IP address assignment rather than a hard-coded value.
 
 ### Security
+
 - Defined security policy to provide security patches for latest patch version of the latest minor release.
 
 ## [v0.0.1] - 2021-04-25
