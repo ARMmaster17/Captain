@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-// ProxmoxAdapterConnect Connect to Proxmox using a third party library. This provider driver handles the implentation of plane creation,
+// ProxmoxAdapterConnect Connect to Proxmox using a third party library. This provider driver handles the implementation of plane creation,
 // management, and deletion and the specifics of running these operations on a Proxmox cluster.
 func ProxmoxAdapterConnect() (*proxmox.Client, error) {
 	tlsConf := &tls.Config{InsecureSkipVerify: true}
