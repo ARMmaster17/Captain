@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/ARMmaster17/Captain/drivers"
+	"github.com/ARMmaster17/Captain/drivers/providers"
 	"github.com/go-playground/validator"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -102,14 +104,11 @@ func (p *Plane) buildPlane(db *gorm.DB) error {
 	if os.Getenv("CAPTAIN_DRY_RUN") != "" {
 		return nil
 	}
-	px, err := ProxmoxAdapterConnect()
+	fqcuid, err := drivers.BuildPlaneOnAnyProvider(p.getGenericPlane())
 	if err != nil {
-		return fmt.Errorf("unable to contact Proxmox cluster with error: %w", err)
+		return err
 	}
-	err = ProxmoxBuildLxc(db, px, p)
-	if err != nil {
-		return fmt.Errorf("unable to build plane: %w", err)
-	}
+	p.DriverIdentifier = fqcuid
 	return nil
 }
 
@@ -120,14 +119,16 @@ func (p *Plane) destroyPlane() error {
 	if os.Getenv("CAPTAIN_DRY_RUN") != "" {
 		return nil
 	}
-	px, err := ProxmoxAdapterConnect()
-	if err != nil {
-		return fmt.Errorf("unable to connect to Proxmox cluster: %w", err)
+	return drivers.DestroyPlane(p.getGenericPlane())
+}
+
+func (p *Plane) getGenericPlane() *providers.GenericPlane {
+	return &providers.GenericPlane{
+		FQDN:              p.getFQDN(),
+		CUID:              p.DriverIdentifier,
+		Cores:             p.Formation.CPU,
+		RAM:               p.Formation.RAM,
+		Disk:              p.Formation.Disk,
 	}
-	err = ProxmoxDestroyLxc(px, p)
-	if err != nil {
-		return fmt.Errorf("unable to destroy plane %s: %w", p.getFQDN(), err)
-	}
-	return nil
 }
 
