@@ -24,7 +24,7 @@ jobs:
       run: make test
       env:
         CAPTAIN_DRY_RUN: TRUE
-        CAPTAIN_DB: test.db
+        CAPTAIN_DB: testing.db
 
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
