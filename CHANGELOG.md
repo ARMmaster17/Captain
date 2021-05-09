@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- All configuration is now stored in a unified config file at `/etc/captain/config.yaml` that is generated on first run.
-- A dummy provider driver is now available for testing purposes. Helps with simulating the Captain stack without modifying a live hypervisor environment.
+- All configuration is now stored in a unified config file at `/etc/captain/config.yaml`
+  that is generated on first run.
+- A dummy provider driver is now available for testing purposes. Helps with simulating 
+  the Captain stack without modifying a live hypervisor environment.
 
 ### Removed
 
 - Plane defaults are no longer stored in `defaults.yaml`. This is now part of `config.yaml`.
-- The HTTP listen port for the API can no longer be specified as a command-line parameter. This is now part of `config.yaml`.
+- The HTTP listen port for the API can no longer be specified as a command-line parameter.
+  This is now part of `config.yaml`.
 
 ## [v0.1.0] - 2021-05-02
 

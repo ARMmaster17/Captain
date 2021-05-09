@@ -1,5 +1,6 @@
 package providers
 
+// ProviderDriver is an abstract class that defines the basic capabilities that Captain expects of all provider drivers.
 type ProviderDriver interface {
 	// Connect will connect to the underlying provider, performing any
 	// authentication or configuration necessary to service requests.
@@ -18,8 +19,4 @@ type ProviderDriver interface {
 	// These configured values will be passed with each driver call, so there is no
 	// need to store them in the driver.
 	GetYAMLTag() string
-}
-
-type DriverDefaults struct {
-
 }

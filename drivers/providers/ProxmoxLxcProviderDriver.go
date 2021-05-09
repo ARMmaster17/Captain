@@ -39,13 +39,13 @@ func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 	config.Memory = p.RAM
 	config.Nameserver = viper.GetString("defaults.network.nameservers")
 	config.Networks = proxmox.QemuDevices{
-		0 : {
-			"name": "eth0",
-			"bridge": viper.GetString(d.getConfigItemPath("publicnetwork")),
-			"ip": "dhcp",
-			"gw": viper.GetString("defaults.network.gateway"),
+		0: {
+			"name":     "eth0",
+			"bridge":   viper.GetString(d.getConfigItemPath("publicnetwork")),
+			"ip":       "dhcp",
+			"gw":       viper.GetString("defaults.network.gateway"),
 			"firewall": "0",
-			"mtu": viper.GetInt("defaults.network.mtu"),
+			"mtu":      viper.GetInt("defaults.network.mtu"),
 		},
 	}
 	config.OnBoot = true
@@ -121,16 +121,16 @@ func (d *ProxmoxLxcProviderDriver) proxmoxOverrideDeleteVMParams(vmr *proxmox.Vm
 		return err
 	}
 	url := fmt.Sprintf("/nodes/%s/%s/%d", vmr.Node(), vmr.GetVmType(), vmr.VmId())
+	return d.customDELETERequest(url)
+}
+
+// customDELETERequest performs a DELETE request. This is used as a workaround for broken methods in the
+// telmate/proxmox-api-go library.
+func (d *ProxmoxLxcProviderDriver) customDELETERequest(url string) error {
 	var taskResponse map[string]interface{}
-	session, err := proxmox.NewSession(viper.GetString(d.getConfigItemPath("url")), nil, &tls.Config{
-		InsecureSkipVerify: !viper.GetBool(d.getConfigItemPath("forcessl")),
-	})
+	session, err := d.buildCustomSession()
 	if err != nil {
-		return fmt.Errorf("unable to connect to the Proxmox API: %w", err)
-	}
-	err = session.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
-	if err != nil {
-		return fmt.Errorf("unable to authenticate with the Proxmox API: %w", err)
+		return err
 	}
 	resp, err := session.RequestJSON("DELETE", url, nil, nil, nil, &taskResponse)
 	if err != nil || resp.StatusCode != http.StatusOK {
@@ -140,4 +140,19 @@ func (d *ProxmoxLxcProviderDriver) proxmoxOverrideDeleteVMParams(vmr *proxmox.Vm
 		return fmt.Errorf("the Proxmxox API returned status code %d", resp.StatusCode)
 	}
 	return nil
+}
+
+// buildCustomSession builds a Proxmox API session object without using the telmate/proxmox-api-go library.
+func (d *ProxmoxLxcProviderDriver) buildCustomSession() (*proxmox.Session, error) {
+	session, err := proxmox.NewSession(viper.GetString(d.getConfigItemPath("url")), nil, &tls.Config{
+		InsecureSkipVerify: !viper.GetBool(d.getConfigItemPath("forcessl")),
+	})
+	if err != nil {
+		return &proxmox.Session{}, fmt.Errorf("unable to connect to the Proxmox API: %w", err)
+	}
+	err = session.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
+	if err != nil {
+		return &proxmox.Session{}, fmt.Errorf("unable to authenticate with the Proxmox API: %w", err)
+	}
+	return session, nil
 }

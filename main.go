@@ -43,10 +43,10 @@ func main() {
 			} else {
 				log.Warn().Msg("a config file was generated at /etc/captain/config.yaml that needs to be edited before starting Captain again")
 			}
-			return
 		} else {
 			log.Fatal().Stack().Err(err).Msg("unable to read from config file")
 		}
+		return
 	}
 
 	apiServer := &APIServer{}

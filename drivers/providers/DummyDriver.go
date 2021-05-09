@@ -1,7 +1,8 @@
 package providers
 
+// DummyProviderDriver is a provider driver used for testing both in unit tests, and for trying out Captain without
+// connecting the stack to a live hypervisor cluster.
 type DummyProviderDriver struct {
-
 }
 
 // Connect simulates connecting to a provider driver. Always returns no error.

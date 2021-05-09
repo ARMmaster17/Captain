@@ -26,17 +26,18 @@ git clone https://github.com/ARMmaster17/Captain
 cd Captain
 make install
 ```
-4. Set the following environment variables to match your Proxmox configuration.
-   
-   | Name | Value |
-   |---|---|
-   | `CAPTAIN_DB` | Path to a SQLite3 file or a Postgres connection string starting with `postgres://...`. |
-   | `CAPTAIN_PROXMOX_USER` | The fully qualified username of a user with privileges to create and destroy VMs/containers. (ex. `root@pam`) |
-   | `CAPTAIN_PROXMOX_PASSWORD` | Password to specified proxmox user. |
-   | `CAPTAIN_PRIVATE_KEY` | Absolute filepath to your private key so Captain can provision new planes. |
+4. Set the environment variables in the table below to match your Proxmox configuration.
+5. Run `captain`. It should generate a file at `/etc/captain/config.yaml`. Edit
+   this file with details from your Proxmox setup.
+6. Start Captain by running `captain` again, or install the Systemd service with
+   `make install-service`.
 
-5. Run `captain`. It should generate a file at `/etc/captain/config.yaml`. Edit this file with details from your Proxmox setup.
-6. Start Captain by running `captain` again, or install the Systemd service with `make install-service`.
+| Name | Value |
+   |---|---|
+| `CAPTAIN_DB` | Path to a SQLite3 file or a Postgres connection string starting with `postgres://...`. |
+| `CAPTAIN_PROXMOX_USER` | The fully qualified username of a user with privileges to create and destroy VMs/containers. (ex. `root@pam`) |
+| `CAPTAIN_PROXMOX_PASSWORD` | Password to specified proxmox user. |
+| `CAPTAIN_PRIVATE_KEY` | Absolute filepath to your private key so Captain can provision new planes. |
 
 ## Managing a Captain Cluster
 First a bit of terminology. The highest level in Captain is called an *airspace*. An airspace is an isolated group of instances. For example, one airspace can hold all production instances of an app, and each developer gets their own airspace for testing purposes.
