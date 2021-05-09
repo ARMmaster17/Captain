@@ -43,7 +43,8 @@ First a bit of terminology. The highest level in Captain is called an *airspace*
 
 Each airspace has many *flights*. A flight is a complete app, which may include a reverse proxy, a database, and a web server. Each of those services is a *formation*. A formation is a collection of planes (usually containers or VMs) that can be seamlessly scaled up and down.
 
-At the preset moment, the only way to provision planes is to manually edit the Sqlite3 or PostgreSQL database. In the near future it will be possible to provision airspaces, flights, and formations using a REST API, a CLI, or a GraphQL interface. Planes are usually not managed directly by the API, and instead are automatically managed by Captain depending on how the formation is configured.
+To modify the state database to trigger builds in Proxmox, you may
+use a tool like Curl, or the CLI tool (migrating to this repo soon).
 
 # Contributing
 

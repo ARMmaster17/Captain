@@ -3,6 +3,7 @@ package providers
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/ARMmaster17/Captain/ImageStore"
 	"github.com/Telmate/proxmox-api-go/proxmox"
 	"github.com/spf13/viper"
 	"net/http"
@@ -27,7 +28,11 @@ func (d ProxmoxLxcProviderDriver) Connect() error {
 // the container for provisioning.
 func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 	config := proxmox.NewConfigLxc()
-	config.Ostemplate = viper.GetString(d.getConfigItemPath("image"))
+	template, err := imagestore.GetProviderSpecificImageConfiguration(d.GetYAMLTag(), viper.GetString("defaults.image"))
+	if err != nil {
+		return "", err
+	}
+	config.Ostemplate = template
 	config.Arch = "amd64"
 	config.CMode = "tty"
 	config.Console = true

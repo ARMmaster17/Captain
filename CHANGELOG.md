@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Helps with simulating the Captain stack without modifying a live
   hypervisor environment.
 
+### Changed
+
+- Image mappings can now be made on a per-driver basis in `config.yaml`.
+
 ### Removed
 
 - Plane defaults are no longer stored in `defaults.yaml`. This is now part of `config.yaml`.

@@ -77,11 +77,12 @@ func generateConfigFile() error {
 	viper.Set("defaults.network.searchdomain", "")
 	viper.Set("defaults.network.gateway", "10.1.0.1")
 	viper.Set("defaults.network.mtu", 1450)
+	viper.Set("defaults.image", "debian-10")
 	// In the future when there is more than one driver, this section should not
 	// be added automatically.
 	viper.Set("config.drivers.provisioners", []string{"proxmoxlxc"})
 	viper.Set("config.api.port", 5000)
-	viper.Set("drivers.provisioners.proxmoxlxc.image", "pve-img:vztmpl/debian-10-standard_10.7-1_amd64.tar.gz")
+	viper.Set("images.debian-10.proxmoxlxc", "pve-img:vztmpl/debian-10-standard_10.7-1_amd64.tar.gz")
 	viper.Set("drivers.provisioners.proxmoxlxc.publicnetwork", "internal")
 	viper.Set("drivers.provisioners.proxmoxlxc.diskstorage", "pve-storage")
 	viper.Set("drivers.provisioners.proxmoxlxc.defaultnode", "pxvh1")
