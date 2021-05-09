@@ -34,9 +34,6 @@ jobs:
         prefix: github.com/ARMmaster17/Captain
         coverageLocations: ${{github.workspace}}/cover.out:gocov
 
-    - name: DEBUG tree layout
-      run: tree
-
     - name: Publish unit test results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
