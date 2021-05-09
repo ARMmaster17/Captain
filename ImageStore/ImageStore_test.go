@@ -3,32 +3,101 @@ package ImageStore
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"testing"
 )
 
-func TestGetProviderSpecificImageConfigurationDummy(t *testing.T) {
-	require.NoError(t, helperSetupConfigFile("config_dummy_only.yaml"))
-	path, err := GetProviderSpecificImageConfiguration("dummy", "debian-10")
-	assert.NoError(t, err)
-	assert.Equal(t, "notrealpath", path)
-}
+func TestGetProviderSpecificImageConfiguration(t *testing.T) {
+	type args struct {
+		driverYamlTag string
+		imagetype     string
+	}
+	tests := []struct {
+		name string
+		args func(t *testing.T) args
 
-func TestGetProviderSpecificImageConfigurationDummyBadPath(t *testing.T) {
-	require.NoError(t, helperSetupConfigFile("config_dummy_only.yaml"))
-	path, err := GetProviderSpecificImageConfiguration("dummy", "fakeos")
-	assert.Error(t, err)
-	assert.Equal(t, "", path)
-}
+		want1      string
+		wantErr    bool
+		inspectErr func(err error, t *testing.T) //use for more precise error evaluation after test
+	}{
+		{
+			name: "ImageStoreValidInputs",
+			args: func(t *testing.T) args {
+				return args{
+					driverYamlTag: "dummy",
+					imagetype: "debian-10",
+				}
+			},
+			want1: "notrealpath",
+			wantErr: false,
+		},
+		{
+			name: "ImageStoreBadPath",
+			args: func(t *testing.T) args {
+				return args{
+					driverYamlTag: "dummy",
+					imagetype: "fakeos",
+				}
+			},
+			want1: "",
+			wantErr: true,
+		},
+		{
+			name: "ImageStoreBadDriver",
+			args: func(t *testing.T) args {
+				return args{
+					driverYamlTag: "notrealdriver",
+					imagetype: "debian-10",
+				}
+			},
+			want1: "",
+			wantErr: true,
+		},
+		{
+			name: "ImageStoreEmptyDriver",
+			args: func(t *testing.T) args {
+				return args{
+					driverYamlTag: "",
+					imagetype: "debian-10",
+				}
+			},
+			want1: "",
+			wantErr: true,
+		},
+		{
+			name: "ImageStoreEmptyPath",
+			args: func(t *testing.T) args {
+				return args{
+					driverYamlTag: "dummy",
+					imagetype: "",
+				}
+			},
+			want1: "",
+			wantErr: true,
+		},
+	}
 
-func TestGetProviderSpecificImageConfigurationDummyBadDriver(t *testing.T) {
-	require.NoError(t, helperSetupConfigFile("config_dummy_only.yaml"))
-	path, err := GetProviderSpecificImageConfiguration("notrealdriver", "debian-10")
-	assert.Error(t, err)
-	assert.Equal(t, "", path)
+		for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tArgs := tt.args(t)
+			helperSetupConfigFile("config_dummy_only.yaml")
+			got1, err := GetProviderSpecificImageConfiguration(tArgs.driverYamlTag, tArgs.imagetype)
+
+			if !reflect.DeepEqual(got1, tt.want1) {
+				t.Errorf("GetProviderSpecificImageConfiguration got1 = %v, want1: %v", got1, tt.want1)
+			}
+
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("GetProviderSpecificImageConfiguration error = %v, wantErr: %t", err, tt.wantErr)
+			}
+
+			if tt.inspectErr != nil {
+				tt.inspectErr(err, t)
+			}
+		})
+	}
 }
 
 func helperSetupConfigFile(configFile string) error {
