@@ -51,29 +51,7 @@ func TestPlaneNewValidNum(t *testing.T) {
 	}
 }
 
-func TestPlaneValidVMID(t *testing.T) {
-	p, err := NewPlane(1)
-	if err != nil {
-		t.Errorf("unexpected error: %s", err)
-	}
-	if p == nil {
-		t.Errorf("plane unexpectedly nil")
-	}
-	p.ProxmoxIdentifier = 100
-	err = p.Validate()
-	if err != nil {
-		t.Errorf("unexpected error with valid VMID: %s", err)
-	}
-}
-
-func TestPlaneInvalidVMID(t *testing.T) {
-	p, err := NewPlane(1)
-	if err != nil {
-		t.Errorf("unexpected error: %s", err)
-	}
-	p.ProxmoxIdentifier = -1
-	err = p.Validate()
-	if err == nil {
-		t.Errorf("expected an error with an invalid VMID")
-	}
+func TestFail(t *testing.T) {
+	// Just to trigger a fail until nested unit testing gets sorted out.
+	t.Fail()
 }
