@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -71,7 +72,7 @@ func TestProviderDriverManagerGetDestroyDriverInvalid(t *testing.T) {
 
 func TestProviderDriverManagerGetActiveBuildDriverDummy(t *testing.T) {
 	err := helperSetupConfigFile("config_dummy_only.yaml")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	driver, err := getActiveBuildDriver()
 	assert.NoError(t, err)
 	assert.NotNil(t, driver)
@@ -82,7 +83,7 @@ func TestProviderDriverManagerGetActiveBuildDriverDummy(t *testing.T) {
 func helperSetupConfigFile(configFile string) error {
 	viper.Reset()
 	_ = os.Remove("/etc/captain/config.yaml")
-	input, err := ioutil.ReadFile(fmt.Sprintf("testing/%s", configFile))
+	input, err := ioutil.ReadFile(fmt.Sprintf("../testing/%s", configFile))
 	if err != nil {
 		return err
 	}
