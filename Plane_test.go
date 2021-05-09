@@ -50,8 +50,3 @@ func TestPlaneNewValidNum(t *testing.T) {
 		t.Errorf("expected no error to be thrown with valid Num parameter")
 	}
 }
-
-func TestFail(t *testing.T) {
-	// Just to trigger a fail until nested unit testing gets sorted out.
-	t.Fail()
-}

@@ -29,6 +29,26 @@ func TestProviderDriverManagerDriverLookupByYAMLTagInvalid(t *testing.T) {
 	assert.Nil(t, driver)
 }
 
+func TestProviderDriverManagerDriverLookupByCUIDPrefixDummy(t *testing.T) {
+	driver, err := driverLookupByCUIDPrefix("dummy")
+	assert.NoError(t, err)
+	assert.Equal(t, "dummy", driver.GetYAMLTag())
+	assert.Equal(t, "dummy", driver.GetCUIDPrefix())
+}
+
+func TestProviderDriverManagerDriverLookupByCUIDPrefixProxmoxLxc(t *testing.T) {
+	driver, err := driverLookupByCUIDPrefix("proxmox.lxc")
+	assert.NoError(t, err)
+	assert.Equal(t, "proxmoxlxc", driver.GetYAMLTag())
+	assert.Equal(t, "proxmox.lxc", driver.GetCUIDPrefix())
+}
+
+func TestProviderDriverManagerDriverLookupByCUIDPrefixInvalid(t *testing.T) {
+	driver, err := driverLookupByCUIDPrefix("invalid")
+	assert.Error(t, err)
+	assert.Nil(t, driver)
+}
+
 func TestProviderDriverManagerGetDestroyDriverDummy(t *testing.T) {
 	driver, err := getDestroyDriver("dummy:0")
 	assert.NoError(t, err)

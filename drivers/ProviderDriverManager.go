@@ -81,3 +81,15 @@ func driverLookupByYAMLTag(driverentry string) (providers.ProviderDriver, error)
 	}
 	return nil, fmt.Errorf("%s is not a valid driver type", driverentry)
 }
+
+// driverLookupByCUIDPrefix returns a driver instance by comparing the given string to every registered driver's YAML tag.
+func driverLookupByCUIDPrefix(cuidprefix string) (providers.ProviderDriver, error) {
+	if cuidprefix == (&providers.ProxmoxLxcProviderDriver{}).GetCUIDPrefix() {
+		// In the future there could be a check here to see if a driver is ready to receive new planes.
+		return providers.ProxmoxLxcProviderDriver{}, nil
+	}
+	if cuidprefix == (&providers.DummyProviderDriver{}).GetCUIDPrefix() {
+		return providers.DummyProviderDriver{}, nil
+	}
+	return nil, fmt.Errorf("%s is not a valid CUID prefix", cuidprefix)
+}
