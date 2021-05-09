@@ -74,7 +74,7 @@ func (p *Plane) BeforeCreate(tx *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("invalid formation configuration for plane: %w", err)
 	}
-	err = p.buildPlane(tx)
+	err = p.buildPlane()
 	if err != nil {
 		// TODO: Should detect what kind of error occurred
 		return fmt.Errorf("unable to trigger plane build with error: %w", err)
@@ -99,7 +99,7 @@ func (p *Plane) Validate() error {
 
 // Connects to the proper provider driver to create the plane using the specified parameters. State attribute injection
 // is done by the underlying provider driver.
-func (p *Plane) buildPlane(db *gorm.DB) error {
+func (p *Plane) buildPlane() error {
 	log.Debug().Str("PlaneName", p.getFQDN()).Msg("building new plane")
 	if os.Getenv("CAPTAIN_DRY_RUN") != "" {
 		return nil

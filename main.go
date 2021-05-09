@@ -84,6 +84,8 @@ func generateConfigFile() error {
 	viper.Set("drivers.provisioners.proxmoxlxc.publicnetwork", "internal")
 	viper.Set("drivers.provisioners.proxmoxlxc.diskstorage", "pve-storage")
 	viper.Set("drivers.provisioners.proxmoxlxc.defaultnode", "pxvh1")
+	viper.Set("drivers.provisioners.proxmoxlxc.forcessl", false)
+	viper.Set("drivers.provisioners.proxmoxlxc.url", "https://192.168.1.241:8006/api2/json")
 
 	return viper.WriteConfig()
 }

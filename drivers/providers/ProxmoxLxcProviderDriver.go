@@ -13,13 +13,13 @@ type ProxmoxLxcProviderDriver struct {
 	client *proxmox.Client
 }
 
-func (d *ProxmoxLxcProviderDriver) Connect() error {
-	tlsConf := &tls.Config{InsecureSkipVerify: true}
-	d.client, _ = proxmox.NewClient(os.Getenv("CAPTAIN_PROXMOX_URL"), nil, tlsConf, 300)
+func (d ProxmoxLxcProviderDriver) Connect() error {
+	tlsConf := &tls.Config{InsecureSkipVerify: !viper.GetBool(d.getConfigItemPath("forcessl"))}
+	d.client, _ = proxmox.NewClient(viper.GetString(d.getConfigItemPath("url")), nil, tlsConf, 300)
 	return d.client.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
 }
 
-func (d *ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
+func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 	config := proxmox.NewConfigLxc()
 	config.Ostemplate = viper.GetString(d.getConfigItemPath("image"))
 	config.Arch = "amd64"
@@ -66,7 +66,7 @@ func (d *ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 	return fmt.Sprintf("%s:%d", d.GetCUIDPrefix(), vmr.VmId()), nil
 }
 
-func (d *ProxmoxLxcProviderDriver) DestroyPlane(p *GenericPlane) error {
+func (d ProxmoxLxcProviderDriver) DestroyPlane(cuid string, p *GenericPlane) error {
 	vmr, err := d.client.GetVmRefByName(p.FQDN)
 	if err != nil {
 		return fmt.Errorf("unable to obtain reference to underlying LXC container for plane %s: %w", p.FQDN, err)
@@ -82,19 +82,19 @@ func (d *ProxmoxLxcProviderDriver) DestroyPlane(p *GenericPlane) error {
 	return nil
 }
 
-func (d *ProxmoxLxcProviderDriver) GetCUIDPrefix() string {
+func (d ProxmoxLxcProviderDriver) GetCUIDPrefix() string {
 	return "proxmox.lxc"
 }
 
-func (d *ProxmoxLxcProviderDriver) GetYAMLTag() string {
+func (d ProxmoxLxcProviderDriver) GetYAMLTag() string {
 	return "proxmoxlxc"
 }
 
-func (d *ProxmoxLxcProviderDriver) getFullYAMLTag() string {
+func (d ProxmoxLxcProviderDriver) getFullYAMLTag() string {
 	return fmt.Sprintf("drivers.provisioners.%s", d.GetYAMLTag())
 }
 
-func (d *ProxmoxLxcProviderDriver) getConfigItemPath(entryPath string) string {
+func (d ProxmoxLxcProviderDriver) getConfigItemPath(entryPath string) string {
 	return fmt.Sprintf("%s.%s", d.getFullYAMLTag(), entryPath)
 }
 
@@ -108,8 +108,8 @@ func (d *ProxmoxLxcProviderDriver) proxmoxOverrideDeleteVMParams(vmr *proxmox.Vm
 	}
 	url := fmt.Sprintf("/nodes/%s/%s/%d", vmr.Node(), vmr.GetVmType(), vmr.VmId())
 	var taskResponse map[string]interface{}
-	session, err := proxmox.NewSession(os.Getenv("CAPTAIN_PROXMOX_URL"), nil, &tls.Config{
-		InsecureSkipVerify: true,
+	session, err := proxmox.NewSession(viper.GetString(d.getConfigItemPath("url")), nil, &tls.Config{
+		InsecureSkipVerify: !viper.GetBool(d.getConfigItemPath("forcessl")),
 	})
 	if err != nil {
 		return fmt.Errorf("unable to connect to the Proxmox API: %w", err)
