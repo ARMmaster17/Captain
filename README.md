@@ -43,8 +43,8 @@ First a bit of terminology. The highest level in Captain is called an *airspace*
 
 Each airspace has many *flights*. A flight is a complete app, which may include a reverse proxy, a database, and a web server. Each of those services is a *formation*. A formation is a collection of planes (usually containers or VMs) that can be seamlessly scaled up and down.
 
-To modify the state database to trigger builds in Proxmox, you may use a tool like Curl, or the CLI tool
-(migrating to this repo soon).
+To modify the state database to trigger builds in Proxmox, you may
+use a tool like Curl, or the CLI tool (migrating to this repo soon).
 
 # Contributing
 

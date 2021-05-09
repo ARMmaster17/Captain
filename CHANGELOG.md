@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A dummy provider driver is now available for testing purposes.
   Helps with simulating the Captain stack without modifying a live
   hypervisor environment.
-  
+
 ### Changed
 
 - Image mappings can now be made on a per-driver basis in `config.yaml`.
