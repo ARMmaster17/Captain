@@ -6,3 +6,13 @@ pull_request_rules:
     actions:
       merge:
         method: merge
+        strict: smart+fasttrack
+      delete_head_branch:
+        force: false
+  - name: Bypass for repo owner
+    conditions:
+      - author=ARMmaster17
+    actions:
+      review:
+        type: APPROVE
+        message: Bypass review
