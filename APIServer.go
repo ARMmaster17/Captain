@@ -166,7 +166,7 @@ func (a *APIServer) getAirspaces(w http.ResponseWriter, r *http.Request) {
 //         type: string
 //         description: Name used for DNS name building, and internal queries against the state database.
 // responses:
-//   '200':
+//   '201':
 //     description: Request processed
 //     schema:
 //       type: object
