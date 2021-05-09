@@ -20,6 +20,7 @@ func BuildPlaneOnAnyProvider(p *providers.GenericPlane) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("unable to initialize %s driver: %w", driver.GetYAMLTag(), err)
 	}
+
 	cuid, err := driver.BuildPlane(p)
 	if err != nil {
 		return "", fmt.Errorf("unable to build plane with driver %s: %w", driver.GetYAMLTag(), err)

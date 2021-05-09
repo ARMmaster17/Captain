@@ -22,5 +22,6 @@ builder/conf/*.private
 
 cover.out
 
-test.db
+testing.db
+db/test.db
 dev.db
