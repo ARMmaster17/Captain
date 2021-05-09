@@ -13,7 +13,6 @@ require (
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/rs/zerolog v1.21.0
 	github.com/stretchr/testify v1.7.0 // indirect
-	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	golang.org/x/text v0.3.5 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
