@@ -11,8 +11,15 @@ pull_request_rules:
         force: false
   - name: Bypass for repo owner
     conditions:
-      - author=ARMmaster17
+      - author~=^ARMmaster17$
     actions:
       review:
         type: APPROVE
         message: Bypass review
+  - name: Bypass for Bots
+    conditions:
+      - author~=^renovate\[bot\]$
+    actions:
+      review:
+        type: APPROVE
+        message: Automatic bot approval
