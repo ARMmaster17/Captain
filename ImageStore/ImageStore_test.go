@@ -1,4 +1,4 @@
-package ImageStore
+package imagestore
 
 import (
 	"fmt"
