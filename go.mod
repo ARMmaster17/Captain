@@ -3,7 +3,7 @@ module github.com/ARMmaster17/Captain
 go 1.13
 
 require (
-	github.com/Telmate/proxmox-api-go v0.0.0-20210402150908-b9cc6607c070
+	github.com/Telmate/proxmox-api-go c60bbda13c0c
 	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
