@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - All configuration is now stored in a unified config file at `/etc/captain/config.yaml`
   that is generated on first run.
-- A dummy provider driver is now available for testing purposes. Helps with simulating 
-  the Captain stack without modifying a live hypervisor environment.
+- A dummy provider driver is now available for testing purposes.
+  Helps with simulating the Captain stack without modifying a live
+  hypervisor environment.
 
 ### Removed
 

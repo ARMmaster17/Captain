@@ -25,12 +25,11 @@ Captain is a container orchestration and streamlined PaaS provider for Proxmox-b
 git clone https://github.com/ARMmaster17/Captain
 cd Captain
 make install
+captain
+nano /etc/captain/config.yaml
+# Set any environment variables you need from the table below.
+captain # or `make install service` to install as a system service.
 ```
-4. Set the environment variables in the table below to match your Proxmox configuration.
-5. Run `captain`. It should generate a file at `/etc/captain/config.yaml`. Edit
-   this file with details from your Proxmox setup.
-6. Start Captain by running `captain` again, or install the Systemd service with
-   `make install-service`.
 
 | Name | Value |
    |---|---|
