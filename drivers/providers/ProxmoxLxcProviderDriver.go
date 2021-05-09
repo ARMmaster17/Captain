@@ -28,7 +28,7 @@ func (d ProxmoxLxcProviderDriver) Connect() error {
 // the container for provisioning.
 func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 	config := proxmox.NewConfigLxc()
-	template, err := ImageStore.GetProviderSpecificImageConfiguration(d.GetYAMLTag(), viper.GetString("defaults.image"))
+	template, err := imagestore.GetProviderSpecificImageConfiguration(d.GetYAMLTag(), viper.GetString("defaults.image"))
 	if err != nil {
 		return "", err
 	}
