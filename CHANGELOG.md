@@ -3,6 +3,17 @@
 The format of this file is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- All configuration is now stored in a unified config file at `/etc/captain/config.yaml` that is generated on first run.
+
+### Removed
+
+- Plane defaults are no longer stored in `defaults.yaml`. This is now part of `config.yaml`.
+- The HTTP listen port for the API can no longer be specified as a command-line parameter. This is now part of `config.yaml`.
+
 ## [v0.1.0] - 2021-05-02
 
 The MVP release of Captain. Supports the ability to create and destroy containers as requested through a REST API.

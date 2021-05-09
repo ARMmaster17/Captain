@@ -36,8 +36,8 @@ make install
    | `CAPTAIN_PROXMOX_URL` | Full path to Proxmox host. (ex. `https://192.168.1.2:8006/api2/json`) |
    | `CAPTAIN_PRIVATE_KEY` | Absolute filepath to your private key so Captain can provision new planes. |
 
-5. Edit `/etc/captain/defaults.yaml` in the captain directory to match the configuration of your network and Proxmox cluster setup. This is also where you provide your public SSH key.
-6. Start Captain by running `captain`, or install the Systemd service with `make install-service`.
+5. Run `captain`. It should generate a file at `/etc/captain/config.yaml`. Edit this file with details from your Proxmox setup.
+6. Start Captain by running `captain` again, or install the Systemd service with `make install-service`.
 
 ## Managing a Captain Cluster
 First a bit of terminology. The highest level in Captain is called an *airspace*. An airspace is an isolated group of instances. For example, one airspace can hold all production instances of an app, and each developer gets their own airspace for testing purposes.

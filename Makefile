@@ -21,7 +21,6 @@ uninstall:
 init-data-dir:
 	sudo mkdir /etc/captain
 	sudo chmod 777 -R /etc/captain
-	cp defaults.yaml /etc/captain/defaults.yaml
 
 install-service:
 	sudo cp captain.service /etc/systemd/system/captain.service
