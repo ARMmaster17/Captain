@@ -67,7 +67,7 @@ func getActiveBuildDriver() (providers.ProviderDriver, error) {
 // getDestroyDriver returns a driver instance from a fully-qualified CUID string from a plane instance.
 func getDestroyDriver(cuid string) (providers.ProviderDriver, error) {
 	driverentry := strings.Split(cuid, ":")[0]
-	return driverLookupByYAMLTag(driverentry)
+	return driverLookupByCUIDPrefix(driverentry)
 }
 
 // driverLookupByYAMLTag returns a driver instance by comparing the given string to every registered driver's YAML tag.
