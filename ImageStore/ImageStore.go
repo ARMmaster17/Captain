@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+// GetProviderSpecificImageConfiguration maps a generic OS name to a storage path that will be accepted
+// by the selected provider driver using its reported YAML tag.
 func GetProviderSpecificImageConfiguration(driverYamlTag string, imagetype string) (string, error) {
 	if !viper.IsSet(fmt.Sprintf("config.images.%s", imagetype)) {
 		return "", fmt.Errorf("image type %s is not configured in config.yaml", imagetype)
