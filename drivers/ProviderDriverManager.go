@@ -64,11 +64,13 @@ func getActiveBuildDriver() (providers.ProviderDriver, error) {
 	return nil, fmt.Errorf("no usable drivers found in config.yaml")
 }
 
+// getDestroyDriver returns a driver instance from a fully-qualified CUID string from a plane instance.
 func getDestroyDriver(cuid string) (providers.ProviderDriver, error) {
 	driverentry := strings.Split(cuid, ":")[0]
 	return driverLookupByYAMLTag(driverentry)
 }
 
+// driverLookupByYAMLTag returns a driver instance by comparing the given string to every registered driver's YAML tag.
 func driverLookupByYAMLTag(driverentry string) (providers.ProviderDriver, error) {
 	if driverentry == (&providers.ProxmoxLxcProviderDriver{}).GetYAMLTag() {
 		// In the future there could be a check here to see if a driver is ready to receive new planes.

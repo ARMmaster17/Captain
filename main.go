@@ -70,6 +70,7 @@ func getApplicationVersion() string {
 	return Version
 }
 
+// generateConfigFile creates a config file when one doesn't exist. Actual implementation is handled by Viper.
 func generateConfigFile() error {
 	viper.Set("defaults.publickey", "x")
 	viper.Set("defaults.network.nameservers", "8.8.8.8 8.8.4.4")

@@ -33,7 +33,6 @@ make install
    | `CAPTAIN_DB` | Path to a SQLite3 file or a Postgres connection string starting with `postgres://...`. |
    | `CAPTAIN_PROXMOX_USER` | The fully qualified username of a user with privileges to create and destroy VMs/containers. (ex. `root@pam`) |
    | `CAPTAIN_PROXMOX_PASSWORD` | Password to specified proxmox user. |
-   | `CAPTAIN_PROXMOX_URL` | Full path to Proxmox host. (ex. `https://192.168.1.2:8006/api2/json`) |
    | `CAPTAIN_PRIVATE_KEY` | Absolute filepath to your private key so Captain can provision new planes. |
 
 5. Run `captain`. It should generate a file at `/etc/captain/config.yaml`. Edit this file with details from your Proxmox setup.

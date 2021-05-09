@@ -9,16 +9,22 @@ import (
 	"os"
 )
 
+// ProxmoxLxcProviderDriver is an implementation of ProviderDriver that interfaces with the LXC capabilities of a
+// Proxmox cluster.
 type ProxmoxLxcProviderDriver struct {
 	client *proxmox.Client
 }
 
+// Connect reads any Proxmox connection parameters defined in the environment and performs authentication with the
+// designated Proxmox cluster.
 func (d ProxmoxLxcProviderDriver) Connect() error {
 	tlsConf := &tls.Config{InsecureSkipVerify: !viper.GetBool(d.getConfigItemPath("forcessl"))}
 	d.client, _ = proxmox.NewClient(viper.GetString(d.getConfigItemPath("url")), nil, tlsConf, 300)
 	return d.client.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
 }
 
+// BuildPlane converts the given GenericPlane into a data structure that is usable by the Proxmox API and submits
+// the container for provisioning.
 func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 	config := proxmox.NewConfigLxc()
 	config.Ostemplate = viper.GetString(d.getConfigItemPath("image"))
@@ -66,6 +72,7 @@ func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 	return fmt.Sprintf("%s:%d", d.GetCUIDPrefix(), vmr.VmId()), nil
 }
 
+// DestroyPlane will destroy a plane that is managed by the Proxmox LXC driver.
 func (d ProxmoxLxcProviderDriver) DestroyPlane(cuid string, p *GenericPlane) error {
 	vmr, err := d.client.GetVmRefByName(p.FQDN)
 	if err != nil {
@@ -82,23 +89,30 @@ func (d ProxmoxLxcProviderDriver) DestroyPlane(cuid string, p *GenericPlane) err
 	return nil
 }
 
+// GetCUIDPrefix gets the prefix that should be added to the beginning of the CUID strings for all planes that are
+// managed by this driver.
 func (d ProxmoxLxcProviderDriver) GetCUIDPrefix() string {
 	return "proxmox.lxc"
 }
 
+// GetYAMLTag gets the YAML tag that the Proxmox LXC driver uses to identify settings unique to this driver
+// in config.yaml.
 func (d ProxmoxLxcProviderDriver) GetYAMLTag() string {
 	return "proxmoxlxc"
 }
 
+// getFullYAMLTag gets the base YAML tag for all settings that are unique to the Proxmox LXC driver.
 func (d ProxmoxLxcProviderDriver) getFullYAMLTag() string {
 	return fmt.Sprintf("drivers.provisioners.%s", d.GetYAMLTag())
 }
 
+// getConfigItemPath returns the full YAML path to a configuration file for the Proxmox LXC driver with the given tag(s) appended
+// at the end.
 func (d ProxmoxLxcProviderDriver) getConfigItemPath(entryPath string) string {
 	return fmt.Sprintf("%s.%s", d.getFullYAMLTag(), entryPath)
 }
 
-// This method replaces the method with the same name in the proxmox library because there is a bug where if you pass
+// proxmoxOverrideDeleteVMParams replaces the method with the same name in the proxmox library because there is a bug where if you pass
 // an empty struct to any DELETE endpoint, the Proxmox API returns an error. This method overrides that by passing
 // nil to the underlying Session object.
 func (d *ProxmoxLxcProviderDriver) proxmoxOverrideDeleteVMParams(vmr *proxmox.VmRef) error {

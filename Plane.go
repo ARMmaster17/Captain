@@ -122,6 +122,7 @@ func (p *Plane) destroyPlane() error {
 	return drivers.DestroyPlane(p.getGenericPlane())
 }
 
+// getGenericPlane converts the current Plane instance into a GenericPlane that can be read by any provisioning driver.
 func (p *Plane) getGenericPlane() *providers.GenericPlane {
 	return &providers.GenericPlane{
 		FQDN:              p.getFQDN(),
