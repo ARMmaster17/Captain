@@ -17,14 +17,20 @@ jobs:
       with:
         go-version: 1.13
 
-    - name: Build
+    - name: Build ATC
       run: cd ATC; make build
 
-    - name: Test
+    - name: Test ATC
       run: cd ATC; make test
       env:
         CAPTAIN_DRY_RUN: TRUE
         CAPTAIN_DB: testing.db
+
+    - name: Build CaptainLib
+      run: cd CaptainLib; go build .
+
+    - name: Test CaptainLib
+      run: cd CaptainLib; go test -v -coverprofile=cover.out ./... 2>&1 | go-junit-report > report.xml
 
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
@@ -32,11 +38,11 @@ jobs:
         CC_TEST_REPORTER_ID: c19b466b4c3e08a48f23e2c883a52c68bc7b2a3b2f52ab914224004b5a990df3
       with:
         prefix: github.com/ARMmaster17/Captain/ATC
-        coverageLocations: ${{github.workspace}}/ATC/cover.out:gocov
+        coverageLocations: ${{github.workspace}}/*/cover.out:gocov
 
     - name: Publish unit test results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
       with:
-        files: ./ATC/report.xml
+        files: ./*/report.xml
         report_individual_runs: "true"
