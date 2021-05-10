@@ -7,22 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- All configuration is now stored in a unified config file at `/etc/captain/config.yaml`
+- ATC: All configuration is now stored in a unified config file at `/etc/captain/config.yaml`
   that is generated on first run.
-- A dummy provider driver is now available for testing purposes.
+- ATC: A dummy provider driver is now available for testing purposes.
   Helps with simulating the Captain stack without modifying a live
   hypervisor environment.
+- CaptainLib: A golang library is now included for each release of Captain for interfacing with
+  ATC instances.
 
 ### Changed
 
-- Image mappings can now be made on a per-driver basis in `config.yaml`.
-- Moved ATC to the `ATC` directory to make room for other Captain modules.
+- ATC: Image mappings can now be made on a per-driver basis in `config.yaml`.
+- ATC: Moved ATC to the `ATC` directory to make room for other Captain modules.
 
 ### Removed
 
-- Plane defaults are no longer stored in `defaults.yaml`. This is now part of `config.yaml`.
-- The HTTP listen port for the API can no longer be specified as a command-line parameter.
+- ATC: Plane defaults are no longer stored in `defaults.yaml`. This is now part of `config.yaml`.
+- ATC: The HTTP listen port for the API can no longer be specified as a command-line parameter.
   This is now part of `config.yaml`.
+
+### Security
+
+- ATC: The Proxmox LXC driver can now be configured to require TLS certificate checks when
+  connecting to the Proxmox API.
 
 ## [v0.1.0] - 2021-05-02
 
