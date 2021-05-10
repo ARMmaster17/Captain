@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-atc:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -38,7 +38,6 @@ jobs:
         CC_TEST_REPORTER_ID: c19b466b4c3e08a48f23e2c883a52c68bc7b2a3b2f52ab914224004b5a990df3
       with:
         prefix: github.com/ARMmaster17/Captain
-        coverageCommand: go test -v -coverprofile=cover.out ./... 2>&1 | go-junit-report
         coverageLocations: ${{github.workspace}}/*/cover.out:gocov
 
     - name: Publish unit test results
