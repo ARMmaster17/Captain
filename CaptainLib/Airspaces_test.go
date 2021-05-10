@@ -208,6 +208,11 @@ func helperRegisterAllAirspaceMocks() {
 			``))
 }
 
+func TestAutoFail(t *testing.T) {
+	t.Fail()
+	// Temporary so auto-merge doesn't merge this incomplete branch.
+}
+
 func helperDeregisterMocks() {
 	httpmock.DeactivateAndReset()
 }
