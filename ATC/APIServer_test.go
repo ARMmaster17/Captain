@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	db2 "github.com/ARMmaster17/Captain/db"
+	db2 "github.com/ARMmaster17/Captain/ATC/DB"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"

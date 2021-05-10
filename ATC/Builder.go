@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ARMmaster17/Captain/db"
+	"github.com/ARMmaster17/Captain/ATC/DB"
 	"github.com/rs/zerolog/log"
 	"sync"
 )
@@ -25,7 +25,7 @@ func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup) {
 		w.logError(err, fmt.Sprintf("Invalid plane object"))
 		return
 	}
-	db, err := db.ConnectToDB()
+	db, err := DB.ConnectToDB()
 	if err != nil {
 		w.logError(err, fmt.Sprintf("unable to connect to database"))
 		return

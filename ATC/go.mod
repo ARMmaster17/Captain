@@ -1,4 +1,4 @@
-module github.com/ARMmaster17/Captain
+module github.com/ARMmaster17/Captain/ATC
 
 go 1.13
 

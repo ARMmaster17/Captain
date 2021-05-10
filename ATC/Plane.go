@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/ARMmaster17/Captain/drivers"
-	"github.com/ARMmaster17/Captain/drivers/providers"
+	"github.com/ARMmaster17/Captain/ATC/drivers"
+	"github.com/ARMmaster17/Captain/ATC/drivers/providers"
 	"github.com/go-playground/validator"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -16,10 +16,10 @@ import (
 // destroyed and recreated in favor of modifying configuration through a complex provider adapter.
 type Plane struct {
 	gorm.Model
-	Num int `validate:"required,gte=1"`
+	Num              int `validate:"required,gte=1"`
 	DriverIdentifier string
-	FormationID int
-	Formation Formation `validate:"-"`
+	FormationID      int
+	Formation        Formation `validate:"-"`
 }
 
 // Creates a temporary plane structure with a supplied formation-specific unique ID. It is assumed that this plane

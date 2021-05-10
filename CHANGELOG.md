@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Image mappings can now be made on a per-driver basis in `config.yaml`.
+- Moved ATC to the `ATC` directory to make room for other Captain modules.
 
 ### Removed
 
