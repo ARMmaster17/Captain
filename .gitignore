@@ -23,3 +23,5 @@ builder/conf/*.private
 cover.out
 
 *.db
+
+.actrc
