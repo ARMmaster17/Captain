@@ -132,7 +132,7 @@ func TestCaptainClient_CreateAirspace(t *testing.T) {
 
 		args func(t *testing.T) args
 
-		want1      int
+		want1      Airspace
 		wantErr    bool
 		inspectErr func(err error, t *testing.T) //use for more precise error evaluation after test
 	}{
@@ -147,7 +147,11 @@ func TestCaptainClient_CreateAirspace(t *testing.T) {
 					netName: "testNetName",
 				}
 			},
-			want1: 0,
+			want1: Airspace{
+				ID:        0,
+				HumanName: "testHumanName",
+				NetName:   "testNetName",
+			},
 			wantErr: false,
 		},
 	}
@@ -206,11 +210,6 @@ func helperRegisterAllAirspaceMocks() {
 		httpmock.NewStringResponder(
 			201,
 			``))
-}
-
-func TestAutoFail(t *testing.T) {
-	t.Fail()
-	// Temporary so auto-merge doesn't merge this incomplete branch.
 }
 
 func helperDeregisterMocks() {

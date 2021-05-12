@@ -37,20 +37,20 @@ func (c *CaptainClient) GetAirspaceByID(id int) (Airspace, error) {
 	return airspace, nil
 }
 
-func (c *CaptainClient) CreateAirspace(humanName string, netName string) (int, error) {
+func (c *CaptainClient) CreateAirspace(humanName string, netName string) (Airspace, error) {
 	result, err := c.restPOST("airspace", map[string]interface{}{
 		"HumanName": humanName,
 		"NetName": netName,
 	})
 	if err != nil {
-		return 0, fmt.Errorf("unable to create Airspace:\n%w", err)
+		return Airspace{}, fmt.Errorf("unable to create Airspace:\n%w", err)
 	}
 	var airspace Airspace
 	err = json.Unmarshal(result, &airspace)
 	if err != nil {
-		return 0, fmt.Errorf("unable to parse response as an Airspace:\n%w", err)
+		return Airspace{}, fmt.Errorf("unable to parse response as an Airspace:\n%w", err)
 	}
-	return airspace.ID, nil
+	return airspace, nil
 }
 
 func (c *CaptainClient) UpdateAirspace(id int, humanName string, netName string) error {
