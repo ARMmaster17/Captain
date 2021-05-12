@@ -5,12 +5,14 @@ import (
 	"fmt"
 )
 
+// Flight is a logical grouping of services that form a single app stack (e.g. database + www + nginx).
 type Flight struct {
 	ID         int
 	AirspaceID int
 	Name       string
 }
 
+// GetAllFlights returns all flights across all airpsaces that are amanged by the connected ATC instance.
 func (c *CaptainClient) GetAllFlights() ([]Flight, error) {
 	results, err := c.restGET("flights")
 	if err != nil {
@@ -24,6 +26,8 @@ func (c *CaptainClient) GetAllFlights() ([]Flight, error) {
 	return flights, nil
 }
 
+// GetFlightByID returns a Flight object that is managed by the connected ATC cluster with the given
+// ID (if it exists).
 func (c *CaptainClient) GetFlightByID(id int) (Flight, error) {
 	results, err := c.restGET(fmt.Sprintf("flight/%d", id))
 	if err != nil {
@@ -37,6 +41,7 @@ func (c *CaptainClient) GetFlightByID(id int) (Flight, error) {
 	return flight, nil
 }
 
+// CreateFlight creates a flight that will be managed by the connected ATC instance within the given airsapce.
 func (c *CaptainClient) CreateFlight(name string, airspaceID int) (Flight, error) {
 	result, err := c.restPOST("flight", map[string]interface{}{
 		"AirspaceID": airspaceID,
@@ -53,6 +58,8 @@ func (c *CaptainClient) CreateFlight(name string, airspaceID int) (Flight, error
 	return flight, nil
 }
 
+// UpdateFlight sends the given flight object to the connected ATC instance, and any changes to the Flight
+// object will be committed to the state database.
 func (c *CaptainClient) UpdateFlight(flight Flight) error {
 	_, err := c.restPUT(fmt.Sprintf("flight/%d", flight.ID), map[string]interface{}{
 		"AirspaceID": flight.AirspaceID,
@@ -64,6 +71,7 @@ func (c *CaptainClient) UpdateFlight(flight Flight) error {
 	return nil
 }
 
+// DeleteFlight deletes a flight object from the connected ATC instance, and will no longer be managed by ATC.
 func (c *CaptainClient) DeleteFlight(id int) error {
 	_, err := c.restDELETE(fmt.Sprintf("flight/%d", id))
 	if err != nil {

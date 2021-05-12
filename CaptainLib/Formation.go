@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+// Formation is a representation of a clonable unit of an application (e.g. database server). Each Formation
+// can be scaled up and down to meet demand.
 type Formation struct {
 	ID          int
 	FlightID    int
@@ -17,6 +19,7 @@ type Formation struct {
 	TargetCount int
 }
 
+// GetAllFormations returns all formations managed by the ATC instance.
 func (c *CaptainClient) GetAllFormations() ([]Formation, error) {
 	results, err := c.restGET("formations")
 	if err != nil {
@@ -30,6 +33,8 @@ func (c *CaptainClient) GetAllFormations() ([]Formation, error) {
 	return formations, nil
 }
 
+// GetFormationByID returns a Formation instance from the conencted ATC instance with the given ID
+// (if it exists).
 func (c *CaptainClient) GetFormationByID(id int) (Formation, error) {
 	results, err := c.restGET(fmt.Sprintf("formation/%d", id))
 	if err != nil {
@@ -43,6 +48,8 @@ func (c *CaptainClient) GetFormationByID(id int) (Formation, error) {
 	return formation, nil
 }
 
+// CreateFormation creates a scalable formation of containers that will be managed by the connected
+// ATC instance.
 func (c *CaptainClient) CreateFormation(name string, flightID int, CPU int, RAM int, disk int, baseName string, domain string, targetCount int) (Formation, error) {
 	result, err := c.restPOST("formation", map[string]interface{}{
 		"FlightID": flightID,
@@ -65,6 +72,8 @@ func (c *CaptainClient) CreateFormation(name string, flightID int, CPU int, RAM 
 	return formation, nil
 }
 
+// UpdateFormation sends the given Formation object to the Captain ATC, and any changes are committed
+// to the state database.
 func (c *CaptainClient) UpdateFormation(formation Formation) error {
 	_, err := c.restPUT(fmt.Sprintf("formation/%d", formation.ID), map[string]interface{}{
 		"Name": formation.Name,
@@ -81,6 +90,7 @@ func (c *CaptainClient) UpdateFormation(formation Formation) error {
 	return nil
 }
 
+// DeleteFormation deletes a formation, and it will no longer be managed by the ATC instance.
 func (c *CaptainClient) DeleteFormation(id int) error {
 	_, err := c.restDELETE(fmt.Sprintf("formation/%d", id))
 	if err != nil {
