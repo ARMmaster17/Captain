@@ -13,10 +13,10 @@ import (
 type Flight struct {
 	gorm.Model
 	// Unique name for flight. In the future will be used as part of the FQDN of each plane.
-	Name string `validate:"required,min=1"`
+	Name       string      `validate:"required,min=1"`
 	Formations []Formation `validate:"-"`
 	AirspaceID int
-	Airspace Airspace `validate:"-"`
+	Airspace   Airspace `validate:"-"`
 }
 
 // Performs the necessary migrations to initialize the database to hold flight state information. Triggers all

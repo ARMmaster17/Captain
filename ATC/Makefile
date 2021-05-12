@@ -3,7 +3,7 @@ VERSION=`git describe --tags`
 LDFLAGS=-ldflags="-w -s -X main.Version=$(VERSION)"
 
 build:
-	go build -v $(LDFLAGS) -o $(BINARY) github.com/ARMmaster17/Captain
+	go build -v $(LDFLAGS) -o $(BINARY) github.com/ARMmaster17/Captain/ATC
 
 test:
 	$(MAKE) init-data-dir

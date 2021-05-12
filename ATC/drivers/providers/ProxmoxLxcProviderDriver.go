@@ -3,7 +3,7 @@ package providers
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/ARMmaster17/Captain/ImageStore"
+	"github.com/ARMmaster17/Captain/ATC/ImageStore"
 	"github.com/Telmate/proxmox-api-go/proxmox"
 	"github.com/spf13/viper"
 	"net/http"

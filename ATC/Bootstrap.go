@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ARMmaster17/Captain/db"
+	"github.com/ARMmaster17/Captain/ATC/DB"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
@@ -13,7 +13,7 @@ import (
 func BootstrapCluster() error {
 	log.Info().Msg("bootstrapping cluster...")
 	log.Debug().Msg("connecting to database")
-	db, err := db.ConnectToDB()
+	db, err := DB.ConnectToDB()
 	if err != nil {
 		return fmt.Errorf("unable to connect to database: %w", err)
 	}

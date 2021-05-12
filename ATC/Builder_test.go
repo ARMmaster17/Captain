@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	db2 "github.com/ARMmaster17/Captain/db"
+	db2 "github.com/ARMmaster17/Captain/ATC/DB"
 	"github.com/go-playground/assert"
 	"sync"
 	"testing"
