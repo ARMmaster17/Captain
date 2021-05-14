@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ARMmaster17/Captain/ATC/DB"
+	"github.com/gorilla/handlers"
 	"net/http"
 	"strconv"
 
@@ -41,7 +42,10 @@ func (a *APIServer) Start() error {
 
 // Starts the HTTP APIServer on a new thread that listens on the specified port.
 func (a *APIServer) Serve(port int) {
-	go http.ListenAndServe(fmt.Sprintf(":%d", port), a.router)
+	corsAO := handlers.AllowedOrigins([]string{"*"})
+	corsAM := handlers.AllowedMethods([]string{"GET","POST","PUT","DELETE","OPTIONS"})
+	corsAH := handlers.AllowedHeaders([]string{"Content-Type"})
+	go http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.CORS(corsAO, corsAM)(a.router))
 }
 
 // Registers the HTTP REST routes for each of the 4 models stored in the state database. Each model is reponsible for
