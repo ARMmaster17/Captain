@@ -3,7 +3,7 @@ module github.com/ARMmaster17/Captain/ATC
 go 1.13
 
 require (
-	github.com/Telmate/proxmox-api-go v0.0.0-20210507143528-c60bbda13c0c
+	github.com/Telmate/proxmox-api-go v0.0.0-20210517153043-5b9c621ea0cd
 	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
