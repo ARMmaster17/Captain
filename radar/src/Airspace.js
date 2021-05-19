@@ -10,7 +10,7 @@ class Airspace extends React.Component {
 
     componentDidMount() {
         // TODO: Change the URL.
-        fetch(`http://172.27.67.219:5000/airspace/${this.props.match.params.airspaceId}/flights`)
+        fetch(`http://172.21.188.65:5000/airspace/${this.props.match.params.airspaceId}/flights`)
             .then(res => res.json())
             .then((data) => {
                 this.setState({

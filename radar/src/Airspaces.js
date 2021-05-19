@@ -9,7 +9,7 @@ class Airspaces extends React.Component {
 
     componentDidMount() {
         // TODO: Change to... something else.
-        fetch('http://172.27.67.219:5000/airspaces')
+        fetch('http://172.21.188.65:5000/airspaces')
             .then(res => res.json())
             .then((data) => {
                 this.setState({

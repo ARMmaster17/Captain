@@ -45,7 +45,7 @@ func (a *APIServer) Serve(port int) {
 	corsAO := handlers.AllowedOrigins([]string{"*"})
 	corsAM := handlers.AllowedMethods([]string{"GET","POST","PUT","DELETE","OPTIONS"})
 	corsAH := handlers.AllowedHeaders([]string{"Content-Type"})
-	go http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.CORS(corsAO, corsAM)(a.router))
+	go http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.CORS(corsAO, corsAM, corsAH)(a.router))
 }
 
 // Registers the HTTP REST routes for each of the 4 models stored in the state database. Each model is reponsible for
@@ -97,11 +97,11 @@ type RESTAirspace struct {
 }
 
 func (a *APIServer) registerAirspaceHandlers() {
-	a.router.HandleFunc("/airspaces", a.getAirspaces).Methods("GET")
-	a.router.HandleFunc("/airspace", a.createAirspace).Methods("POST")
-	a.router.HandleFunc("/airspace/{id:[0-9]+}", a.getAirspace).Methods("GET")
-	a.router.HandleFunc("/airspace/{id:[0-9]+}", a.updateAirspace).Methods("PUT")
-	a.router.HandleFunc("/airspace/{id:[0-9]+}", a.deleteAirspace).Methods("DELETE")
+	a.router.HandleFunc("/airspaces", a.getAirspaces).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/airspace", a.createAirspace).Methods("POST", "OPTIONS")
+	a.router.HandleFunc("/airspace/{id:[0-9]+}", a.getAirspace).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/airspace/{id:[0-9]+}", a.updateAirspace).Methods("PUT", "OPTIONS")
+	a.router.HandleFunc("/airspace/{id:[0-9]+}", a.deleteAirspace).Methods("DELETE", "OPTIONS")
 }
 
 // swagger:operation GET /airspaces airspace GetAirspaces
@@ -379,12 +379,12 @@ type RESTFlight struct {
 }
 
 func (a *APIServer) registerFlightHandlers() {
-	a.router.HandleFunc("/flights", a.getFlights).Methods("GET")
-	a.router.HandleFunc("/airspace/{aid:[0-9+]}/flights", a.getFlightsInAirspace).Methods("GET")
-	a.router.HandleFunc("/flight", a.createFlight).Methods("POST")
-	a.router.HandleFunc("/flight/{id:[0-9]+}", a.getFlight).Methods("GET")
-	a.router.HandleFunc("/flight/{id:[0-9]+}", a.updateFlight).Methods("PUT")
-	a.router.HandleFunc("/flight/{id:[0-9]+}", a.deleteFlight).Methods("DELETE")
+	a.router.HandleFunc("/flights", a.getFlights).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/airspace/{aid:[0-9+]}/flights", a.getFlightsInAirspace).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/flight", a.createFlight).Methods("POST", "OPTIONS")
+	a.router.HandleFunc("/flight/{id:[0-9]+}", a.getFlight).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/flight/{id:[0-9]+}", a.updateFlight).Methods("PUT", "OPTIONS")
+	a.router.HandleFunc("/flight/{id:[0-9]+}", a.deleteFlight).Methods("DELETE", "OPTIONS")
 }
 
 func (a *APIServer) getFlights(w http.ResponseWriter, r *http.Request) {
@@ -607,12 +607,12 @@ func convertToRESTFormation(as Formation) RESTFormation {
 }
 
 func (a *APIServer) registerFormationHandlers() {
-	a.router.HandleFunc("/formations", a.getFormations).Methods("GET")
-	a.router.HandleFunc("/flight/{fid:[0-9+]}/formations", a.getFormationsInFlight).Methods("GET")
-	a.router.HandleFunc("/formation", a.createFormation).Methods("POST")
-	a.router.HandleFunc("/formation/{id:[0-9]+}", a.getFormation).Methods("GET")
-	a.router.HandleFunc("/formation/{id:[0-9]+}", a.updateFormation).Methods("PUT")
-	a.router.HandleFunc("/formation/{id:[0-9]+}", a.deleteFormation).Methods("DELETE")
+	a.router.HandleFunc("/formations", a.getFormations).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/flight/{fid:[0-9+]}/formations", a.getFormationsInFlight).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/formation", a.createFormation).Methods("POST", "OPTIONS")
+	a.router.HandleFunc("/formation/{id:[0-9]+}", a.getFormation).Methods("GET", "OPTIONS")
+	a.router.HandleFunc("/formation/{id:[0-9]+}", a.updateFormation).Methods("PUT", "OPTIONS")
+	a.router.HandleFunc("/formation/{id:[0-9]+}", a.deleteFormation).Methods("DELETE", "OPTIONS")
 }
 
 func (a *APIServer) getFormations(w http.ResponseWriter, r *http.Request) {

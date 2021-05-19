@@ -19,11 +19,12 @@ class FlightForm extends React.Component {
             AirspaceID: this.props.airspaceID
         };
         let requestOptions = {
+            crossOrigin: true,
             method: 'POST',
             headers: { 'ContentType': 'application/json' },
             body: JSON.stringify(newFlightPayload),
         };
-        fetch('http://172.27.67.219:5000/flight', requestOptions)
+        fetch('http://172.21.188.65:5000/flight', requestOptions)
             .then(response => response.json())
             .then(data => console.log(data))
             .catch(console.log);
