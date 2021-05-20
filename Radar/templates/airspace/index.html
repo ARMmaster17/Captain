@@ -1,0 +1,37 @@
+{{ define "airspace/index.html" }}
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Radar - {{ .pagename }}</title>
+        </head>
+        <body>
+            <h1>Airspaces</h1>
+            <ul>
+                {{ range .airspaces }}
+                    <li>
+                        <a href="/airspace/{{ .ID }}">{{ .HumanName }}</a>
+                        <form action="/airspace/{{ .ID }}" method="DELETE">
+                            <input type="submit" value="Delete">
+                        </form>
+                    </li>
+                {{ end }}
+            </ul>
+            <hr />
+            <h2>New Airspace</h2>
+            <form action="/airspace" method="POST">
+                <div>
+                    <label for="NetName">NetName:</label>
+                    <input type="text" name="NetName" id="NetName" required>
+                </div>
+                <div>
+                    <label for="HumanName">HumanName:</label>
+                    <input type="text" name="HumanName" id="HumanName" required>
+                </div>
+                <div>
+                    <input type="submit" value="Create">
+                </div>
+            </form>
+        </body>
+    </html>
+{{ end }}
