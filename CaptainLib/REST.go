@@ -48,12 +48,13 @@ func (c *CaptainClient) restPUT(path string, payload map[string]interface{}) ([]
 
 // restDELETE sends a DELETE request to the given path at the base URL.
 func (c *CaptainClient) restDELETE(path string) ([]byte, error) {
-	return c.restRequest("DELETE", path, nil)
+	return c.restRequest(http.MethodDelete, path, nil)
 }
 
 // restRequest is a generic REST request handler that performs the specified action at the specified URL.
 func (c *CaptainClient) restRequest(method string, uri string, payload map[string]interface{}) ([]byte, error) {
-	url := fmt.Sprintf("%s/%s", c.BaseUrl, uri)
+	url := fmt.Sprintf("%s%s", c.BaseUrl, uri)
+	fmt.Println(url)
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert %s payload to JSON:\n%w", method, err)

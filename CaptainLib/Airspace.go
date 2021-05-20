@@ -72,9 +72,10 @@ func (c *CaptainClient) UpdateAirspace(id int, humanName string, netName string)
 
 // DeleteAirspace deletes an Airspace, and it will no longer be managed by the connected ATC instance.
 func (c *CaptainClient) DeleteAirspace(id int) error {
-	_, err := c.restDELETE(fmt.Sprintf("airspace/%d", id))
+	resp, err := c.restDELETE(fmt.Sprintf("airspace/%d", id))
 	if err != nil {
 		return fmt.Errorf("unable to delete airspace with ID %d:\n%w", id, err)
 	}
+	fmt.Printf("FFFFFFFFFFFFFFFFFFFFF: %s\n", resp)
 	return nil
 }
