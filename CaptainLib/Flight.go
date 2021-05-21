@@ -26,6 +26,19 @@ func (c *CaptainClient) GetAllFlights() ([]Flight, error) {
 	return flights, nil
 }
 
+func (c *CaptainClient) GetFlightsByAirspace(airspaceID int) ([]Flight, error) {
+	results, err := c.restGET(fmt.Sprintf("airspace/%d/flights", airspaceID))
+	if err != nil {
+		return nil, fmt.Errorf("unable to get a list of flights:\n%w", err)
+	}
+	var flights []Flight
+	err = json.Unmarshal(results, &flights)
+	if err != nil {
+		return nil, fmt.Errorf("unable to format response as array of Flights:\n%w", err)
+	}
+	return flights, nil
+}
+
 // GetFlightByID returns a Flight object that is managed by the connected ATC cluster with the given
 // ID (if it exists).
 func (c *CaptainClient) GetFlightByID(id int) (Flight, error) {

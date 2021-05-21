@@ -9,6 +9,8 @@ func main() {
 	r.LoadHTMLGlob("templates/**/*")
 	registerRootHandlers(r)
 	registerAirspaceHandlers(r)
+	registerFlightHandlers(r)
+	registerFormationHandlers(r)
 	err := r.Run("0.0.0.0:5001")
 	if err != nil {
 		// TODO: log error

@@ -3,8 +3,9 @@ module Radar
 go 1.13
 
 require (
-	github.com/ARMmaster17/Captain/CaptainLib v0.0.0-20210517164455-09c8e2c8c564 // indirect
-	github.com/gin-gonic/gin v1.7.1 // indirect
+	github.com/ARMmaster17/Captain/CaptainLib v0.0.0-00010101000000-000000000000
+	github.com/gin-contrib/multitemplate v0.0.0-20210428235909-8a2f6dd269a0 // indirect
+	github.com/gin-gonic/gin v1.7.1
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
@@ -17,3 +18,5 @@ require (
 	golang.org/x/text v0.3.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/ARMmaster17/Captain/CaptainLib => ../CaptainLib

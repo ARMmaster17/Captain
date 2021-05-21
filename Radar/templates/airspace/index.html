@@ -11,7 +11,8 @@
                 {{ range .airspaces }}
                     <li>
                         <a href="/airspace/{{ .ID }}">{{ .HumanName }}</a>
-                        <form action="/airspace/{{ .ID }}" method="DELETE">
+                        <a href="/airspace/{{ .ID }}/delete">DELETE</a>
+                        <form action="/airspace/{{ .ID }}/delete" method="POST">
                             <input type="submit" value="Delete">
                         </form>
                     </li>

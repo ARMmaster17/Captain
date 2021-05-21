@@ -2,16 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/ARMmaster17/Captain/CaptainLib"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 func registerAirspaceHandlers(router *gin.Engine) {
 	router.GET(airspacePath(""), handleAirspaceAllGet)
 	router.POST(airspacePath(""), handleAirspaceNewPost)
-	router.DELETE(airspacePath("/:airspaceid"), handleAirspaceDelete)
+	router.POST(airspacePath("/:airspaceid/delete"), handleAirspaceDelete)
 }
 
 func airspacePath(uri string) string {
@@ -19,7 +17,7 @@ func airspacePath(uri string) string {
 }
 
 func handleAirspaceAllGet(c *gin.Context) {
-	client := CaptainLib.NewCaptainClient("http://192.168.1.224:5000/")
+	client := getCaptainClient()
 	airspaces, err := client.GetAllAirspaces()
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
@@ -31,8 +29,7 @@ func handleAirspaceAllGet(c *gin.Context) {
 }
 
 func handleAirspaceNewPost(c *gin.Context) {
-	// TODO: Create client factory to reduce code duplication.
-	client := CaptainLib.NewCaptainClient("http://192.168.1.224:5000/")
+	client := getCaptainClient()
 	// TODO: Validate input.
 	_, err := client.CreateAirspace(c.PostForm("HumanName"), c.PostForm("NetName"))
 	if err != nil {
@@ -43,15 +40,16 @@ func handleAirspaceNewPost(c *gin.Context) {
 }
 
 func handleAirspaceDelete(c *gin.Context) {
-	client := CaptainLib.NewCaptainClient("http://192.168.1.224:5000/")
-	airspaceID, err := strconv.ParseInt(c.Param("airspaceid"), 10, 64)
+	client := getCaptainClient()
+	airspaceID, err := getUrlIDParameter("airsapce", c)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		return
 	}
-	err = client.DeleteAirspace(int(airspaceID))
+	err = client.DeleteAirspace(airspaceID)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
-	} else {
-		c.Redirect(http.StatusFound, "/airspace")
+		return
 	}
+	c.Redirect(http.StatusFound, "/airspace")
 }

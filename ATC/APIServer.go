@@ -22,7 +22,7 @@ type APIServer struct {
 	// Cached database connection instance to speed up queries and ease the load on the database. According to the
 	// Gorm documentation, sharing an instance also provides thread-safe locking when working with local databases
 	// such as Sqlite3.
-	db     *gorm.DB
+	db *gorm.DB
 }
 
 // Initializes the APIServer instance. Connects to the database and caches the connection for use by HTTP route
@@ -43,7 +43,7 @@ func (a *APIServer) Start() error {
 // Starts the HTTP APIServer on a new thread that listens on the specified port.
 func (a *APIServer) Serve(port int) {
 	corsAO := handlers.AllowedOrigins([]string{"*"})
-	corsAM := handlers.AllowedMethods([]string{"GET","POST","PUT","DELETE","OPTIONS"})
+	corsAM := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
 	corsAH := handlers.AllowedHeaders([]string{"Content-Type"})
 	go http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.CORS(corsAO, corsAM, corsAH)(a.router))
 }
@@ -595,6 +595,7 @@ type RESTFormation struct {
 
 func convertToRESTFormation(as Formation) RESTFormation {
 	return RESTFormation{
+		ID:          as.ID,
 		FlightID:    as.FlightID,
 		Name:        as.Name,
 		CPU:         as.CPU,
