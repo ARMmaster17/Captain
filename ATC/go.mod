@@ -3,7 +3,7 @@ module github.com/ARMmaster17/Captain/ATC
 go 1.13
 
 require (
-	github.com/Telmate/proxmox-api-go v0.0.0-20210507143528-c60bbda13c0c
+	github.com/Telmate/proxmox-api-go v0.0.0-20210517153043-5b9c621ea0cd
 	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
@@ -13,7 +13,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	github.com/rs/zerolog v1.21.0
+	github.com/rs/zerolog v1.22.0
 	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
@@ -26,5 +26,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	gorm.io/driver/postgres v1.1.0
 	gorm.io/driver/sqlite v1.1.4
-	gorm.io/gorm v1.21.9
+	gorm.io/gorm v1.21.10
 )
