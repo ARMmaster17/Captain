@@ -12,7 +12,7 @@ type Flight struct {
 	Name       string
 }
 
-// GetAllFlights returns all flights across all airpsaces that are amanged by the connected ATC instance.
+// GetAllFlights returns all flights across all airpsaces that are managed by the connected ATC instance.
 func (c *CaptainClient) GetAllFlights() ([]Flight, error) {
 	results, err := c.restGET("flights")
 	if err != nil {
@@ -26,6 +26,7 @@ func (c *CaptainClient) GetAllFlights() ([]Flight, error) {
 	return flights, nil
 }
 
+// GetFlightsByAirspace returns all flights in the specified airspace.
 func (c *CaptainClient) GetFlightsByAirspace(airspaceID int) ([]Flight, error) {
 	results, err := c.restGET(fmt.Sprintf("airspace/%d/flights", airspaceID))
 	if err != nil {

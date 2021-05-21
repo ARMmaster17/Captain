@@ -33,6 +33,7 @@ func (c *CaptainClient) GetAllFormations() ([]Formation, error) {
 	return formations, nil
 }
 
+// GetFormationsByFlight returns all formations inside the specified flight.
 func (c *CaptainClient) GetFormationsByFlight(flightID int) ([]Formation, error) {
 	results, err := c.restGET(fmt.Sprintf("flight/%d/formations", flightID))
 	if err != nil {

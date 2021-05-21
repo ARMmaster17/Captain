@@ -6,39 +6,34 @@ import (
 	"net/http"
 )
 
+// registerFormationHandlers creates all the formation routes in the given router instance. Requires that both
+// registerAirspaceHandlers and registerFlightHandlers have run first to ensure successful bindings.
 func registerFormationHandlers(router *gin.Engine) {
 	router.GET(formationPath(""), handleFormationAllGet)
 	router.POST(formationPath(""), handleFormationNewPost)
 	router.POST(formationPath("/:formationid/delete"), handleFormationDelete)
 }
 
+// formationPath helper method to create a fully-qualified path to the other formation pages.
 func formationPath(uri string) string {
 	return fmt.Sprintf("%s/:flightid%s", flightPath(""), uri)
 }
 
+// handleFormationAllGet handles requests to the main formation page. A listing of all formations in the parent flight
+// is rendered.
 func handleFormationAllGet(c *gin.Context) {
 	client := getCaptainClient()
-	airspaceID, err := getUrlIDParameter("airspace", c)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID: %w", err))
-		return
-	}
-	flightID, err := getUrlIDParameter("flight", c)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID: %w", err))
-		return
-	}
-	airspace, err := client.GetAirspaceByID(airspaceID)
+	airspace, err := getAirspaceFromURLParameter(c, client)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
 		return
 	}
-	flight, err := client.GetFlightByID(flightID)
+	flight, err := getFlightFromURLParameter(c, client)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
 		return
 	}
-	formations, err := client.GetFormationsByFlight(flightID)
+	formations, err := client.GetFormationsByFlight(flight.ID)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
 		return
@@ -47,18 +42,22 @@ func handleFormationAllGet(c *gin.Context) {
 		"formations": formations,
 		"flight":     flight,
 		"airspace":   airspace,
+		"pagename": flight.Name,
 	})
 }
 
+// handleFormationNewPost handles requests to create a new formation in the parent flight with the given form
+// parameters. If the request is successful, the user will be redirected to the formation listings page in the parent
+// flight.
 func handleFormationNewPost(c *gin.Context) {
 	client := getCaptainClient()
 	// TODO: Validate input.
-	airspaceID, err := getUrlIDParameter("airspace", c)
+	airspaceID, err := getURLIDParameter("airspace", c)
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID: %w", err))
 		return
 	}
-	flightID, err := getUrlIDParameter("flight", c)
+	flightID, err := getURLIDParameter("flight", c)
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID: %w", err))
 		return
@@ -78,19 +77,21 @@ func handleFormationNewPost(c *gin.Context) {
 	}
 }
 
+// handleFormationDelete handles requests to delete a formation in the parent flight with the given ID. If the request
+// is successful, the user will be redirected to the formation listings page in the parent flight.
 func handleFormationDelete(c *gin.Context) {
 	client := getCaptainClient()
-	airspaceID, err := getUrlIDParameter("airspace", c)
+	airspaceID, err := getURLIDParameter("airspace", c)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
 		return
 	}
-	flightID, err := getUrlIDParameter("flight", c)
+	flightID, err := getURLIDParameter("flight", c)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
 		return
 	}
-	formationID, err := getUrlIDParameter("formation", c)
+	formationID, err := getURLIDParameter("formation", c)
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
 		return

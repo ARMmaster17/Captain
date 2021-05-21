@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   hypervisor environment.
 - CaptainLib: A golang library is now included for each release of Captain for interfacing with
   ATC instances.
+- Radar: A new Web GUI has been introduced that natively integrates with ATC using CaptainLib.
 
 ### Changed
 
