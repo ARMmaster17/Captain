@@ -23,5 +23,6 @@ install:
 deb:
 	$(MAKE) build
 	cp $(BINARY) ./pkg/deb/usr/local/bin/$(BINARY)
+	rm ./pkg/deb/usr/local/bin/.keep
 	dpkg-deb --build ./pkg/deb
 	mv ./pkg/deb.deb ./pkg/captain-atc_$(VERSION)_amd64.deb

@@ -1,4 +1,4 @@
-module Radar
+module github.com/ARMmaster17/Captain/Radar
 
 go 1.13
 

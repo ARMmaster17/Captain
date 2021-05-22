@@ -15,6 +15,8 @@ install:
 deb:
 	$(MAKE) build
 	cp $(BINARY) ./pkg/deb/usr/local/bin/$(BINARY)
+	rm -R ./pkg/deb/etc/captain/radar/templates/
 	cp -R ./templates/ ./pkg/deb/etc/captain/radar/templates/
+	rm ./pkg/deb/usr/local/bin/.keep
 	dpkg-deb --build ./pkg/deb
 	mv ./pkg/deb.deb ./pkg/captain-radar_$(VERSION)_amd64.deb
