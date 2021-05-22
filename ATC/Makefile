@@ -15,6 +15,7 @@ clean:
 
 init-data-dir:
 	sudo mkdir /etc/captain
+	sudo mkdir /etc/captain/atc
 	sudo chmod 777 -R /etc/captain
 
 install:
