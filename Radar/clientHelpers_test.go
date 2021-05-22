@@ -8,11 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestBlock(t *testing.T) {
-	// TODO: Remove this when testing is complete.
-	t.Fail()
-}
-
 func Test_getCaptainClient(t *testing.T) {
 	tests := []struct {
 		name string
