@@ -52,3 +52,16 @@ jobs:
       with:
         files: ./*/report.xml
         report_individual_runs: "true"
+
+    - name: Build ATC RPM
+      run: cd ATC; make deb
+
+    - name: Build Radar RPM
+      run: cd Radar; make deb
+
+    - name: Upload RPMs
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: ./**/*.deb
+        retention-days: 3

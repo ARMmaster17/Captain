@@ -1,0 +1,8 @@
+Package: captain-atc
+Version: 0.1.0
+Section: base
+Priority: required
+Architecture: amd64
+Depends: sqlite3
+Maintainer: wordman05@gmail.com
+Description: PaaS/SaaS platform for Proxmox clusters.

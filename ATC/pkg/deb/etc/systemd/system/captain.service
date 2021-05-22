@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/etc/captain
-ExecStart=/usr/local/bin/captain
+WorkingDirectory=/etc/captain/atc
+ExecStart=/usr/local/bin/captain-atc
 Restart=on-failure
 
 [Install]

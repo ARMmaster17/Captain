@@ -1,4 +1,4 @@
-BINARY=captain
+BINARY=captain-atc
 VERSION=`git describe --tags`
 LDFLAGS=-ldflags="-w -s -X main.Version=$(VERSION)"
 
@@ -13,22 +13,15 @@ test:
 clean:
 	rm ./$(BINARY)
 
-uninstall:
-	rm /usr/local/bin/$(BINARY)
-	rm /etc/captain/defaults.yaml
-	rmdir /etc/captain
-
 init-data-dir:
 	sudo mkdir /etc/captain
 	sudo chmod 777 -R /etc/captain
 
-install-service:
-	sudo cp captain.service /etc/systemd/system/captain.service
-	sudo systemctl daemon-reload
-	sudo systemctl enable captain
-	sudo systemctl start captain
-
 install:
+	$(MAKE) deb
+	sudo apt install ./pkg/captain-atc_*_amd64.deb
+deb:
 	$(MAKE) build
-	cp $(BINARY) /usr/local/bin/$(BINARY)
-	$(MAKE) init-data-dir
+	cp $(BINARY) ./pkg/deb/usr/local/bin/$(BINARY)
+	dpkg-deb --build ./pkg/deb
+	mv ./pkg/deb.deb ./pkg/captain-atc_$(VERSION)_amd64.deb

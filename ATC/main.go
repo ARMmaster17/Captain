@@ -34,7 +34,7 @@ func main() {
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("/etc/captain")
+	viper.AddConfigPath("/etc/captain/atc")
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			err = generateConfigFile()
