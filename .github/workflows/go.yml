@@ -32,6 +32,12 @@ jobs:
     - name: Test CaptainLib
       run: cd CaptainLib; go test -v -coverprofile=cover.out ./... 2>&1 | go-junit-report > report.xml
 
+    - name: Build Radar
+      run: cd Radar; go build .
+
+    - name: Test Radar (Go)
+      run: cd Radar; go test -v -coverprofile=cover.out ./... 2>&1 | go-junit-report > report.xml
+
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
       env:

@@ -33,6 +33,20 @@ func (c *CaptainClient) GetAllFormations() ([]Formation, error) {
 	return formations, nil
 }
 
+// GetFormationsByFlight returns all formations inside the specified flight.
+func (c *CaptainClient) GetFormationsByFlight(flightID int) ([]Formation, error) {
+	results, err := c.restGET(fmt.Sprintf("flight/%d/formations", flightID))
+	if err != nil {
+		return nil, fmt.Errorf("unable to get a list of formations:\n%w", err)
+	}
+	var formations []Formation
+	err = json.Unmarshal(results, &formations)
+	if err != nil {
+		return nil, fmt.Errorf("unable to format response as array of Formations:\n%w", err)
+	}
+	return formations, nil
+}
+
 // GetFormationByID returns a Formation instance from the conencted ATC instance with the given ID
 // (if it exists).
 func (c *CaptainClient) GetFormationByID(id int) (Formation, error) {

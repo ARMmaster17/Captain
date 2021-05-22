@@ -12,9 +12,23 @@ type Flight struct {
 	Name       string
 }
 
-// GetAllFlights returns all flights across all airpsaces that are amanged by the connected ATC instance.
+// GetAllFlights returns all flights across all airpsaces that are managed by the connected ATC instance.
 func (c *CaptainClient) GetAllFlights() ([]Flight, error) {
 	results, err := c.restGET("flights")
+	if err != nil {
+		return nil, fmt.Errorf("unable to get a list of flights:\n%w", err)
+	}
+	var flights []Flight
+	err = json.Unmarshal(results, &flights)
+	if err != nil {
+		return nil, fmt.Errorf("unable to format response as array of Flights:\n%w", err)
+	}
+	return flights, nil
+}
+
+// GetFlightsByAirspace returns all flights in the specified airspace.
+func (c *CaptainClient) GetFlightsByAirspace(airspaceID int) ([]Flight, error) {
+	results, err := c.restGET(fmt.Sprintf("airspace/%d/flights", airspaceID))
 	if err != nil {
 		return nil, fmt.Errorf("unable to get a list of flights:\n%w", err)
 	}
