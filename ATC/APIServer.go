@@ -37,6 +37,7 @@ func (a *APIServer) Start() error {
 		}
 	}
 	a.registerHandlers()
+	a.router.Use(middlewareLogger)
 	return nil
 }
 
@@ -748,4 +749,11 @@ func (a *APIServer) deleteFormation(w http.ResponseWriter, r *http.Request) {
 		a.respondWithError(w)
 		return
 	}
+}
+
+func middlewareLogger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Info().Msgf("[%s] %s %s", r.Method, r.RemoteAddr, r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
 }

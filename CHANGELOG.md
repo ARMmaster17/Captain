@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ATC: Image mappings can now be made on a per-driver basis in `config.yaml`.
 - ATC: Moved ATC to the `ATC` directory to make room for other Captain modules.
+- ATC: Log output is now shown for all HTTP requests, and not just errors.
 
 ### Removed
 
