@@ -1,0 +1,12 @@
+[Unit]
+Description=Captain Radar service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/captain/radar
+ExecStart=/usr/local/bin/captain-radar
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

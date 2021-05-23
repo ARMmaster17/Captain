@@ -82,17 +82,17 @@ func TestProviderDriverManagerGetActiveBuildDriverDummy(t *testing.T) {
 
 func helperSetupConfigFile(configFile string) error {
 	viper.Reset()
-	_ = os.Remove("/etc/captain/config.yaml")
+	_ = os.Remove("/etc/captain/atc/config.yaml")
 	input, err := ioutil.ReadFile(fmt.Sprintf("../testing/%s", configFile))
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile("/etc/captain/config.yaml", input, 0644)
+	err = ioutil.WriteFile("/etc/captain/atc/config.yaml", input, 0644)
 	if err != nil {
 		return err
 	}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("/etc/captain")
+	viper.AddConfigPath("/etc/captain/atc")
 	return viper.ReadInConfig()
 }

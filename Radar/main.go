@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func main() {
@@ -15,7 +16,12 @@ func main() {
 
 func initRouter() *gin.Engine {
 	r := gin.Default()
-	r.LoadHTMLGlob("templates/**/*")
+	executablePath, _ := os.Executable()
+	if executablePath == "" {
+		r.LoadHTMLGlob("/etc/captain/radar/templates/**/*")
+	} else {
+		r.LoadHTMLGlob("templates/**/*")
+	}
 	registerRootHandlers(r)
 	registerAirspaceHandlers(r)
 	registerFlightHandlers(r)

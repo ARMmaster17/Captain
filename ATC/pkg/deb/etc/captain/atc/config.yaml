@@ -1,0 +1,17 @@
+defaults:
+  publickey: x
+  network:
+    nameservers: 8.8.8.8 8.8.4.4
+    searchdomain: ""
+    gateway: 10.1.0.1
+    mtu: 1450
+  image: debian-10
+config:
+  drivers:
+    provisioners:
+      - dummy
+  api:
+    port: 5000
+  images:
+    debian-10:
+      dummy: notrealpath

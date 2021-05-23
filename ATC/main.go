@@ -34,14 +34,14 @@ func main() {
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("/etc/captain")
+	viper.AddConfigPath("/etc/captain/atc")
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			err = generateConfigFile()
 			if err != nil {
 				log.Fatal().Stack().Err(err).Msg("unable to create config file")
 			} else {
-				log.Warn().Msg("a config file was generated at /etc/captain/config.yaml that needs to be edited before starting Captain again")
+				log.Warn().Msg("a config file was generated at /etc/captain/atc/config.yaml that needs to be edited before starting Captain again")
 			}
 		} else {
 			log.Fatal().Stack().Err(err).Msg("unable to read from config file")

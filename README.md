@@ -18,18 +18,21 @@ Captain is a container orchestration and streamlined PaaS provider for Proxmox-b
 # Getting Started
 
 1. Install Proxmox on at least one server (you may also use a hypervisor such as VirtualBox in place of a physical server).
-2. Create an LXC container (or VM) in Proxmox using any (reasonable) Linux distro. Install the golang compiler and `make`.
-3. Run the following commands:
+2. Create an LXC container (or VM) in Proxmox using any Debian or Ubuntu image.
+3. Download the DEB files from GitHub Actions or from the Releases page.
+4. Run the following commands:
 
 ```shell
-git clone https://github.com/ARMmaster17/Captain
-cd Captain
-make install
-captain
-nano /etc/captain/config.yaml
-# Set any environment variables you need from the table below.
-captain # or `make install service` to install as a system service.
+sudo apt install ./captain-atc_*_amd64.deb
+sudo apt install ./captain-radar_*_amd64.deb # Only needed if you want the web GUI.
+nano /etc/captain/atc/config.yaml # Edit to match your proxmox cluster configuration.
+sudo systemctl enable captain-atc
+sudo systemctl start captain-atc
+sudo systemctl enable captain-radar
+sudo systemctl start captain-radar
 ```
+
+You should be able to access the API on `<IP>:5000` and the web GUI on `<IP>:5001`.
 
 | Name | Value |
    |---|---|
@@ -45,6 +48,12 @@ Each airspace has many *flights*. A flight is a complete app, which may include 
 
 To modify the state database to trigger builds in Proxmox, you may
 use a tool like Curl, or the CLI tool (migrating to this repo soon).
+
+## Building From Source
+
+Running `make build` inside the ATC or Radar sub-directories will build executables that can be run in-place.
+If you would like to build your own DEB files, run `make deb` in each project directory. Then you may install them
+following the steps above.
 
 # Contributing
 
