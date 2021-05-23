@@ -15,3 +15,4 @@ config:
   images:
     debian-10:
       dummy: notrealpath
+  loglevel: 0

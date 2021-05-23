@@ -16,9 +16,7 @@ var (
 // Main entry point of the application. Handles the creation of the requested number of workers for each task, and sets
 // them up to use pipe-based IPC or an external MQ service for communication.
 func main() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	// TODO: Read verbosity level from command line args
+	initLogging()
 
 	log.Info().Msg(fmt.Sprintf("Captain %s is starting up", getApplicationVersion()))
 
@@ -49,6 +47,8 @@ func main() {
 		return
 	}
 
+	zerolog.SetGlobalLevel(getLogLevel(viper.GetInt("config.loglevel")))
+
 	apiServer := &APIServer{}
 	err := apiServer.Start()
 	if err != nil {
@@ -61,6 +61,31 @@ func main() {
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("Captain has fatally crashed")
 		return
+	}
+}
+
+func initLogging() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	viper.SetDefault("config.loglevel", -1)
+}
+
+func getLogLevel(level int) zerolog.Level {
+	switch l := level; l {
+	case 5:
+		return zerolog.PanicLevel
+	case 4:
+		return zerolog.FatalLevel
+	case 3:
+		return zerolog.ErrorLevel
+	case 2:
+		return zerolog.WarnLevel
+	case 1:
+		return zerolog.InfoLevel
+	case 0:
+		return zerolog.DebugLevel
+	default:
+		return zerolog.TraceLevel
 	}
 }
 
