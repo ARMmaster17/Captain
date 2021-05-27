@@ -2,6 +2,7 @@ package IPAM
 
 import "fmt"
 
+// performMigrations Ensures that the ReservedBlock and ReservedAddress schemas exist in the database.
 func (ipam *IPAM) performMigrations() error {
 	err := ipam.db.AutoMigrate(&ReservedAddress{})
 	if err != nil {
