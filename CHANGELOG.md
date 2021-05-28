@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Radar: A new Web GUI has been introduced that natively integrates with ATC using CaptainLib.
 - Both ATC and Radar are now available as pre-built DEB files.
 - ATC: Logging can now be filtered with the `config.loglevel` property in `config.yaml`.
+- ATC: An integrated IPAM module is now available to provider drivers for non-DHCP environments.
 
 ### Changed
 
