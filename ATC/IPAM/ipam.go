@@ -11,7 +11,7 @@ import (
 // IPAM is a thread-safe simple implementation of an IP address management system that reserves and releases
 // addresses for Planes based on allowed blocks in config.yaml.
 type IPAM struct {
-	db *gorm.DB
+	db    *gorm.DB
 	mutex *sync.Mutex
 }
 

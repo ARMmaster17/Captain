@@ -45,5 +45,5 @@ func subnetIsFull(existingAddresses int64, subnetCIDR net.IPMask) bool {
 // given to IPAM do not represent the actual operating subnet.
 func getSubnetAddressSize(subnetCIDR net.IPMask) int64 {
 	leadingOnes, bits := subnetCIDR.Size()
-	return int64(math.Pow(2, float64(bits - leadingOnes))/* - 2*/)
+	return int64(math.Pow(2, float64(bits-leadingOnes)) /* - 2*/)
 }

@@ -11,7 +11,7 @@ import (
 type ReservedBlock struct {
 	gorm.Model
 	BlockName string
-	Subnet    net.IPNet
+	Subnet    net.IPNet `gorm:"type:byte[]"`
 	Addresses []ReservedAddress
 }
 
@@ -43,15 +43,14 @@ func (r *ReservedBlock) reserveAddress(db *gorm.DB) (net.IP, error) {
 		return nil, fmt.Errorf("unable get next available address: %w", err)
 	}
 	newAddress := ReservedAddress{
-		Address: ip,
+		Address:         ip,
 		ReservedBlockID: r.ID,
 	}
 	result := db.Save(&newAddress)
 	if result.Error != nil {
 		return nil, fmt.Errorf("unable to save new address: %w", err)
-	} else {
-		return ip, nil
 	}
+	return ip, nil
 }
 
 // getNextAddress Finds the first available address in a ReservedBlock pool. This function only retrieves a free address,

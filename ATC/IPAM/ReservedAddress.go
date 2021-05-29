@@ -10,5 +10,5 @@ import (
 type ReservedAddress struct {
 	gorm.Model
 	ReservedBlockID uint
-	Address net.IP
+	Address         net.IP
 }
