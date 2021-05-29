@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ATC: The HTTP listen port for the API can no longer be specified as a command-line parameter.
   This is now part of `config.yaml`.
 
+### Fixed
+- Radar: ATC API URL is now configurable in a new `config.yaml`.
+
 ### Security
 
 - ATC: The Proxmox LXC driver can now be configured to require TLS certificate checks when

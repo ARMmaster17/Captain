@@ -14,7 +14,10 @@ func Test_getCaptainClient(t *testing.T) {
 
 		want1 *CaptainLib.CaptainClient
 	}{
-		//TODO: Add test cases
+		{
+			name: "gets a new CaptainLib client",
+			want1: CaptainLib.NewCaptainClient("http://localhost:5000/"),
+		},
 	}
 
 	for _, tt := range tests {
