@@ -14,16 +14,16 @@ import (
 func BuildPlaneOnAnyProvider(p *providers.GenericPlane) (string, error) {
 	driver, err := getActiveBuildDriver()
 	if err != nil {
-		return "", fmt.Errorf("unable to get a provisioning driver: %w", err)
+		return "", fmt.Errorf("unable to get a provisioning driver:\n%w", err)
 	}
 	err = driver.Connect()
 	if err != nil {
-		return "", fmt.Errorf("unable to initialize %s driver: %w", driver.GetYAMLTag(), err)
+		return "", fmt.Errorf("unable to initialize %s driver:\n%w", driver.GetYAMLTag(), err)
 	}
 
 	cuid, err := driver.BuildPlane(p)
 	if err != nil {
-		return "", fmt.Errorf("unable to build plane with driver %s: %w", driver.GetYAMLTag(), err)
+		return "", fmt.Errorf("unable to build plane with driver %s:\n%w", driver.GetYAMLTag(), err)
 	}
 	return fmt.Sprintf("%s:%s", driver.GetCUIDPrefix(), cuid), nil
 }
@@ -33,16 +33,16 @@ func BuildPlaneOnAnyProvider(p *providers.GenericPlane) (string, error) {
 func DestroyPlane(p *providers.GenericPlane) error {
 	driver, err := getDestroyDriver(p.CUID)
 	if err != nil {
-		return fmt.Errorf("unable to get a destruction driver: %w", err)
+		return fmt.Errorf("unable to get a destruction driver:\n%w", err)
 	}
 	err = driver.Connect()
 	if err != nil {
-		return fmt.Errorf("unable to initialize %s driver: %w", driver.GetYAMLTag(), err)
+		return fmt.Errorf("unable to initialize %s driver:\n%w", driver.GetYAMLTag(), err)
 	}
 	cuidsplit := strings.Split(p.CUID, ":")[1]
 	err = driver.DestroyPlane(cuidsplit, p)
 	if err != nil {
-		return fmt.Errorf("unable to destroy plane with driver %s: %w", driver.GetYAMLTag(), err)
+		return fmt.Errorf("unable to destroy plane with driver %s:\n%w", driver.GetYAMLTag(), err)
 	}
 	return nil
 }

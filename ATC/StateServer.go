@@ -15,18 +15,18 @@ import (
 func StartMonitoring() error {
 	db, err := DB.ConnectToDB()
 	if err != nil {
-		return fmt.Errorf("unable to open database with error: %w", err)
+		return fmt.Errorf("unable to open database with error:\n%w", err)
 	}
 	log.Info().Msg("initializing airspaces")
 	err = initAirspaces(db)
 	if err != nil {
-		return fmt.Errorf("unable to migrate database with error: %w", err)
+		return fmt.Errorf("unable to migrate database with error:\n%w", err)
 	}
 	log.Info().Msg("beginning monitoring loop on all airspaces")
 	for {
 		err = monitoringLoop(db)
 		if err != nil {
-			return fmt.Errorf("unable to perform timed checks with error: %w", err)
+			return fmt.Errorf("unable to perform timed checks with error:\n%w", err)
 		}
 		time.Sleep(15 * time.Second)
 	}
@@ -39,13 +39,13 @@ func monitoringLoop(db *gorm.DB) error {
 	var airspaces []Airspace
 	result := db.Preload(clause.Associations).Find(&airspaces)
 	if result.Error != nil {
-		return fmt.Errorf("unable to retrieve list of airspaces with error: %w", result.Error)
+		return fmt.Errorf("unable to retrieve list of airspaces with error:\n%w", result.Error)
 	}
 	for i := 0; i < len(airspaces); i++ {
 		log.Trace().Str("airspace", airspaces[i].HumanName).Msg("checking health of airspace")
 		err := airspaces[i].performHealthChecks(db)
 		if err != nil {
-			return fmt.Errorf("unable to perform healthchecks on airspace %s with error: %w", airspaces[i].HumanName, err)
+			return fmt.Errorf("unable to perform healthchecks on airspace %s with error:\n%w", airspaces[i].HumanName, err)
 		}
 	}
 	return nil

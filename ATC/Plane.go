@@ -30,7 +30,7 @@ func NewPlane(num int) (*Plane, error) {
 	}
 	err := plane.Validate()
 	if err != nil {
-		return nil, fmt.Errorf("unable to create plane with error: %w", err)
+		return nil, fmt.Errorf("unable to create plane with error:\n%w", err)
 	}
 	return &plane, nil
 }
@@ -39,7 +39,7 @@ func NewPlane(num int) (*Plane, error) {
 func initPlanes(db *gorm.DB) error {
 	err := db.AutoMigrate(&Plane{})
 	if err != nil {
-		return fmt.Errorf("unable to migrate plane schema with error: %w", err)
+		return fmt.Errorf("unable to migrate plane schema with error:\n%w", err)
 	}
 	return nil
 }
@@ -64,20 +64,20 @@ func (p *Plane) getFQDN() string {
 func (p *Plane) BeforeCreate(tx *gorm.DB) error {
 	err := p.Validate()
 	if err != nil {
-		return fmt.Errorf("unable to create plane: %w", err)
+		return fmt.Errorf("unable to create plane:\n%w", err)
 	}
 	result := tx.First(&p.Formation, p.FormationID)
 	if result.Error != nil {
-		return fmt.Errorf("unable to get formation ID %d for new plane: %w", p.FormationID, err)
+		return fmt.Errorf("unable to get formation ID %d for new plane:\n%w", p.FormationID, err)
 	}
 	err = p.Formation.Validate()
 	if err != nil {
-		return fmt.Errorf("invalid formation configuration for plane: %w", err)
+		return fmt.Errorf("invalid formation configuration for plane:\n%w", err)
 	}
 	err = p.buildPlane()
 	if err != nil {
 		// TODO: Should detect what kind of error occurred
-		return fmt.Errorf("unable to trigger plane build with error: %w", err)
+		return fmt.Errorf("unable to trigger plane build with error:\n%w", err)
 	}
 	return nil
 }
@@ -92,7 +92,7 @@ func (p *Plane) BeforeDelete(tx *gorm.DB) error {
 func (p *Plane) Validate() error {
 	err := validator.New().Struct(p)
 	if err != nil {
-		return fmt.Errorf("invalid parameters for plane: %w", err)
+		return fmt.Errorf("invalid parameters for plane:\n%w", err)
 	}
 	return nil
 }

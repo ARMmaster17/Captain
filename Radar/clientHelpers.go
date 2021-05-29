@@ -46,12 +46,12 @@ func forceIntRead(input string) int {
 func getAirspaceFromURLParameter(c *gin.Context, client *CaptainLib.CaptainClient) (CaptainLib.Airspace, error) {
 	airspaceID, err := getURLIDParameter("airspace", c)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID: %w", err))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID:\n%w", err))
 		return CaptainLib.Airspace{}, err
 	}
 	airspace, err := client.GetAirspaceByID(airspaceID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return CaptainLib.Airspace{}, err
 	}
 	return airspace, nil
@@ -61,12 +61,12 @@ func getAirspaceFromURLParameter(c *gin.Context, client *CaptainLib.CaptainClien
 func getFlightFromURLParameter(c *gin.Context, client *CaptainLib.CaptainClient) (CaptainLib.Flight, error) {
 	flightID, err := getURLIDParameter("flight", c)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID: %w", err))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID:\n%w", err))
 		return CaptainLib.Flight{}, err
 	}
 	flight, err := client.GetFlightByID(flightID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return CaptainLib.Flight{}, err
 	}
 	return flight, nil
