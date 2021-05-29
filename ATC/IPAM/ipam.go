@@ -47,9 +47,9 @@ func (ipam *IPAM) GetNewAddress() (net.IP, error) {
 // ReleaseAddress Finds what pool an address belongs to, and then deletes that address from the pool.
 func (ipam *IPAM) ReleaseAddress(addr net.IP) error {
 	ipam.mutex.Lock()
-	// TODO: Not implemented.
+	result := ipam.db.Where("ip = ?", addr.String()).Delete(&ReservedAddress{})
 	ipam.mutex.Unlock()
-	return nil
+	return result.Error
 }
 
 // syncDBBlocksWithConfig Loads values from config.yaml and performs a reconciliation with the available ReservedBlocks
@@ -83,7 +83,8 @@ func (ipam *IPAM) addNetblockIfNotExists(netBlock net.IPNet, existingReservedBlo
 	// Block does not exist, create it.
 	newBlock := ReservedBlock{
 		BlockName: netBlock.String(),
-		Subnet:    netBlock,
+		IP: netBlock.IP,
+		Mask: netBlock.Mask,
 	}
 	result := ipam.db.Create(&newBlock)
 	if result.Error != nil {

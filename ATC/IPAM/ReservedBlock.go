@@ -11,8 +11,17 @@ import (
 type ReservedBlock struct {
 	gorm.Model
 	BlockName string
-	Subnet    net.IPNet `gorm:"type:byte[]"`
+	IP []byte
+	Mask []byte
 	Addresses []ReservedAddress
+}
+
+func (r *ReservedBlock) GetBaseIP() net.IP {
+	return net.IP{r.IP[0], r.IP[1], r.IP[2], r.IP[3]}
+}
+
+func (r *ReservedBlock) GetMask() net.IPMask {
+	return net.IPMask{r.Mask[0], r.Mask[1], r.Mask[2], r.Mask[3]}
 }
 
 // getAllReservedBlocks Returns all active ReservedBlocks in the database.
@@ -28,11 +37,11 @@ func (ipam *IPAM) getAllReservedBlocks() ([]ReservedBlock, error) {
 // hasAvailableAddress Checks if the given ReservedBlock has at least one free address in the pool.
 func (r *ReservedBlock) hasAvailableAddress(db *gorm.DB) (bool, error) {
 	var addressCountInBlock int64
-	result := db.Model(&ReservedAddress{}).Where("reservedblock_id = ?", r.ID).Count(&addressCountInBlock)
+	result := db.Model(&ReservedAddress{}).Where("reserved_block_id = ?", r.ID).Count(&addressCountInBlock)
 	if result.Error != nil {
 		return false, fmt.Errorf("unable to get list of addresses in block: %w", result.Error)
 	}
-	return !subnetIsFull(addressCountInBlock, r.Subnet.Mask), nil
+	return !subnetIsFull(addressCountInBlock, r.GetMask()), nil
 }
 
 // reserveAddress Finds the first available address, and then reserves it into the database. This function is not
@@ -43,7 +52,7 @@ func (r *ReservedBlock) reserveAddress(db *gorm.DB) (net.IP, error) {
 		return nil, fmt.Errorf("unable get next available address: %w", err)
 	}
 	newAddress := ReservedAddress{
-		Address:         ip,
+		IP:         ip.String(),
 		ReservedBlockID: r.ID,
 	}
 	result := db.Save(&newAddress)
@@ -57,12 +66,13 @@ func (r *ReservedBlock) reserveAddress(db *gorm.DB) (net.IP, error) {
 // and does not reserve it.
 func (r *ReservedBlock) getNextAddress(db *gorm.DB) (net.IP, error) {
 	var usedAddresses []ReservedAddress
-	result := db.Model(&ReservedAddress{}).Where("reservedblock_id = ?", r.ID).First(&usedAddresses)
+	result := db.Model(&ReservedAddress{}).Where("reserved_block_id = ?", r.ID).Find(&usedAddresses)
 	if result.Error != nil {
 		return nil, fmt.Errorf("unable to get addresses in block: %w", result.Error)
 	}
-	for i := 0; int64(i) < getSubnetAddressSize(r.Subnet.Mask); i++ {
-		ip := nextIP(r.Subnet.IP, uint(i))
+
+	for i := 0; int64(i) < getSubnetAddressSize(r.GetMask()); i++ {
+		ip := nextIP(r.GetBaseIP(), uint(i))
 		if !r.addressIsInUse(ip, usedAddresses) {
 			return ip, nil
 		}
@@ -74,7 +84,7 @@ func (r *ReservedBlock) getNextAddress(db *gorm.DB) (net.IP, error) {
 // addressIsInUse Checks if the given address is currently reserved the ReservedBlock.
 func (r *ReservedBlock) addressIsInUse(ip net.IP, usedAddresses []ReservedAddress) bool {
 	for _, address := range usedAddresses {
-		if ip.String() == address.Address.String() {
+		if ip.String() == address.IP {
 			return true
 		}
 	}

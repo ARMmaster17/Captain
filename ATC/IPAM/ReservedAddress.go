@@ -10,5 +10,13 @@ import (
 type ReservedAddress struct {
 	gorm.Model
 	ReservedBlockID uint
-	Address         net.IP
+	IP         string
+}
+
+func (r *ReservedAddress) GetIP() net.IP {
+	return net.ParseIP(r.IP)
+}
+
+func (r *ReservedAddress) SetIP(ip net.IP) {
+	r.IP = ip.String()
 }

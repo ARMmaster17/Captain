@@ -81,12 +81,12 @@ func TestReservedBlock_hasAvailableAddress(t *testing.T) {
 		wantErr    bool
 		inspectErr func(err error, t *testing.T) //use for more precise error evaluation after test
 	}{
-		{
+		/*{
 			name: "addresses available in empty IP block",
 			init: func(t *testing.T) *ReservedBlock {
 				
 			},
-		},
+		},*/
 	}
 
 	for _, tt := range tests {
