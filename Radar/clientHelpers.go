@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ARMmaster17/Captain/CaptainLib"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"net/http"
 	"strconv"
 )
@@ -11,8 +12,14 @@ import (
 // getCaptainClient is a factory for CaptainClient objects with the base URL injected in. In the future,
 // authentication will also be handled here.
 func getCaptainClient() *CaptainLib.CaptainClient {
-	// TODO: Pull this from the environment or something.
-	return CaptainLib.NewCaptainClient("http://192.168.1.224:5000/")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("/etc/captain/radar/")
+	err := viper.ReadInConfig()
+	if err != nil {
+		return CaptainLib.NewCaptainClient("http://localhost:5000/")
+	}
+	return CaptainLib.NewCaptainClient(viper.GetString("url"))
 }
 
 // getURLIDParameter helper method to retrieve an integer value from the request URL.
@@ -39,12 +46,12 @@ func forceIntRead(input string) int {
 func getAirspaceFromURLParameter(c *gin.Context, client *CaptainLib.CaptainClient) (CaptainLib.Airspace, error) {
 	airspaceID, err := getURLIDParameter("airspace", c)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID: %w", err))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID:\n%w", err))
 		return CaptainLib.Airspace{}, err
 	}
 	airspace, err := client.GetAirspaceByID(airspaceID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return CaptainLib.Airspace{}, err
 	}
 	return airspace, nil
@@ -54,12 +61,12 @@ func getAirspaceFromURLParameter(c *gin.Context, client *CaptainLib.CaptainClien
 func getFlightFromURLParameter(c *gin.Context, client *CaptainLib.CaptainClient) (CaptainLib.Flight, error) {
 	flightID, err := getURLIDParameter("flight", c)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID: %w", err))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID:\n%w", err))
 		return CaptainLib.Flight{}, err
 	}
 	flight, err := client.GetFlightByID(flightID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return CaptainLib.Flight{}, err
 	}
 	return flight, nil

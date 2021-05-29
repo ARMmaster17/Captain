@@ -66,13 +66,13 @@ func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 
 	nextID, err := d.client.GetNextID(0)
 	if err != nil {
-		return "", fmt.Errorf("unable to retreive next available VMID with error: %w", err)
+		return "", fmt.Errorf("unable to retreive next available VMID with error:\n%w", err)
 	}
 	vmr := proxmox.NewVmRef(nextID)
 	vmr.SetNode(viper.GetString(d.getConfigItemPath("defaultnode")))
 	err = config.CreateLxc(vmr, d.client)
 	if err != nil {
-		return "", fmt.Errorf("unable to create LXC container with error: %w", err)
+		return "", fmt.Errorf("unable to create LXC container with error:\n%w", err)
 	}
 	return fmt.Sprintf("%s:%d", d.GetCUIDPrefix(), vmr.VmId()), nil
 }
@@ -81,15 +81,15 @@ func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 func (d ProxmoxLxcProviderDriver) DestroyPlane(cuid string, p *GenericPlane) error {
 	vmr, err := d.client.GetVmRefByName(p.FQDN)
 	if err != nil {
-		return fmt.Errorf("unable to obtain reference to underlying LXC container for plane %s: %w", p.FQDN, err)
+		return fmt.Errorf("unable to obtain reference to underlying LXC container for plane %s:\n%w", p.FQDN, err)
 	}
 	_, err = d.client.StopVm(vmr)
 	if err != nil {
-		return fmt.Errorf("unable to stop LXC container: %w", err)
+		return fmt.Errorf("unable to stop LXC container:\n%w", err)
 	}
 	err = d.proxmoxOverrideDeleteVMParams(vmr)
 	if err != nil {
-		return fmt.Errorf("unable to delete LXC container for plane %s: %w", p.FQDN, err)
+		return fmt.Errorf("unable to delete LXC container for plane %s:\n%w", p.FQDN, err)
 	}
 	return nil
 }
@@ -139,7 +139,7 @@ func (d *ProxmoxLxcProviderDriver) customDELETERequest(url string) error {
 	}
 	resp, err := session.RequestJSON("DELETE", url, nil, nil, nil, &taskResponse)
 	if err != nil || resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unable to send DELETE request to the Proxmox API: %w", err)
+		return fmt.Errorf("unable to send DELETE request to the Proxmox API:\n%w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("the Proxmxox API returned status code %d", resp.StatusCode)
@@ -153,11 +153,11 @@ func (d *ProxmoxLxcProviderDriver) buildCustomSession() (*proxmox.Session, error
 		InsecureSkipVerify: !viper.GetBool(d.getConfigItemPath("forcessl")),
 	})
 	if err != nil {
-		return &proxmox.Session{}, fmt.Errorf("unable to connect to the Proxmox API: %w", err)
+		return &proxmox.Session{}, fmt.Errorf("unable to connect to the Proxmox API:\n%w", err)
 	}
 	err = session.Login(os.Getenv("CAPTAIN_PROXMOX_USER"), os.Getenv("CAPTAIN_PROXMOX_PASSWORD"), "")
 	if err != nil {
-		return &proxmox.Session{}, fmt.Errorf("unable to authenticate with the Proxmox API: %w", err)
+		return &proxmox.Session{}, fmt.Errorf("unable to authenticate with the Proxmox API:\n%w", err)
 	}
 	return session, nil
 }

@@ -25,17 +25,17 @@ func handleFormationAllGet(c *gin.Context) {
 	client := getCaptainClient()
 	airspace, err := getAirspaceFromURLParameter(c, client)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	flight, err := getFlightFromURLParameter(c, client)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	formations, err := client.GetFormationsByFlight(flight.ID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	c.HTML(http.StatusOK, "formation/index.html", gin.H{
@@ -54,12 +54,12 @@ func handleFormationNewPost(c *gin.Context) {
 	// TODO: Validate input.
 	airspaceID, err := getURLIDParameter("airspace", c)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID: %w", err))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID:\n%w", err))
 		return
 	}
 	flightID, err := getURLIDParameter("flight", c)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID: %w", err))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid flight ID:\n%w", err))
 		return
 	}
 	_, err = client.CreateFormation(c.PostForm("Name"),
@@ -71,7 +71,7 @@ func handleFormationNewPost(c *gin.Context) {
 		c.PostForm("Domain"),
 		forceIntRead(c.PostForm("TargetCount")))
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 	} else {
 		c.Redirect(http.StatusFound, fmt.Sprintf("/airspace/%d/%d", airspaceID, flightID))
 	}
@@ -83,22 +83,22 @@ func handleFormationDelete(c *gin.Context) {
 	client := getCaptainClient()
 	airspaceID, err := getURLIDParameter("airspace", c)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	flightID, err := getURLIDParameter("flight", c)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	formationID, err := getURLIDParameter("formation", c)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	err = client.DeleteFormation(formationID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	c.Redirect(http.StatusFound, fmt.Sprintf("/airspace/%d/%d", airspaceID, flightID))

@@ -25,12 +25,12 @@ func handleFlightAllGet(c *gin.Context) {
 	client := getCaptainClient()
 	airspace, err := getAirspaceFromURLParameter(c, client)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	flights, err := client.GetFlightsByAirspace(airspace.ID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	c.HTML(http.StatusOK, "flight/index.html", gin.H{
@@ -47,12 +47,12 @@ func handleFlightNewPost(c *gin.Context) {
 	// TODO: Validate input.
 	airspace, err := getAirspaceFromURLParameter(c, client)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID: %w", err))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Invalid airspace ID:\n%w", err))
 		return
 	}
 	_, err = client.CreateFlight(c.PostForm("Name"), airspace.ID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 	} else {
 		c.Redirect(http.StatusFound, fmt.Sprintf("/airspace/%d", airspace.ID))
 	}
@@ -64,17 +64,17 @@ func handleFlightDelete(c *gin.Context) {
 	client := getCaptainClient()
 	airspace, err := getAirspaceFromURLParameter(c, client)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	flight, err := getFlightFromURLParameter(c, client)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	err = client.DeleteFlight(flight.ID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	c.Redirect(http.StatusFound, fmt.Sprintf("/airspace/%d", airspace.ID))

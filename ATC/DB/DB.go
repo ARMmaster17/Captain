@@ -15,7 +15,7 @@ func ConnectToDB() (*gorm.DB, error) {
 	log.Debug().Msg("connecting to database")
 	dialector, err := getConfiguredDBDriver()
 	if err != nil {
-		return nil, fmt.Errorf("unable to detect db driver type: %w", err)
+		return nil, fmt.Errorf("unable to detect db driver type:\n%w", err)
 	}
 	return gorm.Open(dialector, &gorm.Config{})
 }
@@ -25,7 +25,7 @@ func ConnectToDB() (*gorm.DB, error) {
 func getConfiguredDBDriver() (gorm.Dialector, error) {
 	dbString, err := getDBConnectionString()
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve database configuration: %w", err)
+		return nil, fmt.Errorf("unable to retrieve database configuration:\n%w", err)
 	}
 	psqlMatch, _ := regexp.Match("$postgres://", []byte(dbString))
 	if psqlMatch {

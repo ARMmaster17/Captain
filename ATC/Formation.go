@@ -43,11 +43,11 @@ type Formation struct {
 func initFormations(db *gorm.DB) error {
 	err := initPlanes(db)
 	if err != nil {
-		return fmt.Errorf("unable to migrate formation dependencies with error: %w", err)
+		return fmt.Errorf("unable to migrate formation dependencies with error:\n%w", err)
 	}
 	err = db.AutoMigrate(&Formation{})
 	if err != nil {
-		return fmt.Errorf("unable to migrate formation schema with error: %w", err)
+		return fmt.Errorf("unable to migrate formation schema with error:\n%w", err)
 	}
 	return nil
 }
@@ -57,20 +57,20 @@ func initFormations(db *gorm.DB) error {
 func (f *Formation) performHealthChecks(db *gorm.DB) error {
 	result := db.Where("formation_id = ?", f.ID).Preload("Formation").Find(&f.Planes)
 	if result.Error != nil {
-		return fmt.Errorf("unable to list planes for formation %s with error: %w", f.Name, result.Error)
+		return fmt.Errorf("unable to list planes for formation %s with error:\n%w", f.Name, result.Error)
 	}
 	// Remove dead planes.
 	for i := 0; i < len(f.Planes); i++ {
 		log.Trace().Str("formation", f.Name).Str("plane", f.Planes[i].getFQDN()).Msg("checking health of plane")
 		isHealthy, err := f.Planes[i].isHealthy(db)
 		if err != nil {
-			return fmt.Errorf("unable to check health of plane %s with error: %w", f.Planes[i].getFQDN(), err)
+			return fmt.Errorf("unable to check health of plane %s with error:\n%w", f.Planes[i].getFQDN(), err)
 		}
 		if !isHealthy {
 			// TODO: Possibly have a grace period up to X seconds before destroying container?
 			result := db.Unscoped().Delete(&f.Planes[i])
 			if result.Error != nil {
-				return fmt.Errorf("unable to remove unhealthy plane %s with error: %w", f.Planes[i].getFQDN(), result.Error)
+				return fmt.Errorf("unable to remove unhealthy plane %s with error:\n%w", f.Planes[i].getFQDN(), result.Error)
 			}
 		}
 	}
@@ -90,7 +90,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 	// Reload plane list in case changes were made
 	result = db.Where("formation_id = ?", f.ID).Preload("Formation").Find(&f.Planes)
 	if result.Error != nil {
-		return fmt.Errorf("unable to list planes for formation %s with error: %w", f.Name, result.Error)
+		return fmt.Errorf("unable to list planes for formation %s with error:\n%w", f.Name, result.Error)
 	}
 
 	if len(f.Planes) > f.TargetCount {
@@ -100,7 +100,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 		for i := 0; i < numToDelete; i++ {
 			result := db.Unscoped().Delete(&f.Planes[i])
 			if result.Error != nil {
-				return fmt.Errorf("unable to delete excess plane %s with error: %w", f.Planes[i].getFQDN(), result.Error)
+				return fmt.Errorf("unable to delete excess plane %s with error:\n%w", f.Planes[i].getFQDN(), result.Error)
 			}
 		}
 	}
@@ -135,7 +135,7 @@ func (f *Formation) getNextNum(offset int) int {
 func (f *Formation) Validate() error {
 	err := validator.New().Struct(f)
 	if err != nil {
-		return fmt.Errorf("invalid parameters for formation: %w", err)
+		return fmt.Errorf("invalid parameters for formation:\n%w", err)
 	}
 	return nil
 }
@@ -145,7 +145,7 @@ func (f *Formation) Validate() error {
 func (f *Formation) BeforeCreate(tx *gorm.DB) error {
 	err := f.Validate()
 	if err != nil {
-		return fmt.Errorf("invalid formation object: %w", err)
+		return fmt.Errorf("invalid formation object:\n%w", err)
 	}
 	return nil
 }

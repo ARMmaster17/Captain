@@ -24,12 +24,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ATC: Image mappings can now be made on a per-driver basis in `config.yaml`.
 - ATC: Moved ATC to the `ATC` directory to make room for other Captain modules.
 - ATC: Log output is now shown for all HTTP requests, and not just errors.
+- ALL: Makefiles have been revamped to be more unified across the project.
+- ATC: Error stacks are now shown one per line instead of a big glob.
 
 ### Removed
 
 - ATC: Plane defaults are no longer stored in `defaults.yaml`. This is now part of `config.yaml`.
 - ATC: The HTTP listen port for the API can no longer be specified as a command-line parameter.
   This is now part of `config.yaml`.
+
+### Fixed
+- Radar: ATC API URL is now configurable in a new `config.yaml`.
 
 ### Security
 

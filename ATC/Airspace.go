@@ -24,12 +24,12 @@ func initAirspaces(db *gorm.DB) error {
 	log.Debug().Msg("initializing flights")
 	err := initFlights(db)
 	if err != nil {
-		return fmt.Errorf("unable to migrate airspace schema dependencies with error: %w", err)
+		return fmt.Errorf("unable to migrate airspace schema dependencies with error:\n%w", err)
 	}
 	log.Debug().Msg("performing airspace schema migrations")
 	err = db.AutoMigrate(&Airspace{})
 	if err != nil {
-		return fmt.Errorf("unable to migrate airspace schema with error: %w", err)
+		return fmt.Errorf("unable to migrate airspace schema with error:\n%w", err)
 	}
 	// Create a default airspace if none exist.
 	log.Trace().Msg("checking if default airspace exists")
@@ -43,7 +43,7 @@ func initAirspaces(db *gorm.DB) error {
 		}
 		result := db.Create(&airspace)
 		if result.Error != nil {
-			return fmt.Errorf("unable to create default airspace with error: %w", result.Error)
+			return fmt.Errorf("unable to create default airspace with error:\n%w", result.Error)
 		}
 	}
 	return nil
@@ -53,13 +53,13 @@ func initAirspaces(db *gorm.DB) error {
 func (a *Airspace) performHealthChecks(db *gorm.DB) error {
 	result := db.Where("airspace_id = ?", a.ID).Find(&a.Flights)
 	if result.Error != nil {
-		return fmt.Errorf("unable to list flights for airspace %s with error: %w", a.HumanName, result.Error)
+		return fmt.Errorf("unable to list flights for airspace %s with error:\n%w", a.HumanName, result.Error)
 	}
 	for i := 0; i < len(a.Flights); i++ {
 		log.Trace().Str("airspace", a.NetName).Str("flight", a.Flights[i].Name).Msg("checking health of flight")
 		err := a.Flights[i].performHealthChecks(db)
 		if err != nil {
-			return fmt.Errorf("unable to check health of flight %s with error: %w", a.Flights[i].Name, err)
+			return fmt.Errorf("unable to check health of flight %s with error:\n%w", a.Flights[i].Name, err)
 		}
 	}
 	return nil

@@ -10,7 +10,7 @@ func TestFlightValidParams(t *testing.T) {
 	}
 	err := f.Validate()
 	if err != nil {
-		t.Errorf("unexpected error with valid flight object: %w", err)
+		t.Errorf("unexpected error with valid flight object:\n%w", err)
 	}
 }
 
