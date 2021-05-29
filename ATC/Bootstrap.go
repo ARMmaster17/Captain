@@ -15,20 +15,20 @@ func BootstrapCluster() error {
 	log.Debug().Msg("connecting to database")
 	db, err := DB.ConnectToDB()
 	if err != nil {
-		return fmt.Errorf("unable to connect to database: %w", err)
+		return fmt.Errorf("unable to connect to database:\n%w", err)
 	}
 	log.Debug().Msg("running migrations")
 	err = initAirspaces(db)
 	if err != nil {
-		return fmt.Errorf("unable to perform schema migrations on database: %w", err)
+		return fmt.Errorf("unable to perform schema migrations on database:\n%w", err)
 	}
 	airspace, err := bootstrapCreateSystemAirspace(db)
 	if err != nil {
-		return fmt.Errorf("unable to create airspace for Captain services: %w", err)
+		return fmt.Errorf("unable to create airspace for Captain services:\n%w", err)
 	}
 	err = bootstrapCreateCaptainServices(db, airspace)
 	if err != nil {
-		return fmt.Errorf("unable to provision Captain stack: %w", err)
+		return fmt.Errorf("unable to provision Captain stack:\n%w", err)
 	}
 	return nil
 }
@@ -41,7 +41,7 @@ func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
 	})
 	results := db.Save(&airspace)
 	if results.Error != nil {
-		return fmt.Errorf("unable to create core services flight: %w", results.Error)
+		return fmt.Errorf("unable to create core services flight:\n%w", results.Error)
 	}
 	flight := airspace.Flights[0]
 	flight.Formations = append(flight.Formations, Formation{
@@ -64,11 +64,11 @@ func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
 	})
 	results = db.Save(&flight)
 	if results.Error != nil {
-		return fmt.Errorf("unable to create core service flights: %w", results.Error)
+		return fmt.Errorf("unable to create core service flights:\n%w", results.Error)
 	}
 	err := flight.performHealthChecks(db)
 	if err != nil {
-		return fmt.Errorf("unable to create core service planes: %w", err)
+		return fmt.Errorf("unable to create core service planes:\n%w", err)
 	}
 
 	return nil
@@ -80,7 +80,7 @@ func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
 func bootstrapCreateSystemAirspace(db *gorm.DB) (*Airspace, error) {
 	airspacesExist, err := bootstrapCheckIfAirspacesAlreadyExist(db)
 	if err != nil {
-		return nil, fmt.Errorf("unable to check existing airspaces: %w", err)
+		return nil, fmt.Errorf("unable to check existing airspaces:\n%w", err)
 	}
 	if airspacesExist {
 		return nil, fmt.Errorf("cluster is not empty, airspaces have already been initialized")
@@ -102,7 +102,7 @@ func bootstrapCheckIfAirspacesAlreadyExist(db *gorm.DB) (bool, error) {
 	var airspaces []Airspace
 	result := db.Find(&airspaces)
 	if result.Error != nil {
-		return false, fmt.Errorf("unable to retrieve list of active airspaces: %w", result.Error)
+		return false, fmt.Errorf("unable to retrieve list of active airspaces:\n%w", result.Error)
 	}
 	// TODO: Check names of airspaces to determine that only the blank 'default' namespace exists.
 	return result.RowsAffected > 1, nil

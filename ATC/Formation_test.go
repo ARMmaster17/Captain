@@ -16,7 +16,7 @@ func TestFormationValidParams(t *testing.T) {
 	}
 	err := f.Validate()
 	if err != nil {
-		t.Errorf("unexpected error in valid formation params: %w", err)
+		t.Errorf("unexpected error in valid formation params:\n%w", err)
 	}
 }
 

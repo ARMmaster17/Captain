@@ -23,7 +23,7 @@ func handleAirspaceAllGet(c *gin.Context) {
 	client := getCaptainClient()
 	airspaces, err := client.GetAllAirspaces()
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 	} else {
 		c.HTML(http.StatusOK, "airspace/index.html", gin.H{
 			"airspaces": airspaces,
@@ -39,7 +39,7 @@ func handleAirspaceNewPost(c *gin.Context) {
 	// TODO: Validate input.
 	_, err := client.CreateAirspace(c.PostForm("HumanName"), c.PostForm("NetName"))
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 	} else {
 		c.Redirect(http.StatusFound, "/airspace")
 	}
@@ -51,12 +51,12 @@ func handleAirspaceDelete(c *gin.Context) {
 	client := getCaptainClient()
 	airspace, err := getAirspaceFromURLParameter(c, client)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	err = client.DeleteAirspace(airspace.ID)
 	if err != nil {
-		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error: %w", err))
+		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 		return
 	}
 	c.Redirect(http.StatusFound, "/airspace")

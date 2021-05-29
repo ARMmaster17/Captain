@@ -33,7 +33,7 @@ func (a *APIServer) Start() error {
 	if a.db == nil {
 		a.db, err = DB.ConnectToDB()
 		if err != nil {
-			return fmt.Errorf("unable to connect to database: %w", err)
+			return fmt.Errorf("unable to connect to database:\n%w", err)
 		}
 	}
 	a.registerHandlers()
