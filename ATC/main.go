@@ -102,6 +102,8 @@ func generateConfigFile() error {
 	viper.Set("defaults.network.searchdomain", "")
 	viper.Set("defaults.network.gateway", "10.1.0.1")
 	viper.Set("defaults.network.mtu", 1450)
+	viper.Set("defaults.network.cidr", 16)
+	viper.Set("defaults.network.blocks", []string{"10.1.5.0/24"})
 	viper.Set("defaults.image", "debian-10")
 	// In the future when there is more than one driver, this section should not
 	// be added automatically.
