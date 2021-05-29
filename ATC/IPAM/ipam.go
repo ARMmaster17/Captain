@@ -83,8 +83,8 @@ func (ipam *IPAM) addNetblockIfNotExists(netBlock net.IPNet, existingReservedBlo
 	// Block does not exist, create it.
 	newBlock := ReservedBlock{
 		BlockName: netBlock.String(),
-		IP: netBlock.IP,
-		Mask: netBlock.Mask,
+		IP:        netBlock.IP,
+		Mask:      netBlock.Mask,
 	}
 	result := ipam.db.Create(&newBlock)
 	if result.Error != nil {

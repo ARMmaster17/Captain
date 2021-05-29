@@ -11,15 +11,17 @@ import (
 type ReservedBlock struct {
 	gorm.Model
 	BlockName string
-	IP []byte
-	Mask []byte
+	IP        []byte
+	Mask      []byte
 	Addresses []ReservedAddress
 }
 
+// GetBaseIP Returns the starting IP address for the address block.
 func (r *ReservedBlock) GetBaseIP() net.IP {
 	return net.IP{r.IP[0], r.IP[1], r.IP[2], r.IP[3]}
 }
 
+// GetMask Returns the netmask for the given address block.
 func (r *ReservedBlock) GetMask() net.IPMask {
 	return net.IPMask{r.Mask[0], r.Mask[1], r.Mask[2], r.Mask[3]}
 }
@@ -52,7 +54,7 @@ func (r *ReservedBlock) reserveAddress(db *gorm.DB) (net.IP, error) {
 		return nil, fmt.Errorf("unable get next available address: %w", err)
 	}
 	newAddress := ReservedAddress{
-		IP:         ip.String(),
+		IP:              ip.String(),
 		ReservedBlockID: r.ID,
 	}
 	result := db.Save(&newAddress)

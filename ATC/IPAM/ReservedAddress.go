@@ -13,10 +13,12 @@ type ReservedAddress struct {
 	IP         string
 }
 
+// GetIP Converts the underlying DB representation to a net.IP object.
 func (r *ReservedAddress) GetIP() net.IP {
 	return net.ParseIP(r.IP)
 }
 
+// SetIP Converts a net.IP object into the underlying DB representation of the field.
 func (r *ReservedAddress) SetIP(ip net.IP) {
 	r.IP = ip.String()
 }
