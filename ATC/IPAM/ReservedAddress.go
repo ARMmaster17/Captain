@@ -10,7 +10,7 @@ import (
 type ReservedAddress struct {
 	gorm.Model
 	ReservedBlockID uint
-	IP         string
+	IP              string
 }
 
 // GetIP Converts the underlying DB representation to a net.IP object.
