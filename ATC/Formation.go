@@ -8,6 +8,10 @@ import (
 	"sync"
 )
 
+var (
+	resourceLock sync.Mutex
+)
+
 // Formation is the lowest-level object that is directly addressable by the user (within the context of Captain). A
 // formation manages a group of planes that are scaled up and down automatically. A formation is a logical representation
 // of an internal service for an application. For example, all web servers that serve the same web app would be
@@ -49,6 +53,7 @@ func initFormations(db *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("unable to migrate formation schema with error:\n%w", err)
 	}
+	resourceLock = sync.Mutex{}
 	return nil
 }
 
@@ -81,7 +86,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 		wg := new(sync.WaitGroup)
 		wg.Add(offset)
 		for i := 0; i < offset; i++ {
-			f.launchBuilder(i, offset, wg)
+			f.launchBuilder(i, offset, wg, &resourceLock)
 		}
 		log.Trace().Str("formation", f.Name).Msgf("waiting for %d builder threads to return", offset)
 		wg.Wait()
@@ -108,7 +113,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 	return nil
 }
 
-func (f *Formation) launchBuilder(id int, totalBuilders int, wg *sync.WaitGroup) {
+func (f *Formation) launchBuilder(id int, totalBuilders int, wg *sync.WaitGroup, mx *sync.Mutex) {
 	builder := builder{
 		ID: id,
 	}
@@ -117,7 +122,7 @@ func (f *Formation) launchBuilder(id int, totalBuilders int, wg *sync.WaitGroup)
 		Formation: *f,
 		FormationID: int(f.ID),
 		Num: f.getNextNum(id),
-	}, wg)
+	}, wg, mx)
 }
 
 // Gets the next available unique ID within a formation.

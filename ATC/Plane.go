@@ -20,6 +20,7 @@ type Plane struct {
 	DriverIdentifier string
 	FormationID      int
 	Formation        Formation `validate:"-"`
+	NetID            string
 }
 
 // Creates a temporary plane structure with a supplied formation-specific unique ID. It is assumed that this plane
@@ -125,11 +126,11 @@ func (p *Plane) destroyPlane() error {
 // getGenericPlane converts the current Plane instance into a GenericPlane that can be read by any provisioning driver.
 func (p *Plane) getGenericPlane() *providers.GenericPlane {
 	return &providers.GenericPlane{
-		FQDN:              p.getFQDN(),
-		CUID:              p.DriverIdentifier,
-		Cores:             p.Formation.CPU,
-		RAM:               p.Formation.RAM,
-		Disk:              p.Formation.Disk,
+		FQDN:  p.getFQDN(),
+		CUID:  p.DriverIdentifier,
+		Cores: p.Formation.CPU,
+		RAM:   p.Formation.RAM,
+		Disk:  p.Formation.Disk,
+		NetID: p.NetID,
 	}
 }
-

@@ -3,10 +3,16 @@ package main
 import (
 	"fmt"
 	"github.com/ARMmaster17/Captain/ATC/DB"
+	"github.com/ARMmaster17/Captain/ATC/IPAM"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"sync"
 	"time"
+)
+
+var (
+	ipam IPAM.IPAM
 )
 
 // Starts a monitoring server. Ideally this should be run on it's own thread. This server will, at the specified
@@ -21,6 +27,11 @@ func StartMonitoring() error {
 	err = initAirspaces(db)
 	if err != nil {
 		return fmt.Errorf("unable to migrate database with error:\n%w", err)
+	}
+	ipam = IPAM.NewIPAM(&sync.Mutex{}, db)
+	err = ipam.Initialize(db)
+	if err != nil {
+		return fmt.Errorf("uanble to migrate IPAM database with error:\n%w", err)
 	}
 	log.Info().Msg("beginning monitoring loop on all airspaces")
 	for {

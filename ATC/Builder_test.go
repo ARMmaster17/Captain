@@ -33,13 +33,14 @@ func TestBuilderCreateDestroyCycle(t *testing.T) {
 	}
 	tx = db.Create(&formation)
 	assert.Equal(t, tx.Error, err)
+	mx := sync.Mutex{}
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 	builder.buildPlane(Plane{
 		Formation: formation,
 		FormationID: int(formation.ID),
 		Num: formation.getNextNum(0),
-	}, wg)
+	}, wg, &mx)
 	fmt.Println(formation.ID)
 	// TODO: Check that plane got built right.
 	tx = db.Where("formation_id = ?", formation.ID).Delete(&Plane{})
