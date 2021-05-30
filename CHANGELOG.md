@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Radar: ATC API URL is now configurable in a new `config.yaml`.
+- ATC: Fixed issue where DEB packages couldn't be built from source.
 
 ### Security
 

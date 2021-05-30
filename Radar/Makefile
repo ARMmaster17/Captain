@@ -12,9 +12,9 @@ test: $(NAME)
 
 $(NAME).deb: $(NAME)
 	cp $(NAME) ./pkg/deb/usr/local/bin/$(NAME)
-	rm -R ./pkg/deb/etc/captain/radar/templates/
+	rm -R ./pkg/deb/etc/captain/radar/templates/ || true
 	cp -R ./templates/ ./pkg/deb/etc/captain/radar/templates/
-	rm ./pkg/deb/usr/local/bin/.keep
+	rm ./pkg/deb/usr/local/bin/.keep || true
 	dpkg-deb --build ./pkg/deb
 	mv ./pkg/deb.deb ./pkg/captain-radar_$(VERSION)_amd64.deb
 
@@ -24,7 +24,7 @@ install: $(NAME).deb
 all: install
 
 clean:
-	rm $(NAME)
-	rm ./pkg/*.deb
+	rm $(NAME) || true
+	rm ./pkg/*.deb || true
 
 .PHONY: clean all install test build
