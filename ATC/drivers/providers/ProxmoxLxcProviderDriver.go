@@ -47,7 +47,7 @@ func (d ProxmoxLxcProviderDriver) BuildPlane(p *GenericPlane) (string, error) {
 		0: {
 			"name":     "eth0",
 			"bridge":   viper.GetString(d.getConfigItemPath("publicnetwork")),
-			"ip":       "dhcp",
+			"ip":       fmt.Sprintf("%s/%d", p.NetID, viper.GetInt("defaults.network.cidr")),
 			"gw":       viper.GetString("defaults.network.gateway"),
 			"firewall": "0",
 			"mtu":      viper.GetInt("defaults.network.mtu"),

@@ -12,7 +12,10 @@ type GenericPlane struct {
 	// Amount of RAM in megabytes that should be assigned to the Plane.
 	RAM int
 	// Size of disk in gigabytes that should be assigned to the Plane.
-	Disk int
+	Disk  int
+	// Identifier used for direct connections.
+	NetID string
+
 	//NetworkInterfaces []GenericNetworkInterface
 }
 

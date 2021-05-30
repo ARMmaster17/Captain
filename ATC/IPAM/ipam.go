@@ -15,6 +15,14 @@ type IPAM struct {
 	mutex *sync.Mutex
 }
 
+// NewIPAM returns a new IPAM object (not initialized).
+func NewIPAM(mutex *sync.Mutex, db *gorm.DB) IPAM {
+	return IPAM{
+		db: db,
+		mutex: mutex,
+	}
+}
+
 // Initialize performs any needed migrations on the database and creates a mutex object for safe cross-thread
 // transactions.
 func (ipam *IPAM) Initialize(db *gorm.DB) error {
