@@ -75,7 +75,7 @@ func getDestroyDriver(cuid string) (providers.ProviderDriver, error) {
 func driverLookupByYAMLTag(driverentry string) (providers.ProviderDriver, error) {
 	if driverentry == (&providers.ProxmoxLxcProviderDriver{}).GetYAMLTag() {
 		// In the future there could be a check here to see if a driver is ready to receive new planes.
-		return providers.ProxmoxLxcProviderDriver{}, nil
+		return &providers.ProxmoxLxcProviderDriver{}, nil
 	}
 	if driverentry == (&providers.DummyProviderDriver{}).GetYAMLTag() {
 		return providers.DummyProviderDriver{}, nil
@@ -87,7 +87,7 @@ func driverLookupByYAMLTag(driverentry string) (providers.ProviderDriver, error)
 func driverLookupByCUIDPrefix(cuidprefix string) (providers.ProviderDriver, error) {
 	if cuidprefix == (&providers.ProxmoxLxcProviderDriver{}).GetCUIDPrefix() {
 		// In the future there could be a check here to see if a driver is ready to receive new planes.
-		return providers.ProxmoxLxcProviderDriver{}, nil
+		return &providers.ProxmoxLxcProviderDriver{}, nil
 	}
 	if cuidprefix == (&providers.DummyProviderDriver{}).GetCUIDPrefix() {
 		return providers.DummyProviderDriver{}, nil
