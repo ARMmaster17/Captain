@@ -18,7 +18,7 @@ type IPAM struct {
 // NewIPAM returns a new IPAM object (not initialized).
 func NewIPAM(mutex *sync.Mutex, db *gorm.DB) IPAM {
 	return IPAM{
-		db: db,
+		db:    db,
 		mutex: mutex,
 	}
 }
