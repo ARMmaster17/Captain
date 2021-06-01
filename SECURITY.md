@@ -7,7 +7,9 @@ be offered on the latest revision of the current minor release.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v0.0.1  | :white_check_mark: |
+| v0.2.0  | :white_check_mark: |
+| v0.1.0 | :x:                |
+| v0.0.1  | :x: |
 |< v0.0.1 | :x:                |
 
 ## Reporting a Vulnerability
