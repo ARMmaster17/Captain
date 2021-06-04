@@ -1,0 +1,50 @@
+html, body {
+    background-color: rgb(20, 20, 20);
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+*{
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; 
+}
+
+input {
+    border: none;
+    background-color: rgb(29, 29, 29);
+    color: white;
+    height: 30px;
+    font-size: 12pt;
+    padding: 5px;
+    margin: 10px;
+}
+
+li {
+    list-style: none;
+}
+
+#submit {
+    width: 250px;
+    height: 50px;
+}
+
+#delete {
+    width: 150px;
+    height: 40px;
+    background-color: rgb(255, 38, 74);
+}
+
+#submit:hover {
+    cursor: pointer;
+    background-color: rgb(51, 51, 51);
+}
+
+#delete:hover {
+    cursor: pointer;
+    background-color: rgb(255, 79, 108);
+}
+
+
+#logo {
+    width: 10%;
+}

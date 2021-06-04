@@ -17,7 +17,7 @@ func getCaptainClient() *CaptainLib.CaptainClient {
 	viper.AddConfigPath("/etc/captain/radar/")
 	err := viper.ReadInConfig()
 	if err != nil {
-		return CaptainLib.NewCaptainClient("http://localhost:5000/")
+		return CaptainLib.NewCaptainClient("http://192.168.1.224:5000/")
 	}
 	return CaptainLib.NewCaptainClient(viper.GetString("url"))
 }
