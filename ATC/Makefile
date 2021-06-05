@@ -20,7 +20,7 @@ clean:
 	rm ./*.db || true
 
 install: $(NAME).deb
-	sudo apt install ./pkg/captain-atc_*_amd64.deb
+	sudo apt install ./pkg/captain-atc_*_amd64.deb -y
 
 $(NAME).deb: $(NAME)
 	cp $(NAME) ./pkg/deb/usr/local/bin/$(NAME)

@@ -56,6 +56,7 @@ func ansibleProvisionHost(hostFilePath string, privatekeyPath string, playbookPa
 		PrivateKey:    privatekeyPath,
 		Timeout:       5,
 		User:          viper.GetString("config.preflight.ansible.connectionuser"),
+		SSHCommonArgs: "-o StrictHostKeyChecking=no",
 	}
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
 		Inventory:         hostFilePath,

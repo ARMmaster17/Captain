@@ -2,4 +2,4 @@
 - hosts: all
   tasks:
     - name: Ping remote host
-      ansible.builtin.ping:
+      ping:
