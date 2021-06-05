@@ -47,10 +47,12 @@ func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup, mx *sync.Mutex) {
 		w.logError(err, fmt.Sprintf("unable to update formation with new planes"))
 		return
 	}
-	err = Preflight.PreflightSingleInstance(newPlane.NetID, "test.yml")
-	if err != nil {
-		w.logError(err, fmt.Sprintf("unable to perform preflight provisioning"))
-		return
+	if newPlane.NetID != "" {
+		err = Preflight.PreflightSingleInstance(newPlane.NetID, "test.yml")
+		if err != nil {
+			w.logError(err, fmt.Sprintf("unable to perform preflight provisioning"))
+			return
+		}
 	}
 }
 
