@@ -25,5 +25,5 @@ config:
     ansible:
       connectiontype: ssh
       connectionuser: root
-      privatekeypath: /root/.ssh/id_rsa.pub
+      privatekeypath: /root/.ssh/id_rsa
   loglevel: 0

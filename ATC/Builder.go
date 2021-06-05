@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ARMmaster17/Captain/ATC/DB"
 	"github.com/ARMmaster17/Captain/ATC/IPAM"
+	"github.com/ARMmaster17/Captain/ATC/Preflight"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"sync"
@@ -44,6 +45,11 @@ func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup, mx *sync.Mutex) {
 	result := db.Save(&newPlane)
 	if result.Error != nil {
 		w.logError(err, fmt.Sprintf("unable to update formation with new planes"))
+		return
+	}
+	err = Preflight.PreflightSingleInstance(newPlane.NetID, "test.yml")
+	if err != nil {
+		w.logError(err, fmt.Sprintf("unable to perform preflight provisioning"))
 		return
 	}
 }
