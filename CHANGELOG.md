@@ -3,7 +3,7 @@
 The format of this file is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [v0.2.0] - 2021-06-01
 
 ### Added
 
@@ -85,5 +85,6 @@ The MVP release of Captain. Supports the ability to create and destroy container
 - Project logo in `README.md`.
 - Unit testing and code coverage in CI pipeline.
 
+[v0.2.0]: https://github.com/ARMmaster17/Captain/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/ARMmaster17/Captain/releases/tag/v0.1.0
 [v0.0.1]: https://github.com/ARMmaster17/Captain/releases/tag/v0.0.1
