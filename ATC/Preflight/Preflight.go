@@ -6,7 +6,10 @@ import (
 	"github.com/apenella/go-ansible/pkg/options"
 	"github.com/apenella/go-ansible/pkg/playbook"
 	"github.com/go-ping/ping"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
+	"io/ioutil"
+	"os"
 	"time"
 )
 
@@ -15,14 +18,39 @@ func PreflightSingleInstance(connectionURI string, playbookPath string) error {
 	if err != nil {
 		return fmt.Errorf("plane %s is not online, cannot run preflight:\n%w", connectionURI, err)
 	}
-	err = ansibleProvisionHost(connectionURI, viper.GetString("config.preflight.ansible.privatekeypath"), []string{processPlaybookPath(playbookPath)})
+	hostFilePath, err := generateHostsFile(connectionURI)
+	if err != nil {
+		return fmt.Errorf("unable to generate temporary hosts file:\n%w", err)
+	}
+	defer cleanupHostsFile(hostFilePath)
+	err = ansibleProvisionHost(hostFilePath, viper.GetString("config.preflight.ansible.privatekeypath"), []string{processPlaybookPath(playbookPath)})
 	if err != nil {
 		return fmt.Errorf("unable to run preflight playbook on %s:\n%w", connectionURI, err)
 	}
 	return nil
 }
 
-func ansibleProvisionHost(connectionURI string, privatekeyPath string, playbookPaths []string) error {
+func generateHostsFile(connectionURI string) (string, error) {
+	tmpHostsFile, err := ioutil.TempFile(os.TempDir(), "hosts-")
+	if err != nil {
+		return "", fmt.Errorf("unable to create temporary file:\n%w", err)
+	}
+	defer tmpHostsFile.Close()
+	fileBody := []byte(connectionURI)
+	if _, err = tmpHostsFile.Write(fileBody); err != nil {
+		return "", fmt.Errorf("unable to write host data to temporary file:\n%w", err)
+	}
+	return tmpHostsFile.Name(), nil
+}
+
+func cleanupHostsFile(path string) {
+	err := os.Remove(path)
+	if err != nil {
+		log.Warn().Msgf("unable to delete temporary file at %s:\n%w", path, err)
+	}
+}
+
+func ansibleProvisionHost(hostFilePath string, privatekeyPath string, playbookPaths []string) error {
 	ansiblePlaybookConnectionOptions := &options.AnsibleConnectionOptions{
 		Connection:    viper.GetString("config.preflight.ansible.connectiontype"),
 		PrivateKey:    privatekeyPath,
@@ -30,7 +58,7 @@ func ansibleProvisionHost(connectionURI string, privatekeyPath string, playbookP
 		User:          viper.GetString("config.preflight.ansible.connectionuser"),
 	}
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
-		Inventory:         connectionURI,
+		Inventory:         hostFilePath,
 	}
 	playbookObj := &playbook.AnsiblePlaybookCmd{
 		Playbooks:                  playbookPaths,
