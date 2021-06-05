@@ -18,4 +18,12 @@ config:
   images:
     debian-10:
       dummy: notrealpath
+  preflight:
+    ping:
+      timeout: 5
+      retries: 3
+    ansible:
+      connectiontype: ssh
+      connectionuser: root
+      privatekeypath: /root/.ssh/id_rsa
   loglevel: 0
