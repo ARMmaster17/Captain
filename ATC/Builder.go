@@ -48,7 +48,7 @@ func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup, mx *sync.Mutex) {
 		return
 	}
 	if newPlane.NetID != "" {
-		err = Preflight.PreflightSingleInstance(newPlane.NetID, "test.yml")
+		err = Preflight.SingleInstance(newPlane.NetID, "test.yml")
 		if err != nil {
 			w.logError(err, fmt.Sprintf("unable to perform preflight provisioning"))
 			return

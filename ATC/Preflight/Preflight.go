@@ -13,7 +13,8 @@ import (
 	"time"
 )
 
-func PreflightSingleInstance(connectionURI string, playbookPath string) error {
+// SingleInstance Runs the specified Ansible playbook against one host.
+func SingleInstance(connectionURI string, playbookPath string) error {
 	err := waitForHostToComeOnline(connectionURI)
 	if err != nil {
 		return fmt.Errorf("plane %s is not online, cannot run preflight:\n%w", connectionURI, err)
@@ -59,12 +60,12 @@ func ansibleProvisionHost(hostFilePath string, privatekeyPath string, playbookPa
 		SSHCommonArgs: "-o StrictHostKeyChecking=no",
 	}
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
-		Inventory:         hostFilePath,
+		Inventory: hostFilePath,
 	}
 	playbookObj := &playbook.AnsiblePlaybookCmd{
-		Playbooks:                  playbookPaths,
-		Options:                    ansiblePlaybookOptions,
-		ConnectionOptions:          ansiblePlaybookConnectionOptions,
+		Playbooks:         playbookPaths,
+		Options:           ansiblePlaybookOptions,
+		ConnectionOptions: ansiblePlaybookConnectionOptions,
 	}
 	err := playbookObj.Run(context.Background())
 	if err != nil {
