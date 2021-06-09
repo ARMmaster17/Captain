@@ -19,8 +19,10 @@ func initRouter() *gin.Engine {
 	executablePath, _ := os.Executable()
 	if executablePath == "" {
 		r.LoadHTMLGlob("/etc/captain/radar/templates/**/*")
+		r.Static("/static", "/etc/captain/radar/static")
 	} else {
 		r.LoadHTMLGlob("templates/**/*")
+		r.Static("/static", "./static")
 	}
 	registerRootHandlers(r)
 	registerAirspaceHandlers(r)
