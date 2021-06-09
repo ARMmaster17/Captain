@@ -7,6 +7,10 @@ pull_request_rules:
       merge:
         method: merge
         strict: smart+fasttrack
+  - name: delete head branch after merge
+    conditions:
+      - merged
+    actions:
       delete_head_branch:
         force: false
   - name: Bypass for repo owner

@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Both ATC and Radar are now available as pre-built DEB files.
 - ATC: Logging can now be filtered with the `config.loglevel` property in `config.yaml`.
 - ATC: An integrated IPAM module is now available to provider drivers.
+- ATC: Formations can now be provisioned with Ansible playbooks.
 
 ### Changed
 

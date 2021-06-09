@@ -3,5 +3,6 @@ Version: 0.2.0
 Section: base
 Priority: required
 Architecture: amd64
+Depends: ansible (>= 2.7.0)
 Maintainer: wordman05@gmail.com
 Description: PaaS/SaaS platform for Proxmox clusters.
