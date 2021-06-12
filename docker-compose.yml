@@ -1,0 +1,49 @@
+version: "3.2"
+services:
+  builder:
+    build: ./Builder
+    scale: 3
+    environment:
+      AMQP_URL: "amqp://guest:guest@captain_amqp_1:5672/"
+      CAPTAIN_DB: "postgres://docker:docker@captain_db_1:5432/captain"
+    depends_on:
+      amqp:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+  amqp:
+    image: rabbitmq:3.8-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: nc -z localhost 5672 || exit -1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: always
+  db:
+    image: postgres:13.1
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - APP_DB_USER=docker
+      - APP_DB_PASS=docker
+      - APP_DB_NAME=captain
+    ports:
+      - 5432:5432
+    volumes:
+      - ./DB:/docker-entrypoint-initdb.d/
+  prometheus:
+    image: prom/prometheus:v2.21.0
+    ports:
+      - 9090:9090
+    volumes:
+      - ./Prometheus:/etc/prometheus

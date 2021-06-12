@@ -4,12 +4,17 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/go-kit/kit/transport/amqp"
-	log2 "github.com/rs/zerolog/log"
-	"strings"
-
 	"github.com/go-kit/kit/endpoint"
+	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
+	"github.com/go-kit/kit/transport/amqp"
+	stdprometheus "github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	log2 "github.com/rs/zerolog/log"
 	amqp2 "github.com/streadway/amqp"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 )
 
 type BuilderService interface {
@@ -38,6 +43,7 @@ func makeBuildPlaneEndpoint(svc BuilderService) endpoint.Endpoint {
 		if err != nil {
 			return buildPlaneResponse{v, err.Error()}, nil
 		}
+		log2.Warn().Msgf("RESPONSE: %s", v)
 		return buildPlaneResponse{v, ""}, nil
 	}
 }
@@ -51,11 +57,43 @@ func decodeBuildPlaneRequest(_ context.Context, a *amqp2.Delivery) (interface{},
 }
 
 func main() {
-	svc := builderService{}
-	connection, err := amqp2.Dial("testURL")
-	if err != nil {
-		log2.Fatal().Err(err).Msgf("unable to connect to AMQP server %s", "testURL")
+	fieldKeys := []string{"method", "error"}
+	requestCount := kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{
+		Namespace: "my_group",
+		Subsystem: "string_service",
+		Name:      "request_count",
+		Help:      "Number of requests received.",
+	}, fieldKeys)
+	requestLatency := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+		Namespace: "my_group",
+		Subsystem: "string_service",
+		Name:      "request_latency_microseconds",
+		Help:      "Total duration of requests in microseconds.",
+	}, fieldKeys)
+	countResult := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+		Namespace: "my_group",
+		Subsystem: "string_service",
+		Name:      "count_result",
+		Help:      "The result of each count method.",
+	}, []string{})
+
+	http.Handle("/metrics", promhttp.Handler())
+	go http.ListenAndServe("0.0.0.0:9090", nil)
+
+	var svc BuilderService
+	svc = builderService{}
+	svc = instrumentingMiddleware(requestCount, requestLatency, countResult)(svc)
+	var connection *amqp2.Connection
+	var err error
+	for {
+		connection, err = amqp2.Dial(os.Getenv("AMQP_URL"))
+		if err == nil {
+			break
+		}
+		log2.Warn().Err(err).Msgf("unable to connect to AMQP server %s", os.Getenv("AMQP_URL"))
+		time.Sleep(1 * time.Second)
 	}
+
 	defer connection.Close()
 	ch, err := connection.Channel()
 	if err != nil {
