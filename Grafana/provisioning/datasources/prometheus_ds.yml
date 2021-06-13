@@ -1,0 +1,6 @@
+datasources:
+  - name: Prometheus
+    access: proxy
+    type: prometheus
+    url: http://captain_prometheus_1:9090
+    isDefault: true

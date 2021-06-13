@@ -81,3 +81,12 @@ services:
     depends_on:
       - builder
       - preflight
+  grafana:
+    image: grafana/grafana:7.5.7
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - ./Grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
