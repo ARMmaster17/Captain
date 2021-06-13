@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/ARMmaster17/Captain/Shared"
 	"github.com/go-kit/kit/endpoint"
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	"github.com/go-kit/kit/transport/amqp"
@@ -21,35 +23,36 @@ type BuilderService interface {
 	BuildPlane(s string) (string, error)
 }
 
-type builderService struct{}
-
-func (builderService) BuildPlane(s string) (string, error) {
-	return strings.ToUpper(s), nil
+type builderService struct{
+	ProvisionEndpoint endpoint.Endpoint
 }
 
-type buildPlaneRequest struct {
-	S string `json:"s"`
-}
-
-type buildPlaneResponse struct {
-	V string `json:"v"`
-	Err string `json:"err,omitempty"`
+func (b builderService) BuildPlane(s string) (string, error) {
+	result := strings.ToUpper(s)
+	response, err := b.ProvisionEndpoint(context.Background(), Shared.ProvisionPlaneRequest{S: result})
+	if err != nil {
+		log2.Error().Err(err).Msgf("unable to send provisioning request")
+		return "", err
+	} else {
+		log2.Info().Msgf("provisioning service returned the message %v", response)
+	}
+	return result, nil
 }
 
 func makeBuildPlaneEndpoint(svc BuilderService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
-		req := request.(buildPlaneRequest)
+		req := request.(Shared.BuildPlaneRequest)
 		v, err := svc.BuildPlane(req.S)
 		if err != nil {
-			return buildPlaneResponse{v, err.Error()}, nil
+			return Shared.BuildPlaneResponse{V: v, Err: err.Error()}, nil
 		}
 		log2.Warn().Msgf("RESPONSE: %s", v)
-		return buildPlaneResponse{v, ""}, nil
+		return Shared.BuildPlaneResponse{V: v}, nil
 	}
 }
 
 func decodeBuildPlaneRequest(_ context.Context, a *amqp2.Delivery) (interface{}, error) {
-	var request buildPlaneRequest
+	var request Shared.BuildPlaneRequest
 	if err := json.NewDecoder(bytes.NewReader(a.Body)).Decode(&request); err != nil {
 		return nil, err
 	}
@@ -59,20 +62,20 @@ func decodeBuildPlaneRequest(_ context.Context, a *amqp2.Delivery) (interface{},
 func main() {
 	fieldKeys := []string{"method", "error"}
 	requestCount := kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{
-		Namespace: "my_group",
-		Subsystem: "string_service",
+		Namespace: "captain",
+		Subsystem: "builder",
 		Name:      "request_count",
 		Help:      "Number of requests received.",
 	}, fieldKeys)
 	requestLatency := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
-		Namespace: "my_group",
-		Subsystem: "string_service",
+		Namespace: "captain",
+		Subsystem: "builder",
 		Name:      "request_latency_microseconds",
 		Help:      "Total duration of requests in microseconds.",
 	}, fieldKeys)
 	countResult := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
-		Namespace: "my_group",
-		Subsystem: "string_service",
+		Namespace: "captain",
+		Subsystem: "builder",
 		Name:      "count_result",
 		Help:      "The result of each count method.",
 	}, []string{})
@@ -80,9 +83,6 @@ func main() {
 	http.Handle("/metrics", promhttp.Handler())
 	go http.ListenAndServe("0.0.0.0:9090", nil)
 
-	var svc BuilderService
-	svc = builderService{}
-	svc = instrumentingMiddleware(requestCount, requestLatency, countResult)(svc)
 	var connection *amqp2.Connection
 	var err error
 	for {
@@ -90,7 +90,7 @@ func main() {
 		if err == nil {
 			break
 		}
-		log2.Warn().Err(err).Msgf("unable to connect to AMQP server %s", os.Getenv("AMQP_URL"))
+		log2.Warn().Err(err).Msgf("unable to connect to AMQP server %s, retrying in 1s", os.Getenv("AMQP_URL"))
 		time.Sleep(1 * time.Second)
 	}
 
@@ -100,6 +100,25 @@ func main() {
 		log2.Fatal().Err(err).Msgf("unable to bind to AMQP channel")
 	}
 	defer ch.Close()
+
+	//////////////////////////////////////////
+	// Publisher stuff
+	ch2, err := connection.Channel()
+	if err != nil {
+		log2.Fatal().Err(err).Msgf("unable to bind to AMQP channel 2")
+	}
+	defer ch2.Close()
+
+	provisionQueue, err := ch2.QueueDeclare("preflight_provision", false, false, false, false, nil)
+	provisionPublisher := amqp.NewPublisher(ch, &provisionQueue, encodeProvisionRequest, decodeProvisionResponse, amqp.PublisherBefore(amqp.SetPublishKey(provisionQueue.Name)))
+	provisionEndpoint := provisionPublisher.Endpoint()
+	//////////////////////////////////////////
+
+	var svc BuilderService
+	svc = builderService{
+		ProvisionEndpoint: provisionEndpoint,
+	}
+	svc = instrumentingMiddleware(requestCount, requestLatency, countResult)(svc)
 	buildQueue, err := ch.QueueDeclare("builder_build", false, false, false, false, nil)
 	buildMsgs, err := ch.Consume(buildQueue.Name, "", false, false, false, false, nil)
 	buildAMQPHandler := amqp.NewSubscriber(makeBuildPlaneEndpoint(svc), decodeBuildPlaneRequest, amqp.EncodeJSONResponse)
@@ -119,4 +138,26 @@ func main() {
 	}()
 
 	<-forever
+}
+
+func encodeProvisionRequest(ctx context.Context, publishing *amqp2.Publishing, request interface{}) error {
+	provisionRequest, ok := request.(Shared.ProvisionPlaneRequest)
+	if !ok {
+		return fmt.Errorf("unable to encode provisioning request")
+	}
+	b, err := json.Marshal(provisionRequest)
+	if err != nil {
+		return err
+	}
+	publishing.Body = b
+	return nil
+}
+
+func decodeProvisionResponse(ctx context.Context, delivery *amqp2.Delivery) (interface{}, error) {
+	var response Shared.ProvisionPlaneResponse
+	err := json.Unmarshal(delivery.Body, &response)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }

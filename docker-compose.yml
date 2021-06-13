@@ -1,7 +1,9 @@
 version: "3.2"
 services:
   builder:
-    build: ./Builder
+    build:
+      dockerfile: ./Builder/Dockerfile
+      context: ./
     scale: 3
     environment:
       AMQP_URL: "amqp://guest:guest@captain_amqp_1:5672/"
@@ -11,6 +13,35 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+      preflight:
+        condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9090 || exit -1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: always
+  preflight:
+    build:
+      dockerfile: ./Preflight/Dockerfile
+      context: ./
+    scale: 3
+    environment:
+      AMQP_URL: "amqp://guest:guest@captain_amqp_1:5672/"
+      CAPTAIN_DB: "postgres://docker:docker@captain_db_1:5432/captain"
+    depends_on:
+      amqp:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9090 || exit -1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: always
   amqp:
     image: rabbitmq:3.8-management-alpine
     ports:
@@ -47,3 +78,6 @@ services:
       - 9090:9090
     volumes:
       - ./Prometheus:/etc/prometheus
+    depends_on:
+      - builder
+      - preflight

@@ -9,3 +9,4 @@ scrape_configs:
       - targets:
           - 'captain_prometheus_1:9090'
           - 'captain_builder_1:9090'
+          - 'captain_preflight_1:9090'
