@@ -7,9 +7,9 @@ import (
 
 // Airspace is an isolated zone of applications and services that run independent of other airspaces.
 type Airspace struct {
-	ID int
+	ID        int
 	HumanName string
-	NetName string
+	NetName   string
 }
 
 // GetAllAirspaces returns all airpaces managed by the ATC instance.
@@ -45,7 +45,7 @@ func (c *CaptainClient) GetAirspaceByID(id int) (Airspace, error) {
 func (c *CaptainClient) CreateAirspace(humanName string, netName string) (Airspace, error) {
 	result, err := c.restPOST("airspace", map[string]interface{}{
 		"HumanName": humanName,
-		"NetName": netName,
+		"NetName":   netName,
 	})
 	if err != nil {
 		return Airspace{}, fmt.Errorf("unable to create Airspace:\n%w", err)
@@ -62,7 +62,7 @@ func (c *CaptainClient) CreateAirspace(humanName string, netName string) (Airspa
 func (c *CaptainClient) UpdateAirspace(id int, humanName string, netName string) error {
 	_, err := c.restPUT(fmt.Sprintf("airspace/%d", id), map[string]interface{}{
 		"HumanName": humanName,
-		"NetName": netName,
+		"NetName":   netName,
 	})
 	if err != nil {
 		return fmt.Errorf("unable to update airspace with ID %d:\n%w", id, err)

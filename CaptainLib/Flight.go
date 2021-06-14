@@ -59,7 +59,7 @@ func (c *CaptainClient) GetFlightByID(id int) (Flight, error) {
 func (c *CaptainClient) CreateFlight(name string, airspaceID int) (Flight, error) {
 	result, err := c.restPOST("flight", map[string]interface{}{
 		"AirspaceID": airspaceID,
-		"Name": name,
+		"Name":       name,
 	})
 	if err != nil {
 		return Flight{}, fmt.Errorf("unable to create Flight:\n%w", err)
@@ -77,7 +77,7 @@ func (c *CaptainClient) CreateFlight(name string, airspaceID int) (Flight, error
 func (c *CaptainClient) UpdateFlight(flight Flight) error {
 	_, err := c.restPUT(fmt.Sprintf("flight/%d", flight.ID), map[string]interface{}{
 		"AirspaceID": flight.AirspaceID,
-		"Name": flight.Name,
+		"Name":       flight.Name,
 	})
 	if err != nil {
 		return fmt.Errorf("unable to update flight with ID %d:\n%w", flight.ID, err)

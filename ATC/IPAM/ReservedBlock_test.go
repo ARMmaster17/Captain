@@ -25,16 +25,16 @@ func TestIPAM_getAllReservedBlocks(t *testing.T) {
 			init: func(t *testing.T) *IPAM {
 				dbt, _ := DB.ConnectToDB()
 				ipam := IPAM{
-					db: dbt,
+					db:    dbt,
 					mutex: &sync.Mutex{},
 				}
 				ipam.performMigrations()
 				return &ipam
 			},
 			inspect: func(r *IPAM, t *testing.T) {
-				
+
 			},
-			want1: []ReservedBlock{},
+			want1:   []ReservedBlock{},
 			wantErr: false,
 			inspectErr: func(err error, t *testing.T) {
 
@@ -84,7 +84,7 @@ func TestReservedBlock_hasAvailableAddress(t *testing.T) {
 		/*{
 			name: "addresses available in empty IP block",
 			init: func(t *testing.T) *ReservedBlock {
-				
+
 			},
 		},*/
 	}

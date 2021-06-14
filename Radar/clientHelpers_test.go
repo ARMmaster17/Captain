@@ -15,7 +15,7 @@ func Test_getCaptainClient(t *testing.T) {
 		want1 *CaptainLib.CaptainClient
 	}{
 		{
-			name: "gets a new CaptainLib client",
+			name:  "gets a new CaptainLib client",
 			want1: CaptainLib.NewCaptainClient("http://localhost:5000/"),
 		},
 	}
@@ -116,7 +116,7 @@ func Test_forceIntRead(t *testing.T) {
 		},
 	}
 
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tArgs := tt.args(t)
 

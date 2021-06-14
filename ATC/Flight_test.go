@@ -6,7 +6,7 @@ import (
 
 func TestFlightValidParams(t *testing.T) {
 	f := Flight{
-		Name:       "Sample Flight",
+		Name: "Sample Flight",
 	}
 	err := f.Validate()
 	if err != nil {
@@ -24,7 +24,7 @@ func TestFlightMissingName(t *testing.T) {
 
 func TestFlightEmptyName(t *testing.T) {
 	f := Flight{
-		Name:       "",
+		Name: "",
 	}
 	err := f.Validate()
 	if err == nil {

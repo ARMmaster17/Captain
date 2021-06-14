@@ -131,7 +131,7 @@ func TestRESTFlightC(t *testing.T) {
 	db := HelperAPIInitDB()
 	payload := map[string]interface{}{
 		"AirspaceID": 1,
-		"Name": "test3a",
+		"Name":       "test3a",
 	}
 	data, err := json.Marshal(payload)
 	require.NoError(t, err)
@@ -206,13 +206,13 @@ func TestRESTFormationC(t *testing.T) {
 	db := HelperAPIInitDB()
 	flightID := HelperAPICreateSampleFlight(t, db)
 	payload := map[string]interface{}{
-		"FlightID": flightID,
-		"Name": "test3a",
-		"CPU": 1,
-		"RAM": 128,
-		"Disk": 8,
-		"BaseName": "test",
-		"Domain": "example.com",
+		"FlightID":    flightID,
+		"Name":        "test3a",
+		"CPU":         1,
+		"RAM":         128,
+		"Disk":        8,
+		"BaseName":    "test",
+		"Domain":      "example.com",
 		"TargetCount": 0,
 	}
 	data, err := json.Marshal(payload)
@@ -265,7 +265,7 @@ func TestRESTFormationU(t *testing.T) {
 
 func HelperAPICreateSampleFlight(t *testing.T, db *gorm.DB) int {
 	flight := Flight{
-		Name: "test",
+		Name:       "test",
 		AirspaceID: 1,
 	}
 	tx := db.Save(&flight)

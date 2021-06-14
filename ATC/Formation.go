@@ -31,16 +31,18 @@ type Formation struct {
 	Disk int `validate:"required,gte=1"`
 	// URL-safe name for each plane in formation. Should be unique within the flight. Will be used in the FQDN of each
 	// plane that is provisioned within the formation. For example: formation1.example.com.
-	BaseName	string `validate:"alphanum,min=1,max=256"`
+	BaseName string `validate:"alphanum,min=1,max=256"`
 	// Domain name that forms the ending of the FQDN for each plane. In the future this will be moved to be the same
 	// airspace-wide or stack-wide.
-	Domain		string `validate:"required,fqdn,min=1"`
+	Domain string `validate:"required,fqdn,min=1"`
 	// Desired number of planes that should be operational at any given moment. At each health check interval,
 	// remediations will be made to adjust the number of healthy planes in service until it equals this number.
-	TargetCount int     `validate:"gte=0"`
-	Planes      []Plane `validate:"-"`
-	FlightID    int
-	Flight      Flight `validate:"-"`
+	TargetCount int `validate:"gte=0"`
+	// Relative path to playbook file to use to provision plane once the underlying VM/container is created.
+	PreflightPlaybook string  `validate:"-"`
+	Planes            []Plane `validate:"-"`
+	FlightID          int
+	Flight            Flight `validate:"-"`
 }
 
 // Performs all needed migrations to store formation state information in the database.
@@ -119,9 +121,9 @@ func (f *Formation) launchBuilder(id int, totalBuilders int, wg *sync.WaitGroup,
 	}
 	log.Trace().Str("formation", f.Name).Msgf("firing off builder %d/%d to build plane", id, totalBuilders)
 	go builder.buildPlane(Plane{
-		Formation: *f,
+		Formation:   *f,
 		FormationID: int(f.ID),
-		Num: f.getNextNum(id),
+		Num:         f.getNextNum(id),
 	}, wg, mx)
 }
 

@@ -27,7 +27,7 @@ func handleAirspaceAllGet(c *gin.Context) {
 	} else {
 		c.HTML(http.StatusOK, "airspace/index.html", gin.H{
 			"airspaces": airspaces,
-			"pagename": "Airspaces",
+			"pagename":  "Airspaces",
 		})
 	}
 }

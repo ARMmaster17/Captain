@@ -31,7 +31,7 @@ func TestPlaneScaleStateServer(t *testing.T) {
 	err = initAirspaces(db)
 	require.NoError(t, err)
 	flight := Flight{
-		Name: "test",
+		Name:       "test",
 		AirspaceID: 1,
 	}
 	tx := db.Save(&flight)
@@ -44,7 +44,7 @@ func TestPlaneScaleStateServer(t *testing.T) {
 		BaseName:    "plane",
 		Domain:      "example.com",
 		TargetCount: 1,
-		FlightID: int(flight.ID),
+		FlightID:    int(flight.ID),
 	}
 	tx = db.Save(&formation)
 	require.NoError(t, tx.Error)
@@ -64,7 +64,7 @@ func TestPlaneScaleDownStateServer(t *testing.T) {
 	err = initAirspaces(db)
 	require.NoError(t, err)
 	flight := Flight{
-		Name: "test",
+		Name:       "test",
 		AirspaceID: 1,
 	}
 	tx := db.Save(&flight)
@@ -77,7 +77,7 @@ func TestPlaneScaleDownStateServer(t *testing.T) {
 		BaseName:    "plane",
 		Domain:      "example.com",
 		TargetCount: 1,
-		FlightID: int(flight.ID),
+		FlightID:    int(flight.ID),
 	}
 	tx = db.Save(&formation)
 	require.NoError(t, tx.Error)

@@ -17,6 +17,7 @@
             <th>RAM</th>
             <th>Disk</th>
             <th>FQDN</th>
+            <th>Preflight Playbook</th>
             <th>Scale</th>
             <th>Actions</th>
           </tr>
@@ -29,6 +30,7 @@
               <td>{{ .RAM }}</td>
               <td>{{ .Disk }}</td>
               <td>{{ .BaseName }}X.{{ .Domain }}</td>
+              <td>{{ .PreflightPlaybook }}</td>
               <td>{{ .TargetCount }}</td>
               <td>
                 <form action="/airspace/{{ $.airspace.ID }}/{{ $.flight.ID }}/{{ .ID }}/delete" method="POST">
@@ -65,6 +67,10 @@
         <div>
           <label for="Domain">Domain:</label>
           <input type="text" name="Domain" id="Domain" required>
+        </div>
+        <div>
+          <label for="Playbook">Playbook:</label>
+          <input type="text" name="Playbook" id="Playbook" required>
         </div>
         <div>
           <label for="TargetCount">Scale:</label>

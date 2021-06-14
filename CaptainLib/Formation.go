@@ -8,15 +8,16 @@ import (
 // Formation is a representation of a clonable unit of an application (e.g. database server). Each Formation
 // can be scaled up and down to meet demand.
 type Formation struct {
-	ID          int
-	FlightID    int
-	Name        string
-	CPU         int
-	RAM         int
-	Disk        int
-	BaseName    string
-	Domain      string
-	TargetCount int
+	ID                int
+	FlightID          int
+	Name              string
+	CPU               int
+	RAM               int
+	Disk              int
+	BaseName          string
+	Domain            string
+	TargetCount       int
+	PreflightPlaybook string
 }
 
 // GetAllFormations returns all formations managed by the ATC instance.
@@ -64,16 +65,17 @@ func (c *CaptainClient) GetFormationByID(id int) (Formation, error) {
 
 // CreateFormation creates a scalable formation of containers that will be managed by the connected
 // ATC instance.
-func (c *CaptainClient) CreateFormation(name string, flightID int, CPU int, RAM int, disk int, baseName string, domain string, targetCount int) (Formation, error) {
+func (c *CaptainClient) CreateFormation(name string, flightID int, CPU int, RAM int, disk int, baseName string, domain string, targetCount int, preflightPlaybook string) (Formation, error) {
 	result, err := c.restPOST("formation", map[string]interface{}{
-		"FlightID": flightID,
-		"Name": name,
-		"CPU": CPU,
-		"RAM": RAM,
-		"Disk": disk,
-		"BaseName": baseName,
-		"Domain": domain,
-		"TargetCount": targetCount,
+		"FlightID":          flightID,
+		"Name":              name,
+		"CPU":               CPU,
+		"RAM":               RAM,
+		"Disk":              disk,
+		"BaseName":          baseName,
+		"Domain":            domain,
+		"TargetCount":       targetCount,
+		"PreflightPlaybook": preflightPlaybook,
 	})
 	if err != nil {
 		return Formation{}, fmt.Errorf("unable to create Formation:\n%w", err)
@@ -90,13 +92,14 @@ func (c *CaptainClient) CreateFormation(name string, flightID int, CPU int, RAM 
 // to the state database.
 func (c *CaptainClient) UpdateFormation(formation Formation) error {
 	_, err := c.restPUT(fmt.Sprintf("formation/%d", formation.ID), map[string]interface{}{
-		"Name": formation.Name,
-		"CPU": formation.CPU,
-		"RAM": formation.RAM,
-		"Disk": formation.Disk,
-		"BaseName": formation.BaseName,
-		"Domain": formation.Domain,
-		"TargetCount": formation.TargetCount,
+		"Name":              formation.Name,
+		"CPU":               formation.CPU,
+		"RAM":               formation.RAM,
+		"Disk":              formation.Disk,
+		"BaseName":          formation.BaseName,
+		"Domain":            formation.Domain,
+		"TargetCount":       formation.TargetCount,
+		"PreflightPlaybook": formation.PreflightPlaybook,
 	})
 	if err != nil {
 		return fmt.Errorf("unable to update Formation with ID %d:\n%w", formation.ID, err)

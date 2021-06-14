@@ -35,8 +35,8 @@ func Test_getLogLevel(t *testing.T) {
 		level int
 	}
 	tests := []struct {
-		name string
-		args func(t *testing.T) args
+		name  string
+		args  func(t *testing.T) args
 		want1 zerolog.Level
 	}{
 		{
