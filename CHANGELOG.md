@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Radar: New formation field with relative path to preflight Ansible playbook.
+
 ### Changed
 
 - Radar: Updated User Interface of WebGUI
