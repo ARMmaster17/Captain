@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 )
+
 /* There is a bug with how reflect.DeepEqual works with net.IPNet
 https://stackoverflow.com/questions/42921227/ip-part-of-net-ipnet-does-not-fulfil-reflect-deepequal-but-are-equal
 func Test_parseSubnetBlocks(t *testing.T) {
@@ -55,9 +56,9 @@ func Test_nextIP(t *testing.T) {
 	}{
 		{
 			name: "Test base /8",
-			args: func (t *testing.T) args {
+			args: func(t *testing.T) args {
 				return args{
-					ip: net.ParseIP("10.0.0.1"),
+					ip:  net.ParseIP("10.0.0.1"),
 					inc: 1,
 				}
 			},
@@ -65,9 +66,9 @@ func Test_nextIP(t *testing.T) {
 		},
 		{
 			name: "Test base /8 rollover",
-			args: func (t *testing.T) args {
+			args: func(t *testing.T) args {
 				return args{
-					ip: net.ParseIP("10.0.0.255"),
+					ip:  net.ParseIP("10.0.0.255"),
 					inc: 1,
 				}
 			},
@@ -105,7 +106,7 @@ func Test_subnetIsFull(t *testing.T) {
 				_, subnet, _ := net.ParseCIDR("10.0.0.0/8")
 				return args{
 					existingAddresses: 16777217,
-					subnetCIDR: subnet.Mask,
+					subnetCIDR:        subnet.Mask,
 				}
 			},
 			want1: true,
@@ -116,7 +117,7 @@ func Test_subnetIsFull(t *testing.T) {
 				_, subnet, _ := net.ParseCIDR("10.0.0.0/8")
 				return args{
 					existingAddresses: 16777216,
-					subnetCIDR: subnet.Mask,
+					subnetCIDR:        subnet.Mask,
 				}
 			},
 			want1: true,
@@ -127,7 +128,7 @@ func Test_subnetIsFull(t *testing.T) {
 				_, subnet, _ := net.ParseCIDR("10.0.0.0/8")
 				return args{
 					existingAddresses: 16777215,
-					subnetCIDR: subnet.Mask,
+					subnetCIDR:        subnet.Mask,
 				}
 			},
 			want1: false,

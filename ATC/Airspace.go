@@ -39,7 +39,7 @@ func initAirspaces(db *gorm.DB) error {
 		log.Trace().Msg("default airspace does not exist, creating...")
 		airspace := Airspace{
 			HumanName: "Default Airspace",
-			NetName: "default",
+			NetName:   "default",
 		}
 		result := db.Create(&airspace)
 		if result.Error != nil {

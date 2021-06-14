@@ -15,6 +15,8 @@ type GenericPlane struct {
 	Disk int
 	// Identifier used for direct connections.
 	NetID string
+	// Ansible playbook for provisioning.
+	PreflightPlaybook string
 
 	//NetworkInterfaces []GenericNetworkInterface
 }

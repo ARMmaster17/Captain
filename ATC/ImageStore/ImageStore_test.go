@@ -27,10 +27,10 @@ func TestGetProviderSpecificImageConfiguration(t *testing.T) {
 			args: func(t *testing.T) args {
 				return args{
 					driverYamlTag: "dummy",
-					imagetype: "debian-10",
+					imagetype:     "debian-10",
 				}
 			},
-			want1: "notrealpath",
+			want1:   "notrealpath",
 			wantErr: false,
 		},
 		{
@@ -38,10 +38,10 @@ func TestGetProviderSpecificImageConfiguration(t *testing.T) {
 			args: func(t *testing.T) args {
 				return args{
 					driverYamlTag: "dummy",
-					imagetype: "fakeos",
+					imagetype:     "fakeos",
 				}
 			},
-			want1: "",
+			want1:   "",
 			wantErr: true,
 		},
 		{
@@ -49,10 +49,10 @@ func TestGetProviderSpecificImageConfiguration(t *testing.T) {
 			args: func(t *testing.T) args {
 				return args{
 					driverYamlTag: "notrealdriver",
-					imagetype: "debian-10",
+					imagetype:     "debian-10",
 				}
 			},
-			want1: "",
+			want1:   "",
 			wantErr: true,
 		},
 		{
@@ -60,10 +60,10 @@ func TestGetProviderSpecificImageConfiguration(t *testing.T) {
 			args: func(t *testing.T) args {
 				return args{
 					driverYamlTag: "",
-					imagetype: "debian-10",
+					imagetype:     "debian-10",
 				}
 			},
-			want1: "",
+			want1:   "",
 			wantErr: true,
 		},
 		{
@@ -71,15 +71,15 @@ func TestGetProviderSpecificImageConfiguration(t *testing.T) {
 			args: func(t *testing.T) args {
 				return args{
 					driverYamlTag: "dummy",
-					imagetype: "",
+					imagetype:     "",
 				}
 			},
-			want1: "",
+			want1:   "",
 			wantErr: true,
 		},
 	}
 
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tArgs := tt.args(t)
 			helperSetupConfigFile("config_dummy_only.yaml")

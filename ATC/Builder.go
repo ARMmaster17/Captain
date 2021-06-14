@@ -13,7 +13,7 @@ import (
 // Builder instance that handles the creation and destruction of planes. Thread-safe and uses a WaitGroup
 // to properly lock resources and not overwhelm the provider API.
 type builder struct {
-	ID			int
+	ID int
 }
 
 func (w builder) logError(err error, msg string) {
@@ -38,17 +38,22 @@ func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup, mx *sync.Mutex) {
 		w.logError(err, fmt.Sprintf("unable to reserve IP address"))
 	}
 	newPlane := Plane{
-		Num: payload.Num,
+		Num:         payload.Num,
 		FormationID: payload.FormationID,
-		NetID: newNetID,
+		NetID:       newNetID,
 	}
 	result := db.Save(&newPlane)
 	if result.Error != nil {
 		w.logError(err, fmt.Sprintf("unable to update formation with new planes"))
 		return
 	}
-	if newPlane.NetID != "" {
-		err = Preflight.SingleInstance(newPlane.NetID, "test.yml")
+	result = db.First(&newPlane.Formation, newPlane.FormationID)
+	if result.Error != nil {
+		w.logError(err, fmt.Sprintf("unable to get formation data for new planes"))
+		return
+	}
+	if newPlane.NetID != "" && newPlane.Formation.PreflightPlaybook != "" {
+		err = Preflight.SingleInstance(newPlane.NetID, newPlane.Formation.PreflightPlaybook)
 		if err != nil {
 			w.logError(err, fmt.Sprintf("unable to perform preflight provisioning"))
 			return

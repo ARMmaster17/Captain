@@ -32,7 +32,7 @@ func TestCaptainClient_GetAllAirspaces(t *testing.T) {
 		},
 	}
 
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			receiver := tt.init(t)
 			helperRegisterAllAirspaceMocks()
@@ -144,7 +144,7 @@ func TestCaptainClient_CreateAirspace(t *testing.T) {
 			args: func(t *testing.T) args {
 				return args{
 					humanName: "testHumanName",
-					netName: "testNetName",
+					netName:   "testNetName",
 				}
 			},
 			want1: Airspace{

@@ -23,14 +23,14 @@ func TestCaptainClient_GetAllFormations(t *testing.T) {
 			},
 			want1: []Formation{
 				{
-					ID: 0,
-					FlightID: 0,
-					Name: "testFormation",
-					CPU: 1,
-					RAM: 128,
-					Disk: 8,
-					BaseName: "test",
-					Domain: "example.com",
+					ID:          0,
+					FlightID:    0,
+					Name:        "testFormation",
+					CPU:         1,
+					RAM:         128,
+					Disk:        8,
+					BaseName:    "test",
+					Domain:      "example.com",
 					TargetCount: 0,
 				},
 			},
@@ -38,7 +38,7 @@ func TestCaptainClient_GetAllFormations(t *testing.T) {
 		},
 	}
 
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			receiver := tt.init(t)
 			helperRegisterAllFormationMocks()
@@ -90,14 +90,14 @@ func TestCaptainClient_GetFormationByID(t *testing.T) {
 				}
 			},
 			want1: Formation{
-				ID: 0,
-				FlightID: 0,
-				Name: "testFormation",
-				CPU: 1,
-				RAM: 128,
-				Disk: 8,
-				BaseName: "test",
-				Domain: "example.com",
+				ID:          0,
+				FlightID:    0,
+				Name:        "testFormation",
+				CPU:         1,
+				RAM:         128,
+				Disk:        8,
+				BaseName:    "test",
+				Domain:      "example.com",
 				TargetCount: 0,
 			},
 			wantErr: false,
@@ -134,14 +134,15 @@ func TestCaptainClient_GetFormationByID(t *testing.T) {
 
 func TestCaptainClient_CreateFormation(t *testing.T) {
 	type args struct {
-		name        string
-		flightID    int
-		CPU         int
-		RAM         int
-		disk        int
-		baseName    string
-		domain      string
-		targetCount int
+		name              string
+		flightID          int
+		CPU               int
+		RAM               int
+		disk              int
+		baseName          string
+		domain            string
+		targetCount       int
+		preflightPlaybook string
 	}
 	tests := []struct {
 		name    string
@@ -161,26 +162,28 @@ func TestCaptainClient_CreateFormation(t *testing.T) {
 			},
 			args: func(t *testing.T) args {
 				return args{
-					flightID: 0,
-					name: "testFormation",
-					CPU: 1,
-					RAM: 128,
-					disk: 8,
-					baseName: "test",
-					domain: "example.com",
-					targetCount: 0,
+					flightID:          0,
+					name:              "testFormation",
+					CPU:               1,
+					RAM:               128,
+					disk:              8,
+					baseName:          "test",
+					domain:            "example.com",
+					targetCount:       0,
+					preflightPlaybook: "",
 				}
 			},
 			want1: Formation{
-				ID: 0,
-				FlightID: 0,
-				Name: "testFormation",
-				CPU: 1,
-				RAM: 128,
-				Disk: 8,
-				BaseName: "test",
-				Domain: "example.com",
-				TargetCount: 0,
+				ID:                0,
+				FlightID:          0,
+				Name:              "testFormation",
+				CPU:               1,
+				RAM:               128,
+				Disk:              8,
+				BaseName:          "test",
+				Domain:            "example.com",
+				TargetCount:       0,
+				PreflightPlaybook: "",
 			},
 			wantErr: false,
 		},
@@ -192,7 +195,7 @@ func TestCaptainClient_CreateFormation(t *testing.T) {
 
 			receiver := tt.init(t)
 			helperRegisterAllFormationMocks()
-			got1, err := receiver.CreateFormation(tArgs.name, tArgs.flightID, tArgs.CPU, tArgs.RAM, tArgs.disk, tArgs.baseName, tArgs.domain, tArgs.targetCount)
+			got1, err := receiver.CreateFormation(tArgs.name, tArgs.flightID, tArgs.CPU, tArgs.RAM, tArgs.disk, tArgs.baseName, tArgs.domain, tArgs.targetCount, tArgs.preflightPlaybook)
 			helperDeregisterMocks()
 
 			if tt.inspect != nil {

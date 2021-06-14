@@ -37,9 +37,9 @@ func TestBuilderCreateDestroyCycle(t *testing.T) {
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 	builder.buildPlane(Plane{
-		Formation: formation,
+		Formation:   formation,
 		FormationID: int(formation.ID),
-		Num: formation.getNextNum(0),
+		Num:         formation.getNextNum(0),
 	}, wg, &mx)
 	fmt.Println(formation.ID)
 	// TODO: Check that plane got built right.

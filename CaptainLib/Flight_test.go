@@ -23,16 +23,16 @@ func TestCaptainClient_GetAllFlights(t *testing.T) {
 			},
 			want1: []Flight{
 				{
-					ID: 0,
+					ID:         0,
 					AirspaceID: 0,
-					Name: "testFlight",
+					Name:       "testFlight",
 				},
 			},
 			wantErr: false,
 		},
 	}
 
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			receiver := tt.init(t)
 			helperRegisterAllFlightMocks()
@@ -84,9 +84,9 @@ func TestCaptainClient_GetFlightByID(t *testing.T) {
 				}
 			},
 			want1: Flight{
-				ID: 0,
+				ID:         0,
 				AirspaceID: 0,
-				Name: "testFlight",
+				Name:       "testFlight",
 			},
 			wantErr: false,
 		},
@@ -143,14 +143,14 @@ func TestCaptainClient_CreateFlight(t *testing.T) {
 			},
 			args: func(t *testing.T) args {
 				return args{
-					name: "testFlight",
+					name:       "testFlight",
 					airspaceID: 0,
 				}
 			},
 			want1: Flight{
-				ID: 0,
+				ID:         0,
 				AirspaceID: 0,
-				Name: "testFlight",
+				Name:       "testFlight",
 			},
 			wantErr: false,
 		},

@@ -126,11 +126,12 @@ func (p *Plane) destroyPlane() error {
 // getGenericPlane converts the current Plane instance into a GenericPlane that can be read by any provisioning driver.
 func (p *Plane) getGenericPlane() *providers.GenericPlane {
 	return &providers.GenericPlane{
-		FQDN:  p.getFQDN(),
-		CUID:  p.DriverIdentifier,
-		Cores: p.Formation.CPU,
-		RAM:   p.Formation.RAM,
-		Disk:  p.Formation.Disk,
-		NetID: p.NetID,
+		FQDN:              p.getFQDN(),
+		CUID:              p.DriverIdentifier,
+		Cores:             p.Formation.CPU,
+		RAM:               p.Formation.RAM,
+		Disk:              p.Formation.Disk,
+		NetID:             p.NetID,
+		PreflightPlaybook: p.Formation.PreflightPlaybook,
 	}
 }

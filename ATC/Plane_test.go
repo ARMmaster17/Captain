@@ -8,9 +8,9 @@ func TestPlaneGetFQDN(t *testing.T) {
 	p := Plane{
 		Num: 1,
 		Formation: Formation{
-			Name:        "test formation",
-			BaseName:    "tf",
-			Domain:      "testing.com",
+			Name:     "test formation",
+			BaseName: "tf",
+			Domain:   "testing.com",
 		},
 	}
 	testFQDN := p.getFQDN()

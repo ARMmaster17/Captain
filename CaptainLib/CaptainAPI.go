@@ -5,7 +5,7 @@ import "net/http"
 // CaptainClient is a stateful client for connecting to a Captain ATC instance.
 type CaptainClient struct {
 	BaseUrl string
-	client *http.Client
+	client  *http.Client
 }
 
 // GetVersion returns the current library version (not implemented)

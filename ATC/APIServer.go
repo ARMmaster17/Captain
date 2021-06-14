@@ -583,28 +583,30 @@ func (a *APIServer) deleteFlight(w http.ResponseWriter, r *http.Request) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type RESTFormation struct {
-	FlightID    int
-	ID          uint
-	Name        string
-	CPU         int
-	RAM         int
-	Disk        int
-	BaseName    string
-	Domain      string
-	TargetCount int
+	FlightID          int
+	ID                uint
+	Name              string
+	CPU               int
+	RAM               int
+	Disk              int
+	BaseName          string
+	Domain            string
+	TargetCount       int
+	PreflightPlaybook string
 }
 
 func convertToRESTFormation(as Formation) RESTFormation {
 	return RESTFormation{
-		ID:          as.ID,
-		FlightID:    as.FlightID,
-		Name:        as.Name,
-		CPU:         as.CPU,
-		RAM:         as.RAM,
-		Disk:        as.Disk,
-		BaseName:    as.BaseName,
-		Domain:      as.Domain,
-		TargetCount: as.TargetCount,
+		ID:                as.ID,
+		FlightID:          as.FlightID,
+		Name:              as.Name,
+		CPU:               as.CPU,
+		RAM:               as.RAM,
+		Disk:              as.Disk,
+		BaseName:          as.BaseName,
+		Domain:            as.Domain,
+		TargetCount:       as.TargetCount,
+		PreflightPlaybook: as.PreflightPlaybook,
 	}
 }
 

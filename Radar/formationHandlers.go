@@ -42,7 +42,7 @@ func handleFormationAllGet(c *gin.Context) {
 		"formations": formations,
 		"flight":     flight,
 		"airspace":   airspace,
-		"pagename": flight.Name,
+		"pagename":   flight.Name,
 	})
 }
 
@@ -69,7 +69,8 @@ func handleFormationNewPost(c *gin.Context) {
 		forceIntRead(c.PostForm("Disk")),
 		c.PostForm("BaseName"),
 		c.PostForm("Domain"),
-		forceIntRead(c.PostForm("TargetCount")))
+		forceIntRead(c.PostForm("TargetCount")),
+		c.PostForm("PreflightForm"))
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, fmt.Sprintf("Error:\n%w", err))
 	} else {
