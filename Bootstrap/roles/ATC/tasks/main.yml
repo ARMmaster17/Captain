@@ -1,0 +1,8 @@
+---
+- name: install prerequisites
+  apt:
+    name:
+      - ansible
+      - golang
+      - make
+      - sqlite3
