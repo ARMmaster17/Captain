@@ -6,3 +6,25 @@
       - golang
       - make
       - sqlite3
+    state: present
+- name: copy ATC source
+  copy:
+    src: ../../ATC
+    dest: /root/go/src/github.com/ARMmaster17/Captain/ATC
+- name: copy shared source
+  copy:
+    src: ../../Shared
+    dest: /root/go/src/github.com/ARMmaster17/Captain/Shared
+- name: build ATC
+  community.general.make:
+    chdir: /root/go/src/github.com/ARMmaster17/Captain/ATC
+    target: install
+- name: configure ATC
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /etc/captain/atc/config.yaml
+- name: start ATC
+  ansible.builtin.service:
+    name: captain-atc
+    state: started
+    enabled: yes

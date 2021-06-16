@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Radar: Updated User Interface of WebGUI
+- ATC: Systemd service is now called `captain-atc`.
 
 ## [v0.2.0] - 2021-06-01
 

@@ -1,0 +1,37 @@
+defaults:
+  publickey: {{ general_publickey }}
+  network:
+    nameservers: {{ network_nameservers }}
+    searchdomain: {{ network_searchdomain }}
+    gateway: {{ network_gateway }}
+    mtu: {{ network_mtu }}
+    cidr: {{ network_cidr }}
+    blocks:
+      - {{ network_block1 }}
+  image: debian-10
+config:
+  drivers:
+    provisioners:
+      - proxmoxlxc
+  api:
+    port: 5000
+  images:
+    debian-10:
+      proxmoxlxc: pve-image:vztmpl/debian-10-standard_10.7-1_amd64.tar.gz
+  preflight:
+    ping:
+      timeout: 5
+      retries: 3
+    ansible:
+      connectiontype: ssh
+      connectionuser: root
+      privatekeypath: /root/.ssh/id_rsa
+  loglevel: 0
+drivers:
+  provisioners:
+    proxmoxlxc:
+      url: https://{{ proxmox_host }}:8006/api2/json
+      forcessl: false
+      defaultnode: {{ proxmox_hostname }}
+      diskstorage: {{ proxmox_storage }}
+      publicnetwork: {{ proxmox_bridge }}
