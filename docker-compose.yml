@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: ./Builder/Dockerfile
       context: ./
-    scale: 3
+    scale: 1
     environment:
       AMQP_URL: "amqp://guest:guest@captain_amqp_1:5672/"
       CAPTAIN_DB: "postgres://docker:docker@captain_db_1:5432/captain"
@@ -20,13 +20,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
-      start_period: 5s
+      start_period: 15s
     restart: always
   preflight:
     build:
       dockerfile: ./Preflight/Dockerfile
       context: ./
-    scale: 3
+    scale: 1
     environment:
       AMQP_URL: "amqp://guest:guest@captain_amqp_1:5672/"
       CAPTAIN_DB: "postgres://docker:docker@captain_db_1:5432/captain"
@@ -40,7 +40,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
-      start_period: 5s
+      start_period: 15s
     restart: always
   amqp:
     image: rabbitmq:3.8-management-alpine
