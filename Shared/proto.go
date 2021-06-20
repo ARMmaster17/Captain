@@ -1,7 +1,7 @@
 package Shared
 
 type BuildPlaneRequest struct {
-	S string `json:"s"`
+	PlaneID string `json:"planeId"`
 }
 
 type BuildPlaneResponse struct {

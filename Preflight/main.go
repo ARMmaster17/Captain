@@ -95,7 +95,7 @@ func main() {
 	defer ch.Close()
 	provisionQueue, err := ch.QueueDeclare("preflight_provision", false, false, false, false, nil)
 	provisionMsgs, err := ch.Consume(provisionQueue.Name, "", false, false, false, false, nil)
-	provisionAMQPHandler := amqp.NewSubscriber(makeProvisionPlaneEndpoint(svc), decodeProvisionPlaneRequest, amqp.EncodeJSONResponse)
+	provisionAMQPHandler := amqp.NewSubscriber(makeProvisionPlaneEndpoint(svc), decodeProvisionPlaneRequest, amqp.EncodeNopResponse)
 	provisionListener := provisionAMQPHandler.ServeDelivery(ch)
 
 	forever := make(chan bool)

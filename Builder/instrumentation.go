@@ -16,14 +16,14 @@ func instrumentingMiddleware(
 	}
 }
 
-func (mw instrumentationMiddleware) BuildPlane(s string) (output string, err error) {
+func (mw instrumentationMiddleware) BuildPlane(planeId int) (output string, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "buildplane", "error", fmt.Sprint(err != nil)}
 		mw.requestCount.With(lvs...).Add(1)
 		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	output, err = mw.BuilderService.BuildPlane(s)
+	output, err = mw.BuilderService.BuildPlane(planeId)
 	return
 }
 

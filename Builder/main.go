@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/ARMmaster17/Captain/Builder/BuilderSvc"
 	"github.com/ARMmaster17/Captain/Shared"
+	"github.com/ARMmaster17/Captain/Shared/DB"
 	"github.com/go-kit/kit/endpoint"
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	"github.com/go-kit/kit/transport/amqp"
@@ -15,28 +17,36 @@ import (
 	amqp2 "github.com/streadway/amqp"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 )
 
 type BuilderService interface {
-	BuildPlane(s string) (string, error)
+	BuildPlane(planeId int) (string, error)
 }
 
 type builderService struct{
 	ProvisionEndpoint endpoint.Endpoint
 }
 
-func (b builderService) BuildPlane(s string) (string, error) {
-	result := strings.ToUpper(s)
-	response, err := b.ProvisionEndpoint(context.Background(), Shared.ProvisionPlaneRequest{S: result})
+func (b builderService) BuildPlane(planeId int) (string, error) {
+	db, err := DB.ConnectToDB()
+	if err != nil {
+		log2.Error().Msgf("unable to connect to database:\n%w", err)
+		return "", err
+	}
+	err = BuilderSvc.BuildPlane(db, int64(planeId))
+	if err != nil {
+		log2.Error().Err(err).Msgf("unable to build plane with ID %d", planeId)
+		return "", err
+	}
+	response, err := b.ProvisionEndpoint(context.Background(), Shared.ProvisionPlaneRequest{S: string(planeId)})
 	if err != nil {
 		log2.Error().Err(err).Msgf("unable to send provisioning request")
 		return "", err
 	} else {
 		log2.Info().Msgf("provisioning service returned the message %v", response)
 	}
-	return result, nil
+	return "", nil
 }
 
 func makeBuildPlaneEndpoint(svc BuilderService) endpoint.Endpoint {
@@ -110,7 +120,7 @@ func main() {
 	defer ch2.Close()
 
 	provisionQueue, err := ch2.QueueDeclare("preflight_provision", false, false, false, false, nil)
-	provisionPublisher := amqp.NewPublisher(ch, &provisionQueue, encodeProvisionRequest, decodeProvisionResponse, amqp.PublisherBefore(amqp.SetPublishKey(provisionQueue.Name)))
+	provisionPublisher := amqp.NewPublisher(ch2, &provisionQueue, encodeProvisionRequest, decodeProvisionResponse, amqp.PublisherBefore(amqp.SetPublishKey(provisionQueue.Name)))
 	provisionEndpoint := provisionPublisher.Endpoint()
 	//////////////////////////////////////////
 
