@@ -13,10 +13,11 @@ import (
 )
 
 func Test_RegisterLongjobRoute(t *testing.T) {
-	framework := framework2.NewFramework("shared")
+	framework, err := framework2.NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
+	RegisterLongjobQueue(framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		return map[string]string{
 			"test_key": "test_value",
 		}, nil
@@ -34,10 +35,11 @@ func Test_RegisterLongjobRoute(t *testing.T) {
 }
 
 func Test_RegisterLongjobRouteWithNoBodyBug(t *testing.T) {
-	framework := framework2.NewFramework("shared")
+	framework, err := framework2.NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
+	RegisterLongjobQueue(framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		return map[string]string{
 			"test_key": "test_value",
 		}, nil
@@ -55,10 +57,11 @@ func Test_RegisterLongjobRouteWithNoBodyBug(t *testing.T) {
 }
 
 func Test_LongjobStatus(t *testing.T) {
-	framework := framework2.NewFramework("shared")
+	framework, err := framework2.NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
+	RegisterLongjobQueue(framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		time.Sleep(1 * time.Second)
 		return map[string]string{
 			"test_key": "test_value",
@@ -78,10 +81,11 @@ func Test_LongjobStatus(t *testing.T) {
 }
 
 func Test_LongjobResults(t *testing.T) {
-	framework := framework2.NewFramework("shared")
+	framework, err := framework2.NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
+	RegisterLongjobQueue(framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		return map[string]string{
 			"test_key": "test_value",
 		}, nil
@@ -110,10 +114,11 @@ func Test_LongjobResults(t *testing.T) {
 }
 
 func Test_LongjobResultsWithIncompleteError(t *testing.T) {
-	framework := framework2.NewFramework("shared")
+	framework, err := framework2.NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
+	RegisterLongjobQueue(framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		time.Sleep(1 * time.Second)
 		return map[string]string{
 			"test_key": "test_value",

@@ -11,7 +11,8 @@ import (
 )
 
 func Test_FrameworkRegistersApiRoute(t *testing.T) {
-	framework := NewFramework("shared")
+	framework, err := NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
 	framework.RegisterAPIHandler(1, "test", func(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +26,8 @@ func Test_FrameworkRegistersApiRoute(t *testing.T) {
 }
 
 func Test_FrameworkRegistersCommonVersionRoute(t *testing.T) {
-	framework := NewFramework("shared")
+	framework, err := NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
 	framework.RegisterCommonAPIRoutes()
@@ -42,7 +44,8 @@ func Test_FrameworkRegistersCommonVersionRoute(t *testing.T) {
 }
 
 func Test_RespondWithJson(t *testing.T) {
-	framework := NewFramework("shared")
+	framework, err := NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
 	framework.RegisterAPIHandler(1, "test", func(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +66,8 @@ func Test_RespondWithJson(t *testing.T) {
 }
 
 func Test_FrameworkRegisterPostRoute(t *testing.T) {
-	framework := NewFramework("shared")
+	framework, err := NewFramework("shared")
+	require.NoError(t, err)
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
 	framework.RegisterAPIHandler(1, "test", func(w http.ResponseWriter, r *http.Request) {
