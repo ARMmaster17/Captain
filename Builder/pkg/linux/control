@@ -1,0 +1,7 @@
+Package: captain-builder
+Version: 0.3.0
+Section: base
+Priority: required
+Architecture: amd64
+Maintainer: wordman05@gmail.com
+Description: PaaS/SaaS platform for Proxmox clusters.

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/ARMmaster17/Captain/Shared/framework"
-	"github.com/ARMmaster17/Captain/Shared/longjob"
+	"github.com/ARMmaster17/Captain/Builder"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	builderFramework := framework.NewFramework("builder")
-	builderFramework.RegisterCommonAPIRoutes()
-	longjob.RegisterLongjobQueue(&builderFramework, 1, "plane/build", nil)
-	longjob.RegisterLongjobQueue(&builderFramework, 1, "plane/destroy", nil)
-	builderFramework.Start()
+	builder, err := Builder.NewBuilder()
+	if err != nil {
+		log.Fatal().Err(err).Stack().Msg("builder did not initialize")
+	}
+	builder.Start()
 }
