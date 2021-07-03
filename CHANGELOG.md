@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Radar: Updated User Interface of WebGUI
+- Radar: Updated User Interface of WebGUI.
+- All: WIP transition to a common microservice architecture.
 
 ## [v0.2.0] - 2021-06-01
 

@@ -29,6 +29,9 @@ jobs:
     - name: Test Radar (Go)
       run: cd Radar; make test
 
+    - name: Test Shared
+      run: cd Shared; make test
+
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
       env:
