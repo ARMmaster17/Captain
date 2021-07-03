@@ -4,8 +4,10 @@ import "sync"
 
 // JobInput The standardized type that all jobs must accept.
 type JobInput map[string]interface{}
+
 // JobOutput The standardized output format for all job functions.
 type JobOutput interface{}
+
 // JobFunction Standardized job signature for all job functions.
 type JobFunction func(payload JobInput) (JobOutput, error)
 
