@@ -7,18 +7,21 @@ import (
 )
 
 func Test_NewFramework(t *testing.T) {
-	framework := NewFramework("")
+	framework, err := NewFramework("")
+	assert.NoError(t, err)
 	assert.NotNil(t, framework)
 }
 
 func Test_NewFrameworkWithName(t *testing.T) {
-	framework := NewFramework("shared")
+	framework, err := NewFramework("shared")
+	assert.NoError(t, err)
 	require.NotEqual(t, Framework{}, framework)
 	assert.Equal(t, "shared", framework.AppName)
 }
 
 func Test_FrameworkCreatesRouterOnInit(t *testing.T) {
-	framework := NewFramework("shared")
+	framework, err := NewFramework("shared")
+	assert.NoError(t, err)
 	require.NotEqual(t, Framework{}, framework)
 	assert.NotNil(t, framework.Router)
 }
