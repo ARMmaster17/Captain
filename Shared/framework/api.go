@@ -8,15 +8,16 @@ import (
 	"net/http"
 )
 
-const LatestApiVersion int = 1
+// LatestAPIVersion is the newest version of the API supported by this instance of the framework.
+const LatestAPIVersion int = 1
 
-// RegisterApiHandler Adds an http route with the API path prefix and version added in.
-func (f *Framework) RegisterApiHandler(version int, path string, handleFunction func(w http.ResponseWriter, r *http.Request), methods ...string) {
+// RegisterAPIHandler Adds an http route with the API path prefix and version added in.
+func (f *Framework) RegisterAPIHandler(version int, path string, handleFunction func(w http.ResponseWriter, r *http.Request), methods ...string) {
 	f.RegisterHandler(fmt.Sprintf("api/v%d/%s", version, path), handleFunction, methods...)
 }
 
-// ApiRespondWithJson Creates a JSON response with the given payload and writes it to the HTTP stream.
-func ApiRespondWithJson(code int, w http.ResponseWriter, payload interface{}) {
+// APIRespondWithJSON Creates a JSON response with the given payload and writes it to the HTTP stream.
+func APIRespondWithJSON(code int, w http.ResponseWriter, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
 		log.Error().Err(err).Stack().Msg("unable to convert data to json")
@@ -31,16 +32,16 @@ func ApiRespondWithJson(code int, w http.ResponseWriter, payload interface{}) {
 	}
 }
 
-// RegisterCommonApiRoutes Adds routes for common paths such as /version.
-func (f *Framework) RegisterCommonApiRoutes() {
-	for i := 1; i <= LatestApiVersion; i++ {
-		f.RegisterApiHandler(i, "version", handleCommonApiApplicationVersion)
+// RegisterCommonAPIRoutes Adds routes for common paths such as /version.
+func (f *Framework) RegisterCommonAPIRoutes() {
+	for i := 1; i <= LatestAPIVersion; i++ {
+		f.RegisterAPIHandler(i, "version", handleCommonAPIApplicationVersion)
 	}
 }
 
-// handleCommonApiApplicationVersion Handles requests for the application version. Wrapper for metadata module.
-func handleCommonApiApplicationVersion(w http.ResponseWriter, r *http.Request) {
-	ApiRespondWithJson(http.StatusOK, w, map[string]string{
+// handleCommonAPIApplicationVersion Handles requests for the application version. Wrapper for metadata module.
+func handleCommonAPIApplicationVersion(w http.ResponseWriter, r *http.Request) {
+	APIRespondWithJSON(http.StatusOK, w, map[string]string{
 		"version": metadata.GetCaptainVersion(),
 	})
 }

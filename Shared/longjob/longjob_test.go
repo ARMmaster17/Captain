@@ -16,7 +16,7 @@ func Test_RegisterLongjobRoute(t *testing.T) {
 	framework := framework2.NewFramework("shared")
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error){
+	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		return map[string]string{
 			"test_key": "test_value",
 		}, nil
@@ -27,7 +27,7 @@ func Test_RegisterLongjobRoute(t *testing.T) {
 	framework.Router.ServeHTTP(rr, req)
 	assert.Equal(t, http.StatusOK, rr.Code)
 	testOutput, err := json.Marshal(map[string]interface{}{
-		"jobId": 0,
+		"jobID": 0,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, string(testOutput), rr.Body.String())
@@ -37,7 +37,7 @@ func Test_RegisterLongjobRouteWithNoBodyBug(t *testing.T) {
 	framework := framework2.NewFramework("shared")
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error){
+	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		return map[string]string{
 			"test_key": "test_value",
 		}, nil
@@ -48,7 +48,7 @@ func Test_RegisterLongjobRouteWithNoBodyBug(t *testing.T) {
 	framework.Router.ServeHTTP(rr, req)
 	assert.Equal(t, http.StatusOK, rr.Code)
 	testOutput, err := json.Marshal(map[string]interface{}{
-		"jobId": 0,
+		"jobID": 0,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, string(testOutput), rr.Body.String())
@@ -58,7 +58,7 @@ func Test_LongjobStatus(t *testing.T) {
 	framework := framework2.NewFramework("shared")
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error){
+	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		time.Sleep(1 * time.Second)
 		return map[string]string{
 			"test_key": "test_value",
@@ -70,8 +70,8 @@ func Test_LongjobStatus(t *testing.T) {
 	framework.Router.ServeHTTP(rr, req)
 	assert.Equal(t, http.StatusOK, rr.Code)
 	testOutput, err := json.Marshal(map[string]interface{}{
-		"jobId": 0,
-		"done": false,
+		"jobID": 0,
+		"done":  false,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, string(testOutput), rr.Body.String())
@@ -81,7 +81,7 @@ func Test_LongjobResults(t *testing.T) {
 	framework := framework2.NewFramework("shared")
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error){
+	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		return map[string]string{
 			"test_key": "test_value",
 		}, nil
@@ -98,9 +98,9 @@ func Test_LongjobResults(t *testing.T) {
 	framework.Router.ServeHTTP(rr, req)
 	assert.Equal(t, http.StatusOK, rr.Code)
 	testOutput, err := json.Marshal(map[string]interface{}{
-		"jobId": 0,
-		"done": true,
-		"err": nil,
+		"jobID": 0,
+		"done":  true,
+		"err":   nil,
 		"result": map[string]string{
 			"test_key": "test_value",
 		},
@@ -113,7 +113,7 @@ func Test_LongjobResultsWithIncompleteError(t *testing.T) {
 	framework := framework2.NewFramework("shared")
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error){
+	RegisterLongjobQueue(&framework, 1, "test", func(payload JobInput) (JobOutput, error) {
 		time.Sleep(1 * time.Second)
 		return map[string]string{
 			"test_key": "test_value",

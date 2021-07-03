@@ -6,20 +6,23 @@ import (
 	"net/http"
 )
 
-const DefaultApiPort = 3000
+const defaultAPIPort = 3000
 
-type HttpListenStatus int
+// HTTPListenStatus Represents the various listening states of the framework HTTP server.
+type HTTPListenStatus int
 
 const (
-	HttpStopped HttpListenStatus = iota
-	HttpListening
+	// HTTPStopped The server is not currently listening, or has stopped listening due to an error.
+	HTTPStopped HTTPListenStatus = iota
+	// HTTPListening The server is currently accepting requests.
+	HTTPListening
 )
 
 // GetPort Handles the prioritization of port configurations, and returns the port that the service should listen on.
 func (f *Framework) GetPort() int {
 	port := config.GetAppInt("API_PORT")
 	if port == 0 {
-		port = DefaultApiPort
+		port = defaultAPIPort
 	}
 	return port
 }
@@ -31,16 +34,16 @@ func (f *Framework) StartAsync() {
 
 // Start Sets the HttpListenState and listens for incoming HTTP connections to be handles by the Framework instance.
 func (f *Framework) Start() {
-	f.HttpState = HttpListening
+	f.HTTPState = HTTPListening
 	//defer func() {
-	//	f.HttpState = HttpStopped
+	//	f.HTTPState = HTTPStopped
 	//}()
 	//http.Handle("/", f.Router)
 }
 
 // StopAsync Sends a stop message to the running http server job.
 func (f *Framework) StopAsync() {
-	f.HttpState = HttpStopped
+	f.HTTPState = HTTPStopped
 }
 
 // RegisterHandler Adds a handler function that will be called when an http request is made on the specified path.

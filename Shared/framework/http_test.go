@@ -28,7 +28,7 @@ func Test_FrameworkStartsWithRouterStopped(t *testing.T) {
 	framework := NewFramework("shared")
 	require.Equal(t, "shared", framework.AppName)
 	require.NotNil(t, framework.Router)
-	assert.Equal(t, HttpStopped, framework.HttpState)
+	assert.Equal(t, HTTPStopped, framework.HTTPState)
 }
 
 func Test_FrameworkStartingAsyncSetsListenState(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_FrameworkStartingAsyncSetsListenState(t *testing.T) {
 	require.NotNil(t, framework.Router)
 	framework.StartAsync()
 	time.Sleep(10 * time.Millisecond)
-	assert.Equal(t, HttpListening, framework.HttpState)
+	assert.Equal(t, HTTPListening, framework.HTTPState)
 }
 
 func Test_FrameworkStopSetsListenState(t *testing.T) {
@@ -46,9 +46,9 @@ func Test_FrameworkStopSetsListenState(t *testing.T) {
 	require.NotNil(t, framework.Router)
 	framework.StartAsync()
 	time.Sleep(10 * time.Millisecond)
-	assert.Equal(t, HttpListening, framework.HttpState)
+	assert.Equal(t, HTTPListening, framework.HTTPState)
 	framework.StopAsync()
-	assert.Equal(t, HttpStopped, framework.HttpState)
+	assert.Equal(t, HTTPStopped, framework.HTTPState)
 }
 
 func Test_FrameworkRegistersHandler(t *testing.T) {

@@ -10,6 +10,6 @@ import (
 func InitLogging() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{
-		Out:                 os.Stdout,
+		Out: os.Stdout,
 	})
 }

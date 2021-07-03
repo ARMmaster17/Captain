@@ -20,7 +20,7 @@ func RegisterLongjobQueue(framework *framework2.Framework, apiVersion int, path 
 
 // registerLongjobEnqueueRoute Registers the primary route for submitting jobs to the queue.
 func registerLongjobEnqueueRoute(framework *framework2.Framework, apiVersion int, path string, jobQueue Queue) {
-	framework.RegisterApiHandler(apiVersion, path, func(w http.ResponseWriter, r *http.Request) {
+	framework.RegisterAPIHandler(apiVersion, path, func(w http.ResponseWriter, r *http.Request) {
 		var input map[string]interface{}
 		if r.Body == nil {
 			input = nil
@@ -28,60 +28,60 @@ func registerLongjobEnqueueRoute(framework *framework2.Framework, apiVersion int
 			decoder := json.NewDecoder(r.Body)
 			err := decoder.Decode(&input)
 			if err != nil {
-				framework2.ApiRespondWithJson(http.StatusInternalServerError, w, map[string]string{
+				framework2.APIRespondWithJSON(http.StatusInternalServerError, w, map[string]string{
 					"error": err.Error(),
 				})
 				return
 			}
 		}
-		jobId := jobQueue.Enqueue(input)
-		framework2.ApiRespondWithJson(http.StatusOK, w, map[string]uint64{
-			"jobId": jobId,
+		jobID := jobQueue.Enqueue(input)
+		framework2.APIRespondWithJSON(http.StatusOK, w, map[string]uint64{
+			"jobID": jobID,
 		})
 	}, "POST")
 }
 
 // registerLongjobStatusRoute Registers the route for checking the status on a previously-submitted job.
 func registerLongjobStatusRoute(framework *framework2.Framework, apiVersion int, path string, jobQueue Queue) {
-	framework.RegisterApiHandler(apiVersion, fmt.Sprintf("%s/status/{jobid:[0-9]+}", path), func(w http.ResponseWriter, r *http.Request) {
+	framework.RegisterAPIHandler(apiVersion, fmt.Sprintf("%s/status/{jobid:[0-9]+}", path), func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		jobId, err := strconv.ParseUint(vars["jobid"], 10, 64)
+		jobID, err := strconv.ParseUint(vars["jobid"], 10, 64)
 		if err != nil {
-			framework2.ApiRespondWithJson(http.StatusInternalServerError, w, map[string]string{
+			framework2.APIRespondWithJSON(http.StatusInternalServerError, w, map[string]string{
 				"error": err.Error(),
 			})
 			return
 		}
-		framework2.ApiRespondWithJson(http.StatusOK, w, map[string]interface{}{
-			"jobId": jobId,
-			"done": jobQueue.IsJobDone(jobId),
+		framework2.APIRespondWithJSON(http.StatusOK, w, map[string]interface{}{
+			"jobID": jobID,
+			"done":  jobQueue.IsJobDone(jobID),
 		})
 	})
 }
 
 // registerLongjobResultRoute Registers the routes used for getting results from a previous job run.
 func registerLongjobResultRoute(framework *framework2.Framework, apiVersion int, path string, jobQueue Queue) {
-	framework.RegisterApiHandler(apiVersion, fmt.Sprintf("%s/result/{jobid:[0-9]+}", path), func(w http.ResponseWriter, r *http.Request) {
+	framework.RegisterAPIHandler(apiVersion, fmt.Sprintf("%s/result/{jobid:[0-9]+}", path), func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		jobId, err := strconv.ParseUint(vars["jobid"], 10, 64)
+		jobID, err := strconv.ParseUint(vars["jobid"], 10, 64)
 		if err != nil {
-			framework2.ApiRespondWithJson(http.StatusInternalServerError, w, map[string]string{
+			framework2.APIRespondWithJSON(http.StatusInternalServerError, w, map[string]string{
 				"error": err.Error(),
 			})
 			return
 		}
-		if !jobQueue.IsJobDone(jobId) {
-			framework2.ApiRespondWithJson(http.StatusInternalServerError, w, map[string]string{
-				"error": fmt.Sprintf("job #%d is not complete", jobId),
+		if !jobQueue.IsJobDone(jobID) {
+			framework2.APIRespondWithJSON(http.StatusInternalServerError, w, map[string]string{
+				"error": fmt.Sprintf("job #%d is not complete", jobID),
 			})
 			return
 		}
-		result, err := jobQueue.GetResult(jobId)
-		framework2.ApiRespondWithJson(http.StatusOK, w, map[string]interface{}{
-			"jobId": jobId,
-			"done": true,
+		result, err := jobQueue.GetResult(jobID)
+		framework2.APIRespondWithJSON(http.StatusOK, w, map[string]interface{}{
+			"jobID":  jobID,
+			"done":   true,
 			"result": result,
-			"err": err,
+			"err":    err,
 		})
 	})
 }

@@ -7,7 +7,7 @@ import (
 
 func main() {
 	preflightFramework := framework.NewFramework("preflight")
-	preflightFramework.RegisterCommonApiRoutes()
+	preflightFramework.RegisterCommonAPIRoutes()
 	longjob.RegisterLongjobQueue(&preflightFramework, 1, "plane/provision", nil)
 	preflightFramework.Start()
 }

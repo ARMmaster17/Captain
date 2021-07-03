@@ -7,7 +7,7 @@ import (
 
 func main() {
 	builderFramework := framework.NewFramework("builder")
-	builderFramework.RegisterCommonApiRoutes()
+	builderFramework.RegisterCommonAPIRoutes()
 	longjob.RegisterLongjobQueue(&builderFramework, 1, "plane/build", nil)
 	longjob.RegisterLongjobQueue(&builderFramework, 1, "plane/destroy", nil)
 	builderFramework.Start()
