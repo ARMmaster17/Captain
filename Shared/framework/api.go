@@ -15,6 +15,7 @@ func (f *Framework) RegisterApiHandler(version int, path string, handleFunction 
 	f.RegisterHandler(fmt.Sprintf("api/v%d/%s", version, path), handleFunction, methods...)
 }
 
+// ApiRespondWithJson Creates a JSON response with the given payload and writes it to the HTTP stream.
 func ApiRespondWithJson(code int, w http.ResponseWriter, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
@@ -30,12 +31,14 @@ func ApiRespondWithJson(code int, w http.ResponseWriter, payload interface{}) {
 	}
 }
 
+// RegisterCommonApiRoutes Adds routes for common paths such as /version.
 func (f *Framework) RegisterCommonApiRoutes() {
 	for i := 1; i <= LatestApiVersion; i++ {
 		f.RegisterApiHandler(i, "version", handleCommonApiApplicationVersion)
 	}
 }
 
+// handleCommonApiApplicationVersion Handles requests for the application version. Wrapper for metadata module.
 func handleCommonApiApplicationVersion(w http.ResponseWriter, r *http.Request) {
 	ApiRespondWithJson(http.StatusOK, w, map[string]string{
 		"version": metadata.GetCaptainVersion(),
