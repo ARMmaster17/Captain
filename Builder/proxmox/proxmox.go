@@ -19,12 +19,12 @@ var proxmoxCreateLxcFunc = func(config *proxmox.ConfigLxc, vmr *proxmox.VmRef) e
 }
 
 // NewClient initializes a new Proxmox client object (does not attempt to connect to remote resources).
-func NewClient(apiUrl string, forceSSL bool, taskTimeout int) error {
+func NewClient(apiURL string, forceSSL bool, taskTimeout int) error {
 	tlsConfig := &tls.Config{
 		InsecureSkipVerify: !forceSSL,
 	}
 	var err error
-	proxmoxClient, err = proxmoxNewClientFunc(apiUrl, nil, tlsConfig, taskTimeout)
+	proxmoxClient, err = proxmoxNewClientFunc(apiURL, nil, tlsConfig, taskTimeout)
 	return err
 }
 

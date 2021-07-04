@@ -44,7 +44,7 @@ func (f *Framework) StartAsync() {
 func (f *Framework) Start() {
 	log.Debug().Msgf("captain %s %s is starting up", config.ApplicationName, metadata.GetCaptainVersion())
 	f.HTTPState = HTTPListening
-	log.Debug().Msgf("captain %s is now listening at ':%d", config.ApplicationName, f.GetPort())
+	log.Debug().Msgf("captain %s is now listening at 0.0.0.0:%d", config.ApplicationName, f.GetPort())
 	srv = &http.Server{
 		Addr:              fmt.Sprintf("0.0.0.0:%d", f.GetPort()),
 		Handler:           f.Router,

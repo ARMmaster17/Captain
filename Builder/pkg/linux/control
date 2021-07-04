@@ -1,4 +1,4 @@
-Package: captain-builder
+Package: captain-builderFramework
 Version: 0.3.0
 Section: base
 Priority: required
