@@ -38,3 +38,7 @@ func SetAppString(key string, value string) {
 func GetAppInt(key string) int {
 	return viper.GetInt(fmt.Sprintf("%s_%s", ApplicationName, key))
 }
+
+func GetGlobalInt(key string) int {
+	return viper.GetInt(fmt.Sprintf("%s_%s", ApplicationName, key))
+}

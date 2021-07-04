@@ -42,12 +42,9 @@ func (f *Framework) StartAsync() {
 
 // Start Sets the HttpListenState and listens for incoming HTTP connections to be handles by the Framework instance.
 func (f *Framework) Start() {
-	log.Info().Msgf("captain %s %s is starting up", config.ApplicationName, metadata.GetCaptainVersion())
+	log.Debug().Msgf("captain %s %s is starting up", config.ApplicationName, metadata.GetCaptainVersion())
 	f.HTTPState = HTTPListening
-	defer func() {
-		f.HTTPState = HTTPStopped
-	}()
-	log.Info().Msgf("captain %s is now listening at ':%d", config.ApplicationName, f.GetPort())
+	log.Debug().Msgf("captain %s is now listening at ':%d", config.ApplicationName, f.GetPort())
 	srv = &http.Server{
 		Addr:              fmt.Sprintf("0.0.0.0:%d", f.GetPort()),
 		Handler:           f.Router,
@@ -55,7 +52,8 @@ func (f *Framework) Start() {
 		WriteTimeout:      15 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
-	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err := srv.ListenAndServe(); err != nil /*&& err != http.ErrServerClosed*/ {
+		f.HTTPState = HTTPStopped
 		log.Fatal().Err(err).Stack().Msg("http router stopped unexpectedly")
 	}
 }

@@ -13,7 +13,9 @@ func NewBuilder() (*framework.Framework, error) {
 		log.Error().Err(err).Stack().Msg("unable to initialize framework")
 		return nil, fmt.Errorf("unable to create builder service")
 	}
+	log.Trace().Msg("registering api routes")
 	builderFramework.RegisterCommonAPIRoutes()
+	log.Trace().Msg("initializing job routes")
 	longjob.RegisterLongjobQueue(builderFramework, 1, "plane/build", nil)
 	longjob.RegisterLongjobQueue(builderFramework, 1, "plane/destroy", nil)
 	return builderFramework, nil
