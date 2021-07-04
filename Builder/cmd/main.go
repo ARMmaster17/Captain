@@ -14,7 +14,7 @@ func main() {
 		log.Fatal().Err(err).Stack().Msg("builder did not initialize")
 	}
 	log.Debug().Msg("starting builder service on new thread")
-	builder.Start()
+	builder.StartAsync()
 	log.Trace().Msg("setting up interrupt hook")
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)

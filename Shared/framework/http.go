@@ -52,7 +52,7 @@ func (f *Framework) Start() {
 		WriteTimeout:      15 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
-	if err := srv.ListenAndServe(); err != nil /*&& err != http.ErrServerClosed*/ {
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		f.HTTPState = HTTPStopped
 		log.Fatal().Err(err).Stack().Msg("http router stopped unexpectedly")
 	}

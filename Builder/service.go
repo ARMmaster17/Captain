@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// NewBuilder creates an instance of the unified framework and injects all builder handler functions into routes.
 func NewBuilder() (*framework.Framework, error) {
 	builderFramework, err := framework.NewFramework("builder")
 	if err != nil {

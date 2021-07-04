@@ -39,6 +39,7 @@ func GetAppInt(key string) int {
 	return viper.GetInt(fmt.Sprintf("%s_%s", ApplicationName, key))
 }
 
+// GetGlobalInt gets an integer with the CAPTAIN_ prefix from any configured datasource.
 func GetGlobalInt(key string) int {
 	return viper.GetInt(fmt.Sprintf("%s_%s", ApplicationName, key))
 }

@@ -43,7 +43,6 @@ func Test_FrameworkStartingAsyncSetsListenState(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 	assert.Equal(t, HTTPListening, framework.HTTPState)
 	assert.NoError(t, framework.StopAsync())
-	// TODO: Need to stop the listener before exiting the test.
 }
 
 func Test_FrameworkStopSetsListenState(t *testing.T) {
@@ -56,7 +55,6 @@ func Test_FrameworkStopSetsListenState(t *testing.T) {
 	assert.Equal(t, HTTPListening, framework.HTTPState)
 	assert.NoError(t, framework.StopAsync())
 	assert.Equal(t, HTTPStopped, framework.HTTPState)
-	// TODO: Need to stop the listener before exiting the test.
 }
 
 func Test_FrameworkRegistersHandler(t *testing.T) {
