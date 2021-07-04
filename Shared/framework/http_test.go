@@ -42,6 +42,7 @@ func Test_FrameworkStartingAsyncSetsListenState(t *testing.T) {
 	framework.StartAsync()
 	time.Sleep(10 * time.Millisecond)
 	assert.Equal(t, HTTPListening, framework.HTTPState)
+	assert.NoError(t, framework.StopAsync())
 }
 
 func Test_FrameworkStopSetsListenState(t *testing.T) {
@@ -52,7 +53,7 @@ func Test_FrameworkStopSetsListenState(t *testing.T) {
 	framework.StartAsync()
 	time.Sleep(10 * time.Millisecond)
 	assert.Equal(t, HTTPListening, framework.HTTPState)
-	framework.StopAsync()
+	assert.NoError(t, framework.StopAsync())
 	assert.Equal(t, HTTPStopped, framework.HTTPState)
 }
 

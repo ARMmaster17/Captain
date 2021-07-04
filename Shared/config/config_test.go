@@ -40,3 +40,9 @@ func Test_GetAppInt(t *testing.T) {
 	require.NoError(t, os.Setenv("CAPTAIN_SHARED_TEST", "1"))
 	assert.Equal(t, 1, GetAppInt("TEST"))
 }
+
+func Test_GetGlobalInt(t *testing.T) {
+	InitConfiguration("shared")
+	require.NoError(t, os.Setenv("CAPTAIN_TEST", "1"))
+	assert.Equal(t, 1, GetGlobalInt("TEST"))
+}

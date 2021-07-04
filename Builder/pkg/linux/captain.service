@@ -1,0 +1,13 @@
+[Unit]
+Description=Captain Builder service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/captain/atc
+ExecStart=/usr/local/bin/captain-atc
+Restart=on-failure
+EnvironmentFile=/etc/captain/captain.conf
+
+[Install]
+WantedBy=default.target

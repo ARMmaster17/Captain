@@ -3,10 +3,14 @@ package framework
 import (
 	"github.com/stretchr/testify/assert"
 	"os"
+	"runtime"
 	"testing"
 )
 
 func Test_UseMemDBOnNoConfig(t *testing.T) {
+	if os.Getenv("CAPTAIN_TEST_USEREALDB") != "TRUE" && runtime.GOOS == "windows" {
+		t.Skip()
+	}
 	db, err := InitDB("")
 	assert.NoError(t, err)
 	assert.NotNil(t, db)
@@ -14,6 +18,9 @@ func Test_UseMemDBOnNoConfig(t *testing.T) {
 }
 
 func Test_CreateMemDB(t *testing.T) {
+	if os.Getenv("CAPTAIN_TEST_USEREALDB") != "TRUE" && runtime.GOOS == "windows" {
+		t.Skip()
+	}
 	db, err := InitDB("TEST")
 	assert.NoError(t, err)
 	assert.NotNil(t, db)
