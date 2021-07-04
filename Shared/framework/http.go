@@ -46,11 +46,11 @@ func (f *Framework) Start() {
 	f.HTTPState = HTTPListening
 	log.Debug().Msgf("captain %s is now listening at 0.0.0.0:%d", config.ApplicationName, f.GetPort())
 	srv = &http.Server{
-		Addr:              fmt.Sprintf("0.0.0.0:%d", f.GetPort()),
-		Handler:           f.Router,
-		ReadTimeout:       15 * time.Second,
-		WriteTimeout:      15 * time.Second,
-		IdleTimeout:       60 * time.Second,
+		Addr:         fmt.Sprintf("0.0.0.0:%d", f.GetPort()),
+		Handler:      f.Router,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		f.HTTPState = HTTPStopped
@@ -60,7 +60,7 @@ func (f *Framework) Start() {
 
 // StopAsync Sends a stop message to the running http server job.
 func (f *Framework) StopAsync() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 15 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	err := srv.Shutdown(ctx)
 	if err != nil {
