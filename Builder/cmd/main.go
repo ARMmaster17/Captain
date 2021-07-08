@@ -22,5 +22,4 @@ func main() {
 	log.Debug().Msg("received console interrupt")
 	builderFramework.StopAsync()
 	log.Trace().Msg("exiting")
-
 }
