@@ -3,7 +3,8 @@ module github.com/ARMmaster17/Captain/builder
 go 1.16
 
 require (
-	github.com/Telmate/proxmox-api-go v0.0.0-20210517153043-5b9c621ea0cd
+	github.com/ARMmaster17/Captain/Shared v0.0.0-20210704190745-d71ceed35343
+	github.com/Telmate/proxmox-api-go v0.0.0-20210708200918-d27e0fa5a4a4
 	github.com/rs/zerolog v1.23.0
 	github.com/stretchr/testify v1.7.0
 )
