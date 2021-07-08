@@ -49,6 +49,8 @@ github.com/Telmate/proxmox-api-go v0.0.0-20210507143528-c60bbda13c0c h1:s8BXeCeP
 github.com/Telmate/proxmox-api-go v0.0.0-20210507143528-c60bbda13c0c/go.mod h1:keBhXWLa+UBajvf79xvKcfiqeIc7vZL9wOqxuy1CBGw=
 github.com/Telmate/proxmox-api-go v0.0.0-20210517153043-5b9c621ea0cd h1:mF7XRh65mfzFoaNk/V8b0oLILo+TPi1H5Du1gw4p9/Y=
 github.com/Telmate/proxmox-api-go v0.0.0-20210517153043-5b9c621ea0cd/go.mod h1:keBhXWLa+UBajvf79xvKcfiqeIc7vZL9wOqxuy1CBGw=
+github.com/Telmate/proxmox-api-go v0.0.0-20210708200918-d27e0fa5a4a4 h1:nPcdJDO4MVAAUPsJtVV7rgjQGFvjxUEBkP53XrUve88=
+github.com/Telmate/proxmox-api-go v0.0.0-20210708200918-d27e0fa5a4a4/go.mod h1:keBhXWLa+UBajvf79xvKcfiqeIc7vZL9wOqxuy1CBGw=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
