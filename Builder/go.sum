@@ -42,6 +42,8 @@ github.com/ARMmaster17/Captain/Shared v0.0.0-20210703211232-024fe53e519b h1:flNX
 github.com/ARMmaster17/Captain/Shared v0.0.0-20210703211232-024fe53e519b/go.mod h1:C5B9uyLj5NJ+xKuIZOFg1izunCtqmMkXUMqisrk66m8=
 github.com/ARMmaster17/Captain/Shared v0.0.0-20210704190745-d71ceed35343 h1:l4ryeBAkLZhFdHFxPg3B4ziR1IpomcypYd5dLznq5LY=
 github.com/ARMmaster17/Captain/Shared v0.0.0-20210704190745-d71ceed35343/go.mod h1:C5B9uyLj5NJ+xKuIZOFg1izunCtqmMkXUMqisrk66m8=
+github.com/ARMmaster17/Captain/Shared v0.0.0-20210708232013-b74a4aa813cd h1:gUtUSBGoAgGf8v9SI24VFQ1SqRLuZpDXWPwBwt2TDjo=
+github.com/ARMmaster17/Captain/Shared v0.0.0-20210708232013-b74a4aa813cd/go.mod h1:C5B9uyLj5NJ+xKuIZOFg1izunCtqmMkXUMqisrk66m8=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
