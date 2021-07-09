@@ -20,10 +20,3 @@ pull_request_rules:
       review:
         type: APPROVE
         message: Bypass review
-  - name: Bypass for Bots
-    conditions:
-      - author~=^renovate\[bot\]$
-    actions:
-      review:
-        type: APPROVE
-        message: Automatic bot approval
