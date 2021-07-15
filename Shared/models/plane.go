@@ -21,23 +21,23 @@ func NewPlane() *Plane {
 	}
 }
 
-func (Plane) Create() error {
+func (p *Plane) Create() error {
 	panic("implement me")
 }
 
-func (Plane) GetByID() (CRUDObject, error) {
+func (p *Plane) GetByID() (CRUDObject, error) {
 	panic("implement me")
 }
 
-func (Plane) GetAll() ([]CRUDObject, error) {
+func (p *Plane) GetAll() ([]CRUDObject, error) {
 	panic("implement me")
 }
 
-func (Plane) Update() error {
+func (p *Plane) Update() error {
 	panic("implement me")
 }
 
-func (Plane) Delete() error {
+func (p *Plane) Delete() error {
 	panic("implement me")
 }
 
