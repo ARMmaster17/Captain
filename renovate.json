@@ -1,5 +1,11 @@
 {
   "extends": [
     "config:base"
+  ],
+  "postUpdateOptions": [
+    "gomodTidy"  
+  ],
+  "ignoreDeps": [
+    "github.com/ARMmaster17/Captain/Shared"
   ]
 }
