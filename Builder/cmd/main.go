@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ARMmaster17/Captain/builder"
+	"github.com/ARMmaster17/Captain/Builder"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -22,5 +22,4 @@ func main() {
 	log.Debug().Msg("received console interrupt")
 	builderFramework.StopAsync()
 	log.Trace().Msg("exiting")
-
 }

@@ -32,6 +32,9 @@ jobs:
     - name: Test Shared
       run: cd Shared; make test
 
+    - name: Test Builder
+      run: cd Builder; make test
+
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
       env:
