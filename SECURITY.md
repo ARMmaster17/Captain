@@ -2,9 +2,11 @@
 
 ## Supported Versions
 
-As all versions being released right now are pre-production, security patches will only
-be offered on the latest revision of the current minor release. Once the codebase settles
-down after the major refactor in v0.4.0, more versions will be supported on a consistent cycle.
+As all versions being released right now are pre-production,
+security patches will only be offered on the latest revision
+of the current minor release. Once the codebase settles
+down after the major refactor in v0.4.0, more versions
+will be supported on a consistent cycle.
 
 | Version | Supported          |
 | ------- | ------------------ |
