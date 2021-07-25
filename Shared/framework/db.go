@@ -16,7 +16,7 @@ func InitDB(connectionString string) (*gorm.DB, error) {
 		log.Warn().Msg("no DB is configured, using in-memory database")
 		return gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 	case "TEST":
-		return gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+		return nil, nil
 	default:
 		return gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	}

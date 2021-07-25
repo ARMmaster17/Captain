@@ -17,14 +17,11 @@ func Test_UseMemDBOnNoConfig(t *testing.T) {
 	assert.Equal(t, "sqlite", db.Name())
 }
 
-func Test_CreateMemDB(t *testing.T) {
-	if os.Getenv("CAPTAIN_TEST_USEREALDB") != "TRUE" && runtime.GOOS == "windows" {
-		t.Skip()
-	}
+// This test asserts that the testing database is not initialized so that we can inject mocks.
+func Test_CreateTestDB(t *testing.T) {
 	db, err := InitDB("TEST")
 	assert.NoError(t, err)
-	assert.NotNil(t, db)
-	assert.Equal(t, "sqlite", db.Name())
+	assert.Nil(t, db)
 }
 
 func Test_ConnectToPostgres(t *testing.T) {

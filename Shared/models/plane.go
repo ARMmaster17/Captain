@@ -26,26 +26,21 @@ func NewPlane() *Plane {
 
 // Create commits the given Plane object to the database. Create assumes that the object is new and does not already
 // have an assigned ID.
-func (p *Plane) Create() error {
+func (p *Plane) Create(db *gorm.DB) error {
 	panic("implement me")
 }
 
 // GetByID returns a plane with the given integer ID.
-func (p *Plane) GetByID() (CRUDObject, error) {
-	panic("implement me")
-}
-
-// GetAll returns all planes the database.
-func (p *Plane) GetAll() ([]CRUDObject, error) {
+func (p *Plane) GetByID(db *gorm.DB, id int) error {
 	panic("implement me")
 }
 
 // Update commits an existing object to the database.
-func (p *Plane) Update() error {
+func (p *Plane) Update(db *gorm.DB) error {
 	panic("implement me")
 }
 
 // Delete removes a Plane object from the database.
-func (p *Plane) Delete() error {
+func (p *Plane) Delete(db *gorm.DB) error {
 	panic("implement me")
 }
