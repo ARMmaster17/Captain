@@ -14,7 +14,7 @@ func InitDB(connectionString string) (*gorm.DB, error) {
 	case "":
 		return gorm.Open(postgres.Open("host=localhost user=captain password=captain dbname=captain port=9920 sslmode=disable"), &gorm.Config{})
 	case "TEST":
-		return gorm.Open(postgres.Open("host=localhost user=captain password=captain dbname=captain port=9920 sslmode=disable"), &gorm.Config{})
+		return nil, nil
 	default:
 		return gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	}
