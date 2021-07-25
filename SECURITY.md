@@ -2,12 +2,16 @@
 
 ## Supported Versions
 
-As all versions being released right now are pre-production, security patches will only
-be offered on the latest revision of the current minor release.
+As all versions being released right now are pre-production,
+security patches will only be offered on the latest revision
+of the current minor release. Once the codebase settles
+down after the major refactor in v0.4.0, more versions
+will be supported on a consistent cycle.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v0.2.0  | :white_check_mark: |
+| v0.3.0  | :white_check_mark: |
+| v0.2.0 | :x:                |
 | v0.1.0 | :x:                |
 | v0.0.1  | :x: |
 |< v0.0.1 | :x:                |
