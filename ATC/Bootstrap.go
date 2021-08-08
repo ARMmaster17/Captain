@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/ARMmaster17/Captain/ATC/DB"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -44,24 +45,7 @@ func bootstrapCreateCaptainServices(db *gorm.DB, airspace *Airspace) error {
 		return fmt.Errorf("unable to create core services flight:\n%w", results.Error)
 	}
 	flight := airspace.Flights[0]
-	flight.Formations = append(flight.Formations, Formation{
-		Name:        "Captain Server",
-		CPU:         1,
-		RAM:         256,
-		Disk:        8,
-		BaseName:    "captain",
-		Domain:      "core.cap",
-		TargetCount: 1,
-	})
-	flight.Formations = append(flight.Formations, Formation{
-		Name:        "PostgreSQL Server",
-		CPU:         1,
-		RAM:         256,
-		Disk:        12,
-		BaseName:    "psql",
-		Domain:      "core.cap",
-		TargetCount: 1,
-	})
+	flight.Formations = append(flight.Formations, Formation{Name: "Captain Server", CPU: 1, RAM: 256, Disk: 8, BaseName: "captain", Domain: "core.cap", TargetCount: 1}, Formation{Name: "PostgreSQL Server", CPU: 1, RAM: 256, Disk: 12, BaseName: "psql", Domain: "core.cap", TargetCount: 1})
 	results = db.Save(&flight)
 	if results.Error != nil {
 		return fmt.Errorf("unable to create core service flights:\n%w", results.Error)
