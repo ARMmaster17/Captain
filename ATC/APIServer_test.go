@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	db2 "github.com/ARMmaster17/Captain/ATC/DB"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	db2 "github.com/ARMmaster17/Captain/ATC/DB"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 func TestRESTAirspaceRAll(t *testing.T) {
@@ -173,7 +174,7 @@ func TestRESTFormationRAll(t *testing.T) {
 	db := HelperAPIInitDB()
 	flightID := HelperAPICreateSampleFlight(t, db)
 	_ = HelperAPICreateSampleFormation(t, db, flightID)
-	req, err := http.NewRequest("GET", fmt.Sprintf("/formations"), nil)
+	req, err := http.NewRequest("GET", "/formations", nil)
 	require.NoError(t, err)
 	api := HelperAPIGetServerInstance(db)
 	response := HelperAPIExecuteRequest(req, api)
