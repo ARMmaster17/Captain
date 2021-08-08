@@ -107,7 +107,7 @@ func HelperInitMockDB(t *testing.T, f *framework.Framework) sqlmock.Sqlmock {
 	sqlDB, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: sqlDB,
+		Conn:                      sqlDB,
 		SkipInitializeWithVersion: true,
 	}), &gorm.Config{})
 	require.NoError(t, err)
