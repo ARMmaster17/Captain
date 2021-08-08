@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"sync"
+
 	"github.com/ARMmaster17/Captain/ATC/DB"
 	"github.com/ARMmaster17/Captain/ATC/IPAM"
 	"github.com/ARMmaster17/Captain/ATC/Preflight"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"sync"
 )
 
 // Builder instance that handles the creation and destruction of planes. Thread-safe and uses a WaitGroup
@@ -25,17 +25,17 @@ func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup, mx *sync.Mutex) {
 	// we have received a work request.
 	err := payload.Validate()
 	if err != nil {
-		w.logError(err, fmt.Sprintf("Invalid plane object"))
+		w.logError(err, "Invalid plane object")
 		return
 	}
 	db, err := DB.ConnectToDB()
 	if err != nil {
-		w.logError(err, fmt.Sprintf("unable to connect to database"))
+		w.logError(err, "unable to connect to database")
 		return
 	}
 	newNetID, err := getNewNetworkConfig(db, mx)
 	if err != nil {
-		w.logError(err, fmt.Sprintf("unable to reserve IP address"))
+		w.logError(err, "unable to reserve IP address")
 	}
 	newPlane := Plane{
 		Num:         payload.Num,
@@ -44,18 +44,18 @@ func (w builder) buildPlane(payload Plane, wg *sync.WaitGroup, mx *sync.Mutex) {
 	}
 	result := db.Save(&newPlane)
 	if result.Error != nil {
-		w.logError(err, fmt.Sprintf("unable to update formation with new planes"))
+		w.logError(err, "unable to update formation with new planes")
 		return
 	}
 	result = db.First(&newPlane.Formation, newPlane.FormationID)
 	if result.Error != nil {
-		w.logError(err, fmt.Sprintf("unable to get formation data for new planes"))
+		w.logError(err, "unable to get formation data for new planes")
 		return
 	}
 	if newPlane.NetID != "" && newPlane.Formation.PreflightPlaybook != "" {
 		err = Preflight.SingleInstance(newPlane.NetID, newPlane.Formation.PreflightPlaybook)
 		if err != nil {
-			w.logError(err, fmt.Sprintf("unable to perform preflight provisioning"))
+			w.logError(err, "unable to perform preflight provisioning")
 			return
 		}
 	}
