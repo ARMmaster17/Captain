@@ -42,7 +42,7 @@ func (c *CaptainClient) GetAirspaceByID(id int) (Airspace, error) {
 
 // CreateAirspace will create an airspace with the given parameters. This airspace will then be managed by the
 // connected ATC instance.
-func (c *CaptainClient) CreateAirspace(humanName string, netName string) (Airspace, error) {
+func (c *CaptainClient) CreateAirspace(humanName, netName string) (Airspace, error) {
 	result, err := c.restPOST("airspace", map[string]interface{}{
 		"HumanName": humanName,
 		"NetName":   netName,
@@ -59,7 +59,7 @@ func (c *CaptainClient) CreateAirspace(humanName string, netName string) (Airspa
 }
 
 // UpdateAirspace commits an Airspace object to the ATC state database, updating any fields that have changed.
-func (c *CaptainClient) UpdateAirspace(id int, humanName string, netName string) error {
+func (c *CaptainClient) UpdateAirspace(id int, humanName, netName string) error {
 	_, err := c.restPUT(fmt.Sprintf("airspace/%d", id), map[string]interface{}{
 		"HumanName": humanName,
 		"NetName":   netName,

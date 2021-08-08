@@ -65,7 +65,7 @@ func (c *CaptainClient) GetFormationByID(id int) (Formation, error) {
 
 // CreateFormation creates a scalable formation of containers that will be managed by the connected
 // ATC instance.
-func (c *CaptainClient) CreateFormation(name string, flightID int, CPU int, RAM int, disk int, baseName string, domain string, targetCount int, preflightPlaybook string) (Formation, error) {
+func (c *CaptainClient) CreateFormation(name string, flightID, CPU, RAM, disk int, baseName, domain string, targetCount int, preflightPlaybook string) (Formation, error) {
 	result, err := c.restPOST("formation", map[string]interface{}{
 		"FlightID":          flightID,
 		"Name":              name,

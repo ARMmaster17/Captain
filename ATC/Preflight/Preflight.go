@@ -3,18 +3,19 @@ package Preflight
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"time"
+
 	"github.com/apenella/go-ansible/pkg/options"
 	"github.com/apenella/go-ansible/pkg/playbook"
 	"github.com/go-ping/ping"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"os"
-	"time"
 )
 
 // SingleInstance Runs the specified Ansible playbook against one host.
-func SingleInstance(connectionURI string, playbookPath string) error {
+func SingleInstance(connectionURI, playbookPath string) error {
 	err := waitForHostToComeOnline(connectionURI)
 	if err != nil {
 		return fmt.Errorf("plane %s is not online, cannot run preflight:\n%w", connectionURI, err)
@@ -51,7 +52,7 @@ func cleanupHostsFile(path string) {
 	}
 }
 
-func ansibleProvisionHost(hostFilePath string, privatekeyPath string, playbookPaths []string) error {
+func ansibleProvisionHost(hostFilePath, privatekeyPath string, playbookPaths []string) error {
 	ansiblePlaybookConnectionOptions := &options.AnsibleConnectionOptions{
 		Connection:    viper.GetString("config.preflight.ansible.connectiontype"),
 		PrivateKey:    privatekeyPath,
