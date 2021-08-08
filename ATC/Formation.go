@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/go-playground/validator"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"sync"
 )
 
 var (
@@ -115,7 +116,7 @@ func (f *Formation) performHealthChecks(db *gorm.DB) error {
 	return nil
 }
 
-func (f *Formation) launchBuilder(id int, totalBuilders int, wg *sync.WaitGroup, mx *sync.Mutex) {
+func (f *Formation) launchBuilder(id, totalBuilders int, wg *sync.WaitGroup, mx *sync.Mutex) {
 	builder := builder{
 		ID: id,
 	}

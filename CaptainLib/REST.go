@@ -52,7 +52,7 @@ func (c *CaptainClient) restDELETE(path string) ([]byte, error) {
 }
 
 // restRequest is a generic REST request handler that performs the specified action at the specified URL.
-func (c *CaptainClient) restRequest(method string, uri string, payload map[string]interface{}) ([]byte, error) {
+func (c *CaptainClient) restRequest(method, uri string, payload map[string]interface{}) ([]byte, error) {
 	url := fmt.Sprintf("%s%s", c.BaseUrl, uri)
 	fmt.Println(url)
 	data, err := json.Marshal(payload)

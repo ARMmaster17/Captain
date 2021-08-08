@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 var (
@@ -30,7 +31,7 @@ func GetAppString(key string) string {
 }
 
 // SetAppString Sets an application-specific configuration setting in memory.
-func SetAppString(key string, value string) {
+func SetAppString(key, value string) {
 	viper.Set(fmt.Sprintf("%s_%s", ApplicationName, strings.ToUpper(key)), value)
 }
 
