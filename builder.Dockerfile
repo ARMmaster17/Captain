@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine
+FROM golang:1.17-alpine
 RUN apk add gcc musl-dev
 COPY ./Builder /go/src/github.com/ARMmaster17/Captain/builder
 COPY ./Shared /go/src/github.com/ARMmaster17/Captain/Shared
