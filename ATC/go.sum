@@ -45,8 +45,8 @@ github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/Telmate/proxmox-api-go v0.0.0-20210804143723-a6998deceba2 h1:Zp/nKTHow4OawYvMRDSe3EUoxUf206k/1POU4JXtQAY=
-github.com/Telmate/proxmox-api-go v0.0.0-20210804143723-a6998deceba2/go.mod h1:keBhXWLa+UBajvf79xvKcfiqeIc7vZL9wOqxuy1CBGw=
+github.com/Telmate/proxmox-api-go v0.0.0-20210824171734-5a7bec182583 h1:sL9zKd94Wst59MYibXCa7J5ipLMfrp1uUR6Z4rmrMrQ=
+github.com/Telmate/proxmox-api-go v0.0.0-20210824171734-5a7bec182583/go.mod h1:keBhXWLa+UBajvf79xvKcfiqeIc7vZL9wOqxuy1CBGw=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
