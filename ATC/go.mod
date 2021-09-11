@@ -17,6 +17,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gorm.io/driver/postgres v1.1.0
-	gorm.io/driver/sqlite v1.1.4
+	gorm.io/driver/sqlite v1.1.5
 	gorm.io/gorm v1.21.15
 )
