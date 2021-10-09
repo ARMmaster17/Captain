@@ -18,5 +18,5 @@ require (
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gorm.io/driver/postgres v1.1.2
 	gorm.io/driver/sqlite v1.1.6
-	gorm.io/gorm v1.21.15
+	gorm.io/gorm v1.21.16
 )
