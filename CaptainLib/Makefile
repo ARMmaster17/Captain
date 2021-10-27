@@ -1,5 +1,5 @@
 NAME=captain-lib
-VERSION=`git describe --tags`
+VERSION="v0.3.0-beta"
 
 build: $(NAME)
 
