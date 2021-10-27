@@ -1,5 +1,5 @@
 NAME=captain-atc
-VERSION=`git describe --tags`
+VERSION="v0.3.0-beta"
 LDFLAGS=-ldflags="-w -s -X main.Version=$(VERSION)"
 
 build: $(NAME)
