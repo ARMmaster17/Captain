@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/Telmate/proxmox-api-go v0.0.0-20211025150448-0cc61e17eed6
 	github.com/apenella/go-ansible v1.1.2
-	github.com/go-ping/ping v0.0.0-20211014180314-6e2b003bffdd
+	github.com/go-ping/ping v0.0.0-20211130115550-779d1e919534
 	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
