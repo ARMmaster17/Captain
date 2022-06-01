@@ -14,8 +14,6 @@
 # Dependency directories (remove the comment below to include it)
 vendor/
 
-ATC/pkg/deb/usr/local/bin/captain-atc*
-Radar/pkg/deb/usr/local/bin/captain-radar*
 .deb
 *.env
 .idea/*
