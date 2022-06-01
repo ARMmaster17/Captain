@@ -3,7 +3,7 @@ module github.com/ARMmaster17/Captain/ATC
 go 1.13
 
 require (
-	github.com/Telmate/proxmox-api-go v0.0.0-20211025150448-0cc61e17eed6
+	github.com/Telmate/proxmox-api-go v0.0.0-20220524222303-9d9842512e0c
 	github.com/apenella/go-ansible v1.1.2
 	github.com/go-ping/ping v0.0.0-20211130115550-779d1e919534
 	github.com/go-playground/assert v1.2.1
