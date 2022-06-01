@@ -2,23 +2,22 @@
 
 ## Supported Versions
 
-As all versions being released right now are pre-production,
-security patches will only be offered on the latest revision
-of the current minor release. Once the codebase settles
-down after the major refactor in v0.4.0, more versions
-will be supported on a consistent cycle.
+The codebase is currently undergoing a refactor in a new language and a new framework.
+Only the code on the `main` branch will be supported with security updates. The old
+support cycle will resume with the release of v1.0.0.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v0.3.0  | :white_check_mark: |
-| v0.2.0 | :x:                |
-| v0.1.0 | :x:                |
-| v0.0.1  | :x: |
+| Main    | :white_check_mark: |
+| v0.3.0  | :x:                |
+| v0.2.0 | :x:                 |
+| v0.1.0 | :x:                 |
+| v0.0.1  | :x:                |
 |< v0.0.1 | :x:                |
 
 ## Reporting a Vulnerability
 
-If you find a vulnerability with Captain, contact the project maintainer directly. **Do not
+If you find a vulnerability with Captain, contact the project maintainer(s) directly. **Do not
 open a ticket.** Upon successful verification and duplication of the vulnerability, a fix
 will be released as soon as possible. A public notice will be sent out within 30 days,
 after a fix is released if possible.

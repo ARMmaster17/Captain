@@ -1,14 +1,10 @@
 version = 1
 
-test_patterns = ["**/*_test.go"]
+test_patterns = ["**/*Test.java"]
 
 [[analyzers]]
-name = "go"
+name = "java"
 enabled = true
 
   [analyzers.meta]
-  import_root = "github.com/ARMmaster17/Captain"
-
-[[transformers]]
-name = "gofmt"
-enabled = true
+  runtime_version = "17"

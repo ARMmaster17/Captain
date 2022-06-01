@@ -1,7 +1,0 @@
-Package: captain-radar
-Version: 0.2.0
-Section: base
-Priority: required
-Architecture: amd64
-Maintainer: wordman05@gmail.com
-Description: Web GUI for Captain stack.
