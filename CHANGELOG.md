@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Captain Core is now the central controlling service, and runs on the Quarkus framework. (#276)
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+- All features/capabilities of Captain have been removed as part of a codebase reset. (#276)
+
+### Fixed
+
+### Security
+
+## v0.3.0 - Not Released
+
+### Added
+
 - Radar: New formation field with relative path to preflight Ansible playbook.
 
 ### Changed

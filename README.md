@@ -15,7 +15,7 @@ Project Goals:
 - Provide health checks and automatic crash mitigation.
 - Easy to use through the CLI, web interface, or REST API.
 
-Captain is currently undergoing a refactor to make it more maintainable before moving on to new microservices. This refactor is part of release v0.4.0.
+Captain is currently undergoing a refactor to make it more maintainable before moving on to new microservices. This refactor is part of release v1.0.0.
 
 Roadmap:
 - Integrated DNS server with service discovery.
