@@ -16,7 +16,7 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gorm.io/driver/postgres v1.2.2
+	gorm.io/driver/postgres v1.3.7
 	gorm.io/driver/sqlite v1.2.6
-	gorm.io/gorm v1.22.3
+	gorm.io/gorm v1.23.4
 )
