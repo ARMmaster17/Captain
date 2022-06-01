@@ -9,8 +9,8 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/rs/zerolog v1.26.0
-	github.com/spf13/viper v1.9.0
-	github.com/stretchr/testify v1.7.0
+	github.com/spf13/viper v1.12.0
+	github.com/stretchr/testify v1.7.1
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gorm.io/driver/mysql v1.1.3
 	gorm.io/driver/postgres v1.2.2
