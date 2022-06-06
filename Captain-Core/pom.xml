@@ -67,6 +67,19 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>it.corsinvest.proxmoxve.api</groupId>
+            <artifactId>cv4-pve-api-java</artifactId>
+            <version>7.2.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/cv4pve-api-java-7.2.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180813</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
