@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  atc:
+    build: .
+    environment:
+      CAPTAIN_DATABASE: "host=db user=postgres password=password dbname=captain port=5432"
+    depends_on:
+      - db
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=captain
