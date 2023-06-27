@@ -8,7 +8,8 @@ import (
 
 type Flight struct {
 	gorm.Model
-	Name string `json:"name"`
+	Name       string `json:"name"`
+	Formations []Formation
 }
 
 func SetupFlights() {
